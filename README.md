@@ -1,4 +1,6 @@
-* Copy from current multitimer repository, will be updated soon (which means eventually)*
+## **Copy from current multitimer repository, will be updated soon (which means eventually)**
+
+Original copy follows:
 
 # MIE MultiTimer
 The brand new multitimer meant to be a modern rewrite of the old timer bringing new features and a new look.
