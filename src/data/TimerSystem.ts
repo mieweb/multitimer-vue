@@ -7,8 +7,8 @@ import TimerVue from "../components/Timer.vue";
 
 class _TimerSystem {
     static lastId: number = -1;
-    // private _map: Ref<Map<number, TimerInterface>> = ref(new Map());
     private _map: Map<number, TimerInterface> = new Map();
+    private _existingIssues: Map<string, true> = new Map();
     private _activeTimerId: number = NaN;
     private setTimeoutId: number = NaN;
     public timerToConfirm: number = NaN;
@@ -16,7 +16,10 @@ class _TimerSystem {
     private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
 
     public addTimer(ti: TimerInterface) {
+        if (this._existingIssues.get(ti.issue)) return;
+
         this._map.set(this.id(), reactive(ti));
+        this._existingIssues.set(ti.issue, true);
         console.log(this._map);
     }
 
@@ -59,7 +62,9 @@ class _TimerSystem {
 
     public deleteTimer() {
         const id = this.timerToConfirm;
+        const issue = this._map.get(id)!.issue;
         this._map.delete(id);
+        this._existingIssues.delete(issue);
         this.timerToConfirm = NaN;
     }
 
