@@ -1,0 +1,165 @@
+@import "./node_modules/bootstrap/scss/functions";
+
+@import "./node_modules/bootstrap/scss/variables";
+
+$enable-grid-classes: false;
+$enable-cssgrid: true;
+
+@import "./node_modules/bootstrap/scss/maps";
+@import "./node_modules/bootstrap/scss/mixins";
+@import "./node_modules/bootstrap/scss/root";
+
+@import "./node_modules/bootstrap/scss/utilities";
+@import "./node_modules/bootstrap/scss/reboot";
+@import "./node_modules/bootstrap/scss/buttons";
+@import "./node_modules/bootstrap/scss/containers";
+@import "./node_modules/bootstrap/scss/tooltip";
+@import "./node_modules/bootstrap/scss/grid";
+@import "./node_modules/bootstrap/scss/modal";
+@import "./node_modules/bootstrap/scss/forms";
+@import "./node_modules/bootstrap/scss/placeholders";
+@import "./node_modules/bootstrap/scss/progress";
+@import "./node_modules/bootstrap/scss/spinners";
+@import "./node_modules/bootstrap/scss/close";
+@import "./node_modules/bootstrap/scss/alert";
+
+@import "./node_modules/bootstrap/scss/utilities/api";
+
+
+$white: white;
+$timer-primary: #596f86;
+$timer-active: #2ecc71;
+// $timer-secondary: #435365;
+$timer-secondary: #4e6175;
+$timer-secondary-active: #28b363;
+
+// @import "./override.scss";
+
+:root {
+    // --white: #FAFAFA;
+    --white: #FFFFFF;
+    --black: #202020;
+    --light-grey: #dfdfdf;
+    --dark-grey: #383838;
+
+    --foreground: var(--black);
+    --background: var(--white);
+    --foreground-alt: var(--dark-grey);
+    --background-alt: var(--light-grey);
+    --timer-primary: #596f86;
+    --timer-secondary: #4e6175;
+    --timer-active: #2ecc71;
+    --timer-secondary-active: #28b363;
+}
+
+.dark {
+    --foreground: var(--light-grey);
+    --background: var(--black);
+    --foreground-alt: var(--light-grey);
+    --background-alt: var(--dark-grey);
+    --timer-primary: #384554;
+    --timer-secondary: #445566;
+    --timer-active: #114d2a;
+    --timer-secondary-active: #19703e;
+}
+
+body {
+    margin: 0;
+    color: var(--foreground);
+    background-color: var(--background);
+}
+
+header {
+    padding: 1rem;
+}
+
+.gap-2 {
+    gap: 2rem;
+}
+
+.bg-active {
+    background-color: var(--timer-active);
+}
+
+.bg-default {
+    background-color: var(--timer-primary);
+}
+
+.bg-alt-active {
+    background-color: var(--timer-secondary-active);
+}
+
+.bg-alt-default {
+    background-color: var(--timer-secondary);
+}
+
+.header-control {
+    background-color: unset;
+    border: unset;
+}
+
+.hover-hide {
+    visibility: hidden;
+}
+
+.hide {
+    visibility: hidden;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.pointer:hover {
+    color: var(--background);
+}
+
+#common-tickets-list li {
+    cursor: pointer;
+}
+
+.simple-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.simple-link:hover {
+    color: inherit;
+    opacity: 75%;
+}
+
+.plain-btn {
+	border: none;
+	background-color: inherit;
+	padding: 5px 8px 5px;
+	border-radius: 0.4rem;
+    border-color: var(--background-alt);
+}
+
+.plain-btn:hover {
+	background-color: var(--background-alt);
+}
+
+.jiggle-anim {
+    animation-name: jiggle;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+}
+
+@keyframes jiggle {
+    20% {
+        transform: rotate(-15deg);
+    }
+
+    40% {
+        transform: rotate(20deg);
+    }
+
+    60% {
+        transform: rotate(-20deg);
+    }
+    
+    80% {
+        transform: rotate(15deg);
+    }
+}
