@@ -49,7 +49,7 @@ const actions = [
         action: () => {
             const ti: TimerInterface = {
                 title: formData.title,
-                issue: formData.issue,
+                issue: formData.issue.toString(),
                 link: formData.link,
                 comment: formData.comment,
                 billStatus: formData.billStatus,

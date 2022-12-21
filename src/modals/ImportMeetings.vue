@@ -6,6 +6,7 @@ import HMS from '../data/HMS';
 import { MeetingData } from '../data/ImportMeetings';
 import TimerInterface, { BillStatus } from '../data/TimerInterface';
 import { TimerSystem } from '../data/TimerSystem';
+import { Settings } from '../data/Settings';
 
 const props = defineProps<{
     generic: { meetingData: MeetingData[] }
@@ -17,14 +18,16 @@ const actions: Action[] = [
             const timerDataCollection = formDataCollection
                 .filter((formData: { chosen: boolean }) => formData.chosen)
                 .map((chosen: any) => {
-                    return {
+                    const timerData: TimerInterface = {
                         issue: chosen.issue,
                         title: chosen.title,
                         time: chosen.time,
                         billStatus: chosen.billStatus,
                         comment: chosen.comment,
-                        link: chosen.link
-                    } as TimerInterface;
+                        link: chosen.link,
+                        controlsHidden: Settings.hideControls
+                    };
+                    return timerData;
                 }).forEach((timerData: TimerInterface) => TimerSystem.addTimer(timerData));
         },
         closeModal: true,
