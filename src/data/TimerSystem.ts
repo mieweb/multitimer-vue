@@ -5,6 +5,11 @@ import HMS from "./HMS";
 import { Settings } from "./Settings";
 import TimerVue from "../components/Timer.vue";
 
+export interface TimerFilter {
+    search: string,
+    withTime: boolean
+};
+
 class _TimerSystem {
     static lastId: number = -1;
     private _map: Map<number, TimerInterface> = new Map();
@@ -14,6 +19,10 @@ class _TimerSystem {
     public timerToConfirm: number = NaN;
     private _favoriteTimers: Map<number, TimerInterface> = new Map();
     private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
+    private timerFilter: TimerFilter = {
+        search: '',
+        withTime: false
+    };
 
     public addTimer(ti: TimerInterface) {
         if (this._existingIssues.get(ti.issue)) return;
@@ -23,8 +32,23 @@ class _TimerSystem {
         console.log(this._map);
     }
 
-    public map() {
-        return this._map;
+    public* iterator(): IterableIterator<[number, TimerInterface]> {
+        const filter = this.timerFilter;
+        const regex = new RegExp(`.*${filter.search}.*`);
+
+        for (const [id, timer] of this._map.entries()) {
+            if (filter.withTime && !timer.time.hasTime()) continue;
+            if (!timer.title.toLowerCase().match(regex)) continue;
+
+            yield [id, timer]
+        }
+    }
+
+    public updateFilter(userFilter: TimerFilter) {
+        this.timerFilter = {
+            ...this.timerFilter,
+            ...userFilter
+        };
     }
 
     public activeTimerId() {
