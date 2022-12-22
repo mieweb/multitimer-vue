@@ -80,6 +80,40 @@ import ModalTemplate from '../components/ModalTemplate.vue';
             </li>
         </ul>
         <hr />
+        <h4>Top Controls</h4>
+        Above the timer list, are the top controls, which are mostly self-explantory. The features include:
+        <ul>
+            <li>
+                <span class="text-primary">Log All Timers</span> will log all the timers that have time; timers with no time will be excluded.
+                This features includes a date selector which will affect the log date, which defaults to the current date upon refresh of the site.
+            </li>
+            <li>
+                <span class="text-danger">Reset All Timers</span> will reset all timers with time back to zero.
+            </li>
+            <li>
+                <span class="text-danger">Delete All Timers</span> will delete all timers, clearing your timer list.
+            </li>
+            <li>
+                A search bar labeled 
+                <div class="input-group-sm" style="display:inline-block">
+                    <div class="input-group-text">
+                        Search timers:
+                    </div>
+                </div>
+                allows searching from the current list of timers that exist in your timer list based on the title
+                of your timer. You can search any part of the title to get your results (i.e. a query of 'f' will return all timers with an 'f' in it),
+                and capitalization is not taken into consideration.
+            </li>
+            <li>
+                The checkbox labeled with 
+                <div class="input-group-sm" style="display:inline-block">
+                    <div class="input-group-text">
+                        Timers with time
+                    </div>
+                </div>
+                will filter out any timers with no time on them. This can be useful when logging 😉.
+            </li>
+        </ul>
         <h4>Top Right Controls</h4>
         The other controls in the top-right corner:
         <ul>

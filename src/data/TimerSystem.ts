@@ -34,7 +34,7 @@ class _TimerSystem {
 
     public* iterator(): IterableIterator<[number, TimerInterface]> {
         const filter = this.timerFilter;
-        const regex = new RegExp(`.*${filter.search}.*`);
+        const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
 
         for (const [id, timer] of this._map.entries()) {
             if (filter.withTime && !timer.time.hasTime()) continue;
