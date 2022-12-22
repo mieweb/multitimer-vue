@@ -19,9 +19,8 @@ import { Modal } from 'bootstrap';
 import { onMounted, ref } from 'vue';
 import { openModal, show, componentReference } from './data/ModalHandler';
 import TestModal from './modals/TestModal.vue';
+import { TimerFilter } from './data/TimerSystem';
 
-const openTest = () => openModal(TestModal);
-const openAdd = () => openModal(AddTimer);
 const modalData = componentReference();
 </script>
 

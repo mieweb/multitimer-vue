@@ -57,4 +57,8 @@ export default class HMS {
         this.minutes = 0;
         this.seconds = 0;
     }
+
+    public hasTime(): boolean {
+        return !!(this.hours || this.minutes || this.seconds);
+    }
 };
