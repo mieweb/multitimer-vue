@@ -22,7 +22,6 @@ const toggleDarkMode = () => {
             <div id="left-controls">
                 <i
                     class="header-control fa fa-plus p-0 pointer"
-                    data-bs-modal-type="add"
                     @click="openModal(AddTimer)"
                 ></i>
             </div>
