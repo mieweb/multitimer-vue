@@ -1,0 +1,39 @@
+.modal {
+    --bs-modal-bg: var(--background);
+}
+
+.modal *:not(.btn) {
+    color: var(--foreground);
+}
+
+.modal *:focus {
+    color: var(--foreground);
+    border-color: var(--background-alt);
+}
+
+.modal input {
+    background-color: var(--background);
+    border-color: var(--background-alt);
+}
+
+.modal input:not([type="radio"]):not([type="checkbox"]):focus {
+    background-color: var(--background);
+}
+
+.modal select {
+    background-color: var(--background);
+    border-color: var(--background-alt);
+}
+
+.modal *.input-group-text {
+    background-color: var(--background-alt);
+    border-color: var(--background-alt);
+}
+
+input[type="date"] {
+    border-color: var(--background-alt);
+    background-color: var(--background);
+    color: var(--foreground);
+    border-radius: 3px;
+    border: 1px solid;
+}
