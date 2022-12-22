@@ -26,7 +26,7 @@ const toggleDarkMode = () => {
                 ></i>
             </div>
             <div id="mid-controls">
-                <h3 class="my-2">MIE MultiTimer</h3>
+                <h3 class="my-2 align-middle">MIE MultiTimer</h3>
             </div>
             <div id="right-controls" class="d-flex gap-1">
                 <i
