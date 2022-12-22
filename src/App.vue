@@ -14,7 +14,7 @@ import Help from './modals/Help.vue';
 import DeleteTimer from './modals/DeleteTimer.vue';
 import EditTimer from './modals/EditTimer.vue';
 import TotalTimer from './components/TotalTimer.vue';
-import MeetingsImporter from './components/MeetingsImporter.vue';
+import BottomControls from './components/BottomControls.vue';
 import { Modal } from 'bootstrap';
 import { onMounted, ref } from 'vue';
 import { openModal, show, componentReference } from './data/ModalHandler';
@@ -35,5 +35,5 @@ const modalData = componentReference();
   <TopControls />
   <TotalTimer />
   <TimerList />
-  <MeetingsImporter />
+  <BottomControls />
 </template>
