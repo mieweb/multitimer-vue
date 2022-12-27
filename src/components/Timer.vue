@@ -9,6 +9,8 @@ import EditTimer from '../modals/EditTimer.vue';
 import ResetTimer from '../modals/ResetTimer.vue';
 import UpdateTime from '../modals/UpdateTime.vue';
 import { Settings } from '../data/Settings';
+//@ts-ignore
+import anime from 'animejs/lib/anime.es';
 const props = defineProps<{
     timerId: number,
     timerData: TimerInterface,
@@ -44,7 +46,19 @@ const Timer = {
     },
     favorite: () => {
         TimerSystem.timerToConfirm = props.timerId;
-        TimerSystem.addFavorite();
+        if (!TimerSystem.addFavorite()) return;
+        anime({
+            targets: '.fa-ticket',
+            keyframes: [
+               { value: 20, rotate: '-30deg' },
+               { value: 40, rotate: '25deg' },
+               { value: 60, rotate: '-15deg' },
+               { value: 80, rotate: '5deg' },
+               { value: 100, rotate: '0deg' }
+            ],
+            duration: 1000,
+            easing: 'easeInOutSine'
+        });
     },
     toggleControls: () => {
         TimerSystem.timerToConfirm = props.timerId;

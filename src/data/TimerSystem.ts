@@ -115,11 +115,14 @@ class _TimerSystem {
         timer.time?.updateTime(hms);
     }
 
-    public addFavorite() {
+    public addFavorite(): boolean {
         const id = this.timerToConfirm;
         const timerRef = this._map.get(id)!;
+        const hasFavorite = this._favoriteTimers.get(id);
+        if (hasFavorite) return false;
         this._favoriteTimers.set(id, timerRef);
         this.timerToConfirm = NaN;
+        return true;
     }
 
     public deleteFavorite() {

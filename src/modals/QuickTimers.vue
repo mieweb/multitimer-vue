@@ -29,7 +29,7 @@ const deleteFavorite = (id: number) => {
             <div v-for="[id, timer] in TimerSystem.favorites()"
                 :key="id"
             >
-                <button class="plain-btn" @click="addTimer(timer.value)">{{timer.issue}} {{timer.title}}</button>
+                <button class="plain-btn" @click="addTimer(timer)">{{timer.issue}} {{timer.title}}</button>
                 <button class="plain-btn" @click="deleteFavorite(id)"><i class="fa fa-trash-alt"></i></button>
             </div>
         </div>
