@@ -1,6 +1,5 @@
-import HMS from './HMS';
 import { Settings, SettingsInterface } from './Settings';
-import TimerInterface from './TimerInterface';
+import { jsonToInterface, TimerInterface, TimerJSON } from './TimerInterface';
 import { TimerSystem } from './TimerSystem';
 
 export interface SaveData {
@@ -16,31 +15,49 @@ interface Save {
 }
 
 class LocalStorage implements Save {
-    save() {
-        const timers = [];
-        const settings = { ...Settings };
+	save() {
+		const settings = { ...Settings };
 
-        for (const timer of TimerSystem.map().values()) {
-            timers.push({ 
-                timerData: timer
-            });
-        }
+		const {
+			timers,
+			favoriteTimers
+		} = TimerSystem.saveData();
 
-        localStorage.setItem('timers', JSON.stringify(timers));
-        localStorage.setItem('settings', JSON.stringify(settings));
-    }
+		localStorage.setItem('timers', JSON.stringify(timers));
+		localStorage.setItem('settings', JSON.stringify(settings));
+		localStorage.setItem('favoriteTimers', JSON.stringify(favoriteTimers));
+	}
 
-    load() {
-        const timers = JSON.parse(localStorage.getItem('timers')!);
-        const settings: SettingsInterface = JSON.parse(localStorage.getItem('settings')!);
+	load() {
+		const timers = loadTimers().map(jsonToInterface);
+		const favoriteTimers = loadFavoriteTimers().map(jsonToInterface);
+		const settings = loadSettings();
 
-        for (const timer of timers) {
-            const { hours, minutes, seconds } = timer.timerData.time
-            timer.timerData.time = new HMS(hours, minutes, seconds);
-            TimerSystem.addTimer(timer.timerData);
-        }
-        Settings.updateSettings(settings);
-    }
+		for (const timer of timers) {
+			TimerSystem.addTimer(timer);
+		}
+
+		for (const timer of favoriteTimers) {
+			TimerSystem.addFavoriteFromInterface(timer);
+		}
+
+		Settings.updateSettings(settings);
+
+		function loadTimers(): TimerJSON[] {
+			const timers = localStorage.getItem('timers');
+			return timers ? JSON.parse(timers) : [];
+		}
+
+		function loadSettings(): Partial<SettingsInterface> {
+			const settings = localStorage.getItem('settings');
+			return settings ? JSON.parse(settings) : {};
+		}
+
+		function loadFavoriteTimers(): TimerJSON[] {
+			const timers = localStorage.getItem('favoriteTimers');
+			return timers ? JSON.parse(timers) : [];
+		}
+	}
 }
 
 // class ServerStorage implements Save {
@@ -48,5 +65,5 @@ class LocalStorage implements Save {
 // }
 
 export function getStorage() {
-    return new LocalStorage();
+	return new LocalStorage();
 }

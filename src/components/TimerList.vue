@@ -1,27 +1,26 @@
 <script setup lang="ts">
-import TimerInterface from '../data/TimerInterface';
-import Timer from './Timer.vue'
-import { TimerFilter, TimerSystem } from '../data/TimerSystem';
+import TimerItem from './TimerItem.vue';
+import { TimerSystem } from '../data/TimerSystem';
 import { Settings } from '../data/Settings';
-import { reactive } from 'vue';
 </script>
 <template>
-    <TransitionGroup
-        tag="div"
-        id="timer-list"
-        name="timer-list"
-        class="d-flex flex-column align-items-stretch py-4 gap-2 m-auto"
-        :style="`width: ${Settings.timerWidth}%`"
-    >
-        <Timer 
-            v-for="[id, timerData] in TimerSystem.iterator()" 
-            :key="id" 
-            :timer-id="id"
-            :timer-data="timerData"
-            :is-active="TimerSystem.activeTimerId() === id"
-        />
-    </TransitionGroup> 
+	<TransitionGroup
+		id="timer-list"
+		tag="div"
+		name="timer-list"
+		class="d-flex flex-column align-items-stretch py-4 gap-2 m-auto"
+		:style="`width: ${Settings.timerWidth}%`"
+	>
+		<TimerItem 
+			v-for="[id, timerData] in TimerSystem.iterator()" 
+			:key="id" 
+			:timer-id="id"
+			:timer-data="timerData"
+			:is-active="TimerSystem.activeTimerId() === id"
+		/>
+	</TransitionGroup> 
 </template>
+<script lang="ts">export default {};</script>
 <style scoped>
     .timer-list-enter-active,
     .timer-list-leave-active {
@@ -35,4 +34,3 @@ import { reactive } from 'vue';
         transform: translateY(30px);
     }
 </style>
-<script lang="ts">export default {};</script>
