@@ -62,6 +62,16 @@ const Timer = {
 	toggleControls: () => {
 		TimerSystem.timerToConfirm = props.timerId;
 		TimerSystem.toggleControls();
+	},
+	updateComment: (event: Event) => {
+		const value = (event.target as HTMLInputElement).value;
+		TimerSystem.timerToConfirm = props.timerId;
+		TimerSystem.editTimer({ comment: value });
+	},
+	updateBillStatus: (event: Event) => {
+		const value = (event.target as HTMLInputElement).value;
+		TimerSystem.timerToConfirm = props.timerId;
+		TimerSystem.editTimer({ billStatus: value });
 	}
 };
 const ExtraControlsClass = {
@@ -125,6 +135,7 @@ const ExtraControlsClass = {
 			/>
 			<select 
 				:class="`form-select form-select-sm billable  ${ExtraControlsClass.bgAlt(isActive)} ${ExtraControlsClass.visibility(timerData.controlsHidden)}`"
+				@change="Timer.updateBillStatus($event)"
 			>
 				<option
 					v-for="status in billStatuses"
@@ -139,6 +150,7 @@ const ExtraControlsClass = {
 				:class="`form-control form-control-sm comment ${ExtraControlsClass.bgAlt(isActive)} ${ExtraControlsClass.visibility(timerData.controlsHidden)}`"
 				placeholder="Comment..."
 				:value="timerData.comment"
+				@change="Timer.updateComment($event)"
 			>
 			<a 
 				target="_blank" 

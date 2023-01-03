@@ -10,12 +10,22 @@ export interface SaveData {
 }
 
 interface Save {
+	setAutosave(interval: number): void;
     save(): void;
     load(): void;
 }
 
 class LocalStorage implements Save {
-	save() {
+	private intervalId = NaN;
+
+	public setAutosave(interval: number) {
+		window.clearInterval(this.intervalId);
+		this.intervalId = window.setInterval(() => {
+			this.save();
+		}, interval);
+	}
+
+	public save() {
 		const settings = { ...Settings };
 
 		const {
@@ -28,7 +38,7 @@ class LocalStorage implements Save {
 		localStorage.setItem('favoriteTimers', JSON.stringify(favoriteTimers));
 	}
 
-	load() {
+	public load() {
 		const timers = loadTimers().map(jsonToInterface);
 		const favoriteTimers = loadFavoriteTimers().map(jsonToInterface);
 		const settings = loadSettings();

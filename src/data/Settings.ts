@@ -1,5 +1,6 @@
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { reactive } from 'vue';
+import { getStorage } from './Save';
 
 type MeetingPreset = 'D' | 'W' | 'M' | 'R';
 type StartEndDate = {
@@ -35,7 +36,11 @@ class _Settings implements SettingsInterface {
 			if (obj[k] !== undefined)
 				this[k] = obj[k];
 		}
-		
+
+		// Post function calls
+		if (obj.autosaveInterval) {
+			getStorage().setAutosave(this.autosaveInterval);
+		}
 	}
 
 	public dataCopy(): SettingsInterface {

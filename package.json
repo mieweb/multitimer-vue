@@ -20,7 +20,8 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.6.1",
     "sortablejs": "^1.15.0",
-    "vue": "^3.2.41"
+    "vue": "^3.2.41",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
