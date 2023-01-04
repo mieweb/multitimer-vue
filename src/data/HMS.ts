@@ -1,64 +1,74 @@
-export default class HMS { 
-    public hours = 0;
-    public minutes = 0;
-    public seconds = 0;
+class HMS { 
+	public hours = 0;
+	public minutes = 0;
+	public seconds = 0;
 
-    constructor(hours?: number, minutes?: number, seconds?: number) {
-        this.hours = hours || 0;
-        this.minutes = minutes || 0;
-        this.seconds = seconds || 0;
-    }
+	constructor(hours?: number, minutes?: number, seconds?: number) {
+		this.hours = hours || 0;
+		this.minutes = minutes || 0;
+		this.seconds = seconds || 0;
+	}
 
-    public toString() {
-        const hours = toTwoDigit(this.hours);
-        const minutes = toTwoDigit(this.minutes);
-        const seconds = toTwoDigit(this.seconds);
+	static fromObject(obj: { hours?: number, minutes?: number, seconds?: number }) {
+		const hours = obj.hours || 0;
+		const minutes = obj.hours || 0;
+		const seconds = obj.hours || 0;
 
-        return `${hours}:${minutes}:${seconds}`;
+		return new HMS(hours, minutes, seconds);
+	}
 
-        function toTwoDigit(n: number) {
-            return n < 10 ? `0${n}` : `${n}`;
-        }
-    }
+	public toString() {
+		const hours = toTwoDigit(this.hours);
+		const minutes = toTwoDigit(this.minutes);
+		const seconds = toTwoDigit(this.seconds);
 
-    static fromSeconds(seconds: number): HMS {
-        if (seconds <= 0) return new HMS();
+		return `${hours}:${minutes}:${seconds}`;
 
-        seconds = Math.round(seconds);
-        let hours = 0, minutes = 0;
+		function toTwoDigit(n: number) {
+			return n < 10 ? `0${n}` : `${n}`;
+		}
+	}
 
-        while (seconds >= 3600) {
-            ++hours;
-            seconds -= 3600;
-        }
+	static fromSeconds(seconds: number): HMS {
+		if (seconds <= 0) return new HMS();
 
-        while (seconds >= 60) {
-            ++minutes;
-            seconds -= 60;
-        }
+		seconds = Math.round(seconds);
+		let hours = 0, minutes = 0;
 
-        return new HMS(hours, minutes, seconds);
-    }
+		while (seconds >= 3600) {
+			++hours;
+			seconds -= 3600;
+		}
 
-    public updateTime(time: HMS) {
-        const diff = this.toSeconds() + time.toSeconds();
-        let newTime = HMS.fromSeconds(diff);
-        this.hours = newTime.hours;
-        this.minutes = newTime.minutes;
-        this.seconds = newTime.seconds;
-    }
+		while (seconds >= 60) {
+			++minutes;
+			seconds -= 60;
+		}
 
-    public toSeconds() {
-        return this.seconds + this.minutes * 60 + this.hours * 3600;
-    }
+		return new HMS(hours, minutes, seconds);
+	}
 
-    public reset() {
-        this.hours = 0;
-        this.minutes = 0;
-        this.seconds = 0;
-    }
+	public updateTime(time: HMS) {
+		const diff = this.toSeconds() + time.toSeconds();
+		const newTime = HMS.fromSeconds(diff);
+		this.hours = newTime.hours;
+		this.minutes = newTime.minutes;
+		this.seconds = newTime.seconds;
+	}
 
-    public hasTime(): boolean {
-        return !!(this.hours || this.minutes || this.seconds);
-    }
-};
+	public toSeconds() {
+		return this.seconds + this.minutes * 60 + this.hours * 3600;
+	}
+
+	public reset() {
+		this.hours = 0;
+		this.minutes = 0;
+		this.seconds = 0;
+	}
+
+	public hasTime(): boolean {
+		return !!(this.hours || this.minutes || this.seconds);
+	}
+}
+
+export default HMS;

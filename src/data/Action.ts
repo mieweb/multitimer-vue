@@ -1,6 +1,7 @@
-export default interface Action {
+interface Action {
     title: string,
     action: () => void,
     classes?: string,
     closeModal?: boolean
-};
+}
+export default Action;

@@ -1,6 +1,5 @@
-import HMS from './HMS';
 import { Settings, SettingsInterface } from './Settings';
-import TimerInterface from './TimerInterface';
+import { jsonToInterface, TimerInterface, TimerJSON } from './TimerInterface';
 import { TimerSystem } from './TimerSystem';
 
 export interface SaveData {
@@ -11,36 +10,64 @@ export interface SaveData {
 }
 
 interface Save {
+	setAutosave(interval: number): void;
     save(): void;
     load(): void;
 }
 
 class LocalStorage implements Save {
-    save() {
-        const timers = [];
-        const settings = { ...Settings };
+	private intervalId = NaN;
 
-        for (const timer of TimerSystem.map().values()) {
-            timers.push({ 
-                timerData: timer
-            });
-        }
+	public setAutosave(interval: number) {
+		window.clearInterval(this.intervalId);
+		this.intervalId = window.setInterval(() => {
+			this.save();
+		}, interval);
+	}
 
-        localStorage.setItem('timers', JSON.stringify(timers));
-        localStorage.setItem('settings', JSON.stringify(settings));
-    }
+	public save() {
+		const settings = { ...Settings };
 
-    load() {
-        const timers = JSON.parse(localStorage.getItem('timers')!);
-        const settings: SettingsInterface = JSON.parse(localStorage.getItem('settings')!);
+		const {
+			timers,
+			favoriteTimers
+		} = TimerSystem.saveData();
 
-        for (const timer of timers) {
-            const { hours, minutes, seconds } = timer.timerData.time
-            timer.timerData.time = new HMS(hours, minutes, seconds);
-            TimerSystem.addTimer(timer.timerData);
-        }
-        Settings.updateSettings(settings);
-    }
+		localStorage.setItem('timers', JSON.stringify(timers));
+		localStorage.setItem('settings', JSON.stringify(settings));
+		localStorage.setItem('favoriteTimers', JSON.stringify(favoriteTimers));
+	}
+
+	public load() {
+		const timers = loadTimers().map(jsonToInterface);
+		const favoriteTimers = loadFavoriteTimers().map(jsonToInterface);
+		const settings = loadSettings();
+
+		for (const timer of timers) {
+			TimerSystem.addTimer(timer);
+		}
+
+		for (const timer of favoriteTimers) {
+			TimerSystem.addFavoriteFromInterface(timer);
+		}
+
+		Settings.updateSettings(settings);
+
+		function loadTimers(): TimerJSON[] {
+			const timers = localStorage.getItem('timers');
+			return timers ? JSON.parse(timers) : [];
+		}
+
+		function loadSettings(): Partial<SettingsInterface> {
+			const settings = localStorage.getItem('settings');
+			return settings ? JSON.parse(settings) : {};
+		}
+
+		function loadFavoriteTimers(): TimerJSON[] {
+			const timers = localStorage.getItem('favoriteTimers');
+			return timers ? JSON.parse(timers) : [];
+		}
+	}
 }
 
 // class ServerStorage implements Save {
@@ -48,5 +75,5 @@ class LocalStorage implements Save {
 // }
 
 export function getStorage() {
-    return new LocalStorage();
+	return new LocalStorage();
 }
