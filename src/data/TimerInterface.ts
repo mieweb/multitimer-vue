@@ -55,7 +55,7 @@ export interface TimerForm {
 export function partialToInterface(form: Partial<TimerInterface>): TimerInterface {
 	const time = form.time ? HMS.fromObject(form.time) : new HMS();
 	return {
-		issue: form.issue || '',	
+		issue: form.issue?.toString() || '', // .toString() because this ends up being a number
 		title: form.title?.trim() || '',
 		time: time,
 		link: form.link?.trim() || '',

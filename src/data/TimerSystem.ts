@@ -35,9 +35,16 @@ class _TimerSystem {
 
 		for (const [id, timer] of this.map.entries()) {
 			if (filter.withTime && !timer.time.hasTime()) continue;
-			if (!timer.title.toLowerCase().match(regex)) continue;
+			if (!searchMatches(timer, regex)) continue;
 
 			yield [id, timer];
+		}
+
+		function searchMatches(timer: TimerInterface, regex: RegExp): boolean {
+			const title = timer.title.toLowerCase();
+			const issue = timer.issue;
+
+			return !!title.match(regex) || !!issue.match(regex);
 		}
 	}
 
