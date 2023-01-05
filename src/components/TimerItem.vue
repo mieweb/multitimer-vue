@@ -10,6 +10,7 @@ import UpdateTime from '../modals/UpdateTime.vue';
 import { Settings } from '../data/Settings';
 //@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
 import anime from 'animejs/lib/anime.es';
+import { computed } from 'vue';
 const props = defineProps<{
     timerId: number,
     timerData: TimerInterface,
@@ -78,6 +79,13 @@ const ExtraControlsClass = {
 	visibility: (visible: boolean) => visible ? 'd-none' : '',
 	bgAlt: (isActive: boolean) => isActive ? 'bg-alt-active' : 'bg-alt-default'
 };
+
+const showOnHover = computed(() => Settings.hideOptions ? 'hover-hide' : '');
+const hideLog = computed(() => !props.timerData.issue ? 'hide' : '');
+const chevron = computed(() => props.timerData.controlsHidden ? 'fa-chevron-down' : 'fa-chevron-up');
+const showExtraControls = computed(() => props.timerData.controlsHidden ? 'd-none' : '');
+const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-default');
+
 </script>
 <template>
 	<div
@@ -86,7 +94,7 @@ const ExtraControlsClass = {
 	>
 		<div class="timer-grid">
 			<i
-				:class="`fa fa-save pointer save-button ${Settings.hideOptions ? 'hover-hide' : ''} ${!timerData.issue ? 'hide' : ''}`"
+				:class="`fa fa-save pointer save-button ${showOnHover} ${hideLog}`"
 				@click="Timer.log"
 			/>
 			<p class="issue m-0 pointer">
@@ -102,7 +110,7 @@ const ExtraControlsClass = {
 			<p class="time m-0">
 				{{ timerData.time }}
 			</p>
-			<div :class="`timer-options d-flex ${Settings.hideOptions ? 'hover-hide' : ''}`">
+			<div :class="`timer-options d-flex ${showOnHover}`">
 				<i
 					class="fa fa-edit pointer"
 					@click="Timer.edit"
@@ -130,11 +138,11 @@ const ExtraControlsClass = {
 				@click="isActive ? Timer.pause() : Timer.start()"
 			/>
 			<i 
-				:class="'fa control-toggle pointer ' + (timerData.controlsHidden ? 'fa-chevron-down' : 'fa-chevron-up')"
+				:class="`fa control-toggle pointer ${chevron}`"
 				@click="Timer.toggleControls"
 			/>
 			<select 
-				:class="`form-select form-select-sm billable  ${ExtraControlsClass.bgAlt(isActive)} ${ExtraControlsClass.visibility(timerData.controlsHidden)}`"
+				:class="`form-select form-select-sm billable  ${activeBgColor} ${showExtraControls}`"
 				@change="Timer.updateBillStatus($event)"
 			>
 				<option
@@ -147,7 +155,7 @@ const ExtraControlsClass = {
 			</select>
 			<input
 				type="text"
-				:class="`form-control form-control-sm comment ${ExtraControlsClass.bgAlt(isActive)} ${ExtraControlsClass.visibility(timerData.controlsHidden)}`"
+				:class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
 				placeholder="Comment..."
 				:value="timerData.comment"
 				@change="Timer.updateComment($event)"
@@ -156,7 +164,7 @@ const ExtraControlsClass = {
 				target="_blank" 
 				rel="noopener noreferrer" 
 				:href="timerData.link" 
-				:class="`link btn btn-sm ${ExtraControlsClass.bgAlt(isActive)} ${ExtraControlsClass.visibility(timerData.controlsHidden)}`"
+				:class="`link btn btn-sm ${activeBgColor} ${showExtraControls}`"
 			>
 				Meeting Link
 			</a>
