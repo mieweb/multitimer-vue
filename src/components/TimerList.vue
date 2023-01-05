@@ -2,9 +2,15 @@
 import TimerItem from './TimerItem.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import { Settings } from '../data/Settings';
+import { Sortable } from 'sortablejs-vue3';
+
+const dragOptions = {
+	animation: 150,
+	handle: '.handle'
+};
 </script>
 <template>
-	<TransitionGroup
+	<!-- <TransitionGroup
 		id="timer-list"
 		tag="div"
 		name="timer-list"
@@ -18,7 +24,29 @@ import { Settings } from '../data/Settings';
 			:timer-data="timerData"
 			:is-active="TimerSystem.activeTimerId() === id"
 		/>
-	</TransitionGroup> 
+	</TransitionGroup>  -->
+	<Sortable
+		:list="TimerSystem.getTimerList()"
+		item-key="id"
+		:options="dragOptions"
+		class="d-flex flex-column align-items-stretch py-4 gap-2 m-auto"
+		:style="`width: ${Settings.timerWidth}%`"
+	>
+		<template #item="{ element }">
+			<Transition
+				appear
+				name="timer-wrapper"
+			>
+				<TimerItem
+					v-if="TimerSystem.isFiltered(element.id)"
+					:key="element.id"
+					:timer-id="element.id"
+					:timer-data="element.timer"
+					:is-active="TimerSystem.activeTimerId === element.id"
+				/>
+			</Transition>
+		</template>
+	</Sortable>
 </template>
 <script lang="ts">export default {};</script>
 <style scoped>
@@ -30,6 +58,18 @@ import { Settings } from '../data/Settings';
 
     .timer-list-leave-to,
     .timer-list-enter-from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .timer-wrapper-enter-active,
+    .timer-wrapper-leave-active {
+        transition: all 0.3s ease;
+    }
+
+
+    .timer-wrapper-leave-to,
+    .timer-wrapper-enter-from {
         opacity: 0;
         transform: translateY(30px);
     }
