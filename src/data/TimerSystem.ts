@@ -102,12 +102,15 @@ class _TimerSystem {
 
 	public editTimer(changes: Partial<TimerInterface>) {
 		const id = this.timerToConfirm;
-		const newTimer  = {
-			...this.pullFromMap(),
+		const oldTimerData = this.pullFromMap();
+		const newTimer = {
+			...oldTimerData,
 			...changes
 		};
+		if (newTimer.issue && this.issueExists(newTimer.issue)) {
+			newTimer.issue = oldTimerData.issue;
+		}
 		this.map.set(id, newTimer);
-		this.timerToConfirm = NaN;
 	}
 
 	public selectedTimerData() {
@@ -227,15 +230,6 @@ class _TimerSystem {
 		});
 	}
 
-	private issueExists(issue: string) {
-		for (const timer of this.map.values()) {
-			if (issue === timer.issue) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private pullFromMap() {
 		const timer = this.map.get(this.timerToConfirm);
 		if (!timer) throw `PullFromMap: Timer doesn't exist with id ${this.timerToConfirm}`;
@@ -272,6 +266,19 @@ class _TimerSystem {
 				return (Math.ceil(m / r) * r) / 60;
 			}
 		}
+	}
+
+	/**
+	 * Checks to see if issue exists in timer data map.
+	 * Always returns false if `issue` parameter is empty. 
+	 * @param issue Issue string, can be empty.
+	 */
+	private issueExists(issue: string): boolean {
+		if (!issue) return false;
+		for (const timer of this.map.values()) {
+			if (issue === timer.issue) return true;
+		}
+		return false;
 	}
 }
 
