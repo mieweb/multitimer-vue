@@ -29,7 +29,7 @@ class _Settings implements SettingsInterface {
 	public timerWidth = 62;
 	public meetingDetectStart = format(new Date(), 'yyyy-MM-dd');
 	public meetingDetectEnd = this.meetingDetectStart;
-	public meetingDetectPreset = 'D' as MeetingPreset;
+	public meetingDetectPreset: MeetingPreset = 'D';
 
 	public updateSettings(obj: Partial<SettingsInterface>) {
 		for (const k of Object.keys(this)) {

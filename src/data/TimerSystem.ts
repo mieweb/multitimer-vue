@@ -14,6 +14,7 @@ class _TimerSystem {
 	private timerList: { id: TimerId, timer: TimerInterface }[] = [];
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
+	public activeTimerId = NaN;
 	private favoriteTimers: TimerInterface[] = [];
 	private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
 	private timerFilter: TimerFilter = {
@@ -91,11 +92,13 @@ class _TimerSystem {
 			this.setTimeoutId = window.setTimeout(timeStep, interval - drift);
 		};
 		this.pauseActiveTimer();
+		this.activeTimerId = id;
 		this.setTimeoutId = window.setTimeout(timeStep, interval);
 	}
 
 	public pauseActiveTimer() {
 		clearTimeout(this.setTimeoutId);
+		this.activeTimerId = NaN;
 		this.setTimeoutId = NaN;
 	}
 
@@ -125,6 +128,10 @@ class _TimerSystem {
 
 	public selectedTimerData() {
 		return this.getTimerById(this.timerToConfirm);
+	}
+
+	public timerIsActive(id: TimerId) {
+		return this.activeTimerId === id;
 	}
     
 	public resetTimer(id: TimerId) {

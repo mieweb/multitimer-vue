@@ -4,11 +4,7 @@ import ImportMeetings from '../modals/ImportMeetings.vue';
 import { openModal } from '../data/ModalHandler';
 
 const beginImport = async () => {
-	const generic = {
-		meetingData: await importMeetings()
-	};
-
-	openModal(ImportMeetings, generic);
+	openModal(ImportMeetings, { importMeetingData: await importMeetings() });
 };
 
 </script>

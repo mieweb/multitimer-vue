@@ -22,21 +22,6 @@ const mutateList = (event: SortableJS.SortableEvent) => {
 
 </script>
 <template>
-	<!-- <TransitionGroup
-		id="timer-list"
-		tag="div"
-		name="timer-list"
-		class="d-flex flex-column align-items-stretch py-4 gap-2 m-auto"
-		:style="`width: ${Settings.timerWidth}%`"
-	>
-		<TimerItem 
-			v-for="[id, timerData] in TimerSystem.iterator()" 
-			:key="id" 
-			:timer-id="id"
-			:timer-data="timerData"
-			:is-active="TimerSystem.activeTimerId() === id"
-		/>
-	</TransitionGroup>  -->
 	<Sortable
 		:list="timerList"
 		item-key="id"
@@ -55,7 +40,7 @@ const mutateList = (event: SortableJS.SortableEvent) => {
 					:key="element.id"
 					:timer-id="element.id"
 					:timer-data="element.timer"
-					:is-active="TimerSystem.activeTimerId() === element.id"
+					:is-active="TimerSystem.timerIsActive(element.id)"
 				/>
 			</Transition>
 		</template>
