@@ -2,11 +2,17 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import Action from '../data/Action';
+import type { ModalData } from '../data/ModalHandler';
+
+const props = defineProps<{
+	modalData: ModalData
+}>();
 const actions: Action[] = [
 	{
 		title: 'Reset',
 		action: () => {
-			TimerSystem.resetTimer();
+			console.log(props);
+			TimerSystem.resetTimer(props.modalData.timerId);
 		},
 		closeModal: true,
 		classes: 'btn-primary'

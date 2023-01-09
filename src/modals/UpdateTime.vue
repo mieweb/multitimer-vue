@@ -3,7 +3,11 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import Action from '../data/Action';
 import HMS from '../data/HMS';
+import type { ModalData } from '../data/ModalHandler';
 
+const props = defineProps<{
+	modalData: ModalData
+}>();
 const formData = {
 	toSubtract: false,
 	hoursRef: NaN,
@@ -24,7 +28,7 @@ const actions: Action[] = [
 				formData.minutesRef * signFactor,
 				formData.secondsRef * signFactor,
 			);
-			TimerSystem.updateTime(hms);
+			TimerSystem.updateTime(props.modalData.timerId, hms);
 		},
 		closeModal: true,
 		classes: 'btn-primary'

@@ -18,35 +18,28 @@ const props = defineProps<{
 }>();
 const Timer = {
 	log: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		TimerSystem.logTimer();
+		TimerSystem.logTimer(props.timerId);
 	},
 	start: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		TimerSystem.startTimer();
+		TimerSystem.startTimer(props.timerId);
 	},
 	pause: () => {
 		TimerSystem.pauseActiveTimer();
 	},
 	delete: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		openModal(DeleteTimer);
+		openModal(DeleteTimer, { timerId: props.timerId });
 	},
 	edit: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		openModal(EditTimer);
+		openModal(EditTimer, { timerId: props.timerId, timerData: props.timerData });
 	},
 	reset: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		openModal(ResetTimer);
+		openModal(ResetTimer, { timerId: props.timerId });
 	},
 	updateTime: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		openModal(UpdateTime);
+		openModal(UpdateTime, { timerId: props.timerId });
 	},
 	favorite: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		if (!TimerSystem.addFavorite()) return;
+		TimerSystem.addFavorite(props.timerId);
 		anime({
 			targets: '.fa-ticket',
 			keyframes: [
@@ -61,18 +54,15 @@ const Timer = {
 		});
 	},
 	toggleControls: () => {
-		TimerSystem.timerToConfirm = props.timerId;
-		TimerSystem.toggleControls();
+		TimerSystem.toggleControls(props.timerId);
 	},
 	updateComment: (event: Event) => {
 		const value = (event.target as HTMLInputElement).value;
-		TimerSystem.timerToConfirm = props.timerId;
-		TimerSystem.editTimer({ comment: value });
+		TimerSystem.editTimer(props.timerId, { comment: value });
 	},
 	updateBillStatus: (event: Event) => {
 		const value = (event.target as HTMLInputElement).value;
-		TimerSystem.timerToConfirm = props.timerId;
-		TimerSystem.editTimer({ billStatus: value });
+		TimerSystem.editTimer(props.timerId, { billStatus: value });
 	}
 };
 
