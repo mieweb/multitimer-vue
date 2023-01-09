@@ -2,11 +2,16 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import Action from '../data/Action';
+import type { ModalData } from '../data/ModalHandler';
+
+const props = defineProps<{
+	modalData: ModalData
+}>();
 const actions: Action[] = [
 	{
 		title: 'Delete',
 		action: () => {
-			TimerSystem.deleteTimer();
+			TimerSystem.deleteTimer(props.modalData.timerId);
 		},
 		closeModal: true,
 		classes: 'btn-danger'

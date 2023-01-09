@@ -1,4 +1,4 @@
-import { jsonToInterface, TimerInterface, TimerJSON } from './TimerInterface';
+import { jsonToInterface, TimerInterface, TimerJSON, TimerId } from './TimerInterface';
 import { reactive } from 'vue';
 import format from 'date-fns/format';
 import HMS from './HMS';
@@ -11,8 +11,7 @@ export interface TimerFilter {
 class _TimerSystem {
 	static lastId = -1;
 	// private map: Map<number, TimerInterface> = new Map();
-	private timerList: { id: number, timer: TimerInterface }[] = [];
-	private _activeTimerId = NaN;
+	private timerList: { id: TimerId, timer: TimerInterface }[] = [];
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
 	private favoriteTimers: TimerInterface[] = [];
@@ -33,8 +32,8 @@ class _TimerSystem {
 		return this.timerList;
 	}
 
-	public isFiltered(timerId: number): boolean {
-		const timer = this.getTimerById(timerId);
+	public isFiltered(id: TimerId): boolean {
+		const timer = this.getTimerById(id);
 		if (!timer) return false;
 		const filter = this.timerFilter;
 		const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
@@ -74,18 +73,13 @@ class _TimerSystem {
 		};
 	}
 
-	public activeTimerId() {
-		return this._activeTimerId;
-	}
-
-	public logTimer() {
-		const timer = this.pullFromMap();
+	public logTimer(id: TimerId) {
+		const timer = this.getTimerById(id);
 		this.logFromData(timer);
 	}
 
-	public startTimer() {
-		const id = this.timerToConfirm;
-		const timer = this.pullFromMap();
+	public startTimer(id: TimerId) {
+		const timer = this.getTimerById(id);
 		const interval = 1000;
 
 		let expected = Date.now() + interval;
@@ -97,37 +91,34 @@ class _TimerSystem {
 			this.setTimeoutId = window.setTimeout(timeStep, interval - drift);
 		};
 		this.pauseActiveTimer();
-		this._activeTimerId = id;
 		this.setTimeoutId = window.setTimeout(timeStep, interval);
 	}
 
 	public pauseActiveTimer() {
 		clearTimeout(this.setTimeoutId);
-		this._activeTimerId = NaN;
 		this.setTimeoutId = NaN;
 	}
 
-	public deleteTimer() {
-		const id = this.timerToConfirm;
-		const timer = this.getTimerById(id);
-		if (!timer) return;
-		this.deleteTimerById(id);
-		this.timerToConfirm = NaN;
+	public deleteTimer(id: TimerId) {
+		for (let i = 0; i < this.timerList.length; ++i) {
+			if (this.timerList[i].id === id) {
+				this.timerList.splice(i, 1);
+			}
+		}
 	}
 
-	public editTimer(changes: Partial<TimerInterface>) {
-		const id = this.timerToConfirm;
-		const oldTimerData = this.pullFromMap();
-		const newTimer = {
+	public editTimer(id: TimerId, changes: Partial<TimerInterface>) {
+		const oldTimerData = this.getTimerById(id);
+		const newTimerData = {
 			...oldTimerData,
 			...changes
 		};
-		if (newTimer.issue && this.issueExists(newTimer.issue)) {
-			newTimer.issue = oldTimerData.issue;
+		if (newTimerData.issue && this.issueExists(newTimerData.issue)) {
+			newTimerData.issue = oldTimerData.issue;
 		}
 		for (let i = 0; i < this.timerList.length; ++i) {
 			if (this.timerList[i].id === id) {
-				this.timerList[i].timer = newTimer;
+				this.timerList[i].timer = newTimerData;
 			}
 		}
 	}
@@ -136,22 +127,19 @@ class _TimerSystem {
 		return this.getTimerById(this.timerToConfirm);
 	}
     
-	public resetTimer() {
-		const timer = this.pullFromMap();
+	public resetTimer(id: TimerId) {
+		const timer = this.getTimerById(id);
 		timer.time = new HMS();
 		this.timerToConfirm = NaN;
 	}
 
-	public updateTime(hms: HMS) {
-		const timer = this.pullFromMap();
+	public updateTime(id: TimerId, hms: HMS) {
+		const timer = this.getTimerById(id);
 		timer.time?.updateTime(hms);
 	}
 
-	public addFavorite(): boolean {
-		const id = this.timerToConfirm;
+	public addFavorite(id: TimerId): boolean {
 		const timerData = this.getTimerById(id);
-		if (!timerData) return false;
-		this.timerToConfirm = NaN;
 		return this.addFavoriteFromInterface(timerData);
 	}
 
@@ -204,8 +192,8 @@ class _TimerSystem {
 		this.logDate = date;
 	}
 
-	public toggleControls() {
-		const timer = this.pullFromMap();
+	public toggleControls(id: TimerId) {
+		const timer = this.getTimerById(id);
 		timer.controlsHidden = !timer.controlsHidden;
 	}
 
@@ -255,7 +243,6 @@ class _TimerSystem {
 
 	private pullFromMap() {
 		const timer = this.getTimerById(this.timerToConfirm);
-		if (!timer) throw `PullFromMap: Timer doesn't exist with id ${this.timerToConfirm}`;
 		this.timerToConfirm = NaN;
 		return timer;
 	}
@@ -289,22 +276,14 @@ class _TimerSystem {
 		return false;
 	}
 
-	private getTimerById(gettingId: number): TimerInterface | null {
+	private getTimerById(id: TimerId): TimerInterface {
 		for (let i = 0; i < this.timerList.length; ++i) {
-			if (this.timerList[i].id === gettingId) {
+			if (this.timerList[i].id === id) {
 				return this.timerList[i].timer;
 			}
 		}
 
-		return null;
-	}
-
-	private deleteTimerById(removingId: number) {
-		for (let i = 0; i < this.timerList.length; ++i) {
-			if (this.timerList[i].id === removingId) {
-				this.timerList.splice(i, 1);
-			}
-		}
+		throw `function getTimerById: Timer doesn't exist with id ${this.timerToConfirm}`;
 	}
 }
 

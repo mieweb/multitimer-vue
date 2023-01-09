@@ -20,7 +20,7 @@ const modalData = componentReference();
 		<div class="modal-dialog">
 			<component
 				:is="modalData.component.value"
-				:generic="modalData.props"
+				:modal-data="modalData.props"
 			/>
 		</div>
 	</div>

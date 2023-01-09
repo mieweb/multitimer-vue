@@ -3,25 +3,29 @@ import { ref } from 'vue';
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
 import { TimerSystem } from '../data/TimerSystem';
-import { partialToInterface, TimerInterface } from '../data/TimerInterface';
+import { TimerInterface } from '../data/TimerInterface';
+import type { ModalData } from '../data/ModalHandler';
+
+const props = defineProps<{
+	modalData: ModalData
+}>();
 
 const formElement = ref<HTMLFormElement>();
-const selectedTimer = TimerSystem.selectedTimerData();
 const formData: Pick<TimerInterface, 'issue' | 'title' | 'link'> = {
-	issue: selectedTimer?.issue || '',
-	title: selectedTimer?.title || '',
-	link: selectedTimer?.link || ''
+	issue: props.modalData.timerData.issue || '',
+	title: props.modalData.timerData.title || '',
+	link: props.modalData.timerData.link || ''
 };
-const clearFormData = () => {
-	formData.issue = '';
-	formData.title = '';
-	formData.link = '';
-};
+// const clearFormData = () => {
+// 	formData.issue = '';
+// 	formData.title = '';
+// 	formData.link = '';
+// };
 const actions: Action[] = [
 	{
 		title: 'Update Timer',
 		action: () => {
-			TimerSystem.editTimer(partialToInterface(formData));
+			TimerSystem.editTimer(props.modalData.timerId, formData);
 			formElement?.value?.reset();
 			// clearFormData();
 		},

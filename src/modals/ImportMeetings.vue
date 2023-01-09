@@ -2,14 +2,15 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
 import HMS from '../data/HMS';
-import { MeetingData } from '../data/ImportMeetings';
 import { partialToInterface, TimerInterface, BillStatus } from '../data/TimerInterface';
 import { TimerSystem } from '../data/TimerSystem';
+import type { ModalData } from '../data/ModalHandler';
 
 const props = defineProps<{
-    generic: { meetingData: MeetingData[] }
+	modalData: ModalData
 }>();
-const formDataCollection = props.generic.meetingData.map(meeting => {
+
+const formDataCollection = props.modalData.importMeetingData?.map(meeting => {
 	const startEndDifference = new Date(meeting.end).getTime() - new Date(meeting.start).getTime();
 	const time = HMS.fromSeconds(startEndDifference / 1000);
 	const timerForm: Omit<TimerInterface, 'controlsHidden'> & { chosen: boolean } = {
@@ -23,7 +24,7 @@ const formDataCollection = props.generic.meetingData.map(meeting => {
 	};
 
 	return timerForm;
-});
+}) || [];
 const actions: Action[] = [
 	{
 		title: 'Create timer(s)',

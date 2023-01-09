@@ -2,6 +2,7 @@ import HMS from './HMS';
 import { Settings } from './Settings';
 
 export type BillStatus = 'Non-Billable' | 'Billable Time' | 'SOW Line Item' | 'MIE Goodwill (non-billable)';
+export type TimerId = number;
 
 export interface TimerInterface {
     issue: string,
