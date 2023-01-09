@@ -2,7 +2,6 @@ import { jsonToInterface, TimerInterface, TimerJSON } from './TimerInterface';
 import { reactive } from 'vue';
 import format from 'date-fns/format';
 import HMS from './HMS';
-import { Settings } from './Settings';
 
 export interface TimerFilter {
     search: string,
@@ -192,7 +191,11 @@ class _TimerSystem {
 	}
 
 	public logAllTimers() {
-		for (const { timer } of this.timerList) {
+		const timersWithTime = this.timerList.filter(timerEntry => {
+			const { time } = timerEntry.timer;
+			return time.hasTime();
+		});
+		for (const { timer } of timersWithTime) {
 			this.logFromData(timer);
 		}
 	}
