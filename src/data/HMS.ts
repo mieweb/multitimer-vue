@@ -1,3 +1,4 @@
+import { Settings } from './Settings';
 class HMS { 
 	public hours = 0;
 	public minutes = 0;
@@ -68,6 +69,21 @@ class HMS {
 
 	public hasTime(): boolean {
 		return !!(this.hours || this.minutes || this.seconds);
+	}
+
+	public roundedTime() {
+		let min = this.minutes;
+
+		if (this.seconds > 0) ++min;
+		min += this.hours * 60;
+		if (min === 0) return 0;
+
+		// Experimental rounding
+		return minToRound(min, Settings.roundToMinutes);
+
+		function minToRound(m: number, r: number): number {
+			return (Math.ceil(m / r) * r) / 60;
+		}
 	}
 }
 

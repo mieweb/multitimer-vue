@@ -267,25 +267,10 @@ class _TimerSystem {
 	}
 
 	private logFromData(timer: TimerInterface) {
-		const workedTime = roundTime(timer.time);
+		const workedTime = timer.time.roundedTime();
 		const logDate = format(this.logDate, 'dd/MM/yyyy');
 		const url = `https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}`;
 		window.open(url);
-
-		function roundTime(time: HMS) {
-			let min = time.minutes;
-
-			if (time.seconds > 0) ++min;
-			min += time.hours * 60;
-			if (min === 0) return 0;
-
-			// Experimental rounding
-			return minToRound(min, Settings.roundToMinutes);
-
-			function minToRound(m: number, r: number): number {
-				return (Math.ceil(m / r) * r) / 60;
-			}
-		}
 	}
 
 	/**
