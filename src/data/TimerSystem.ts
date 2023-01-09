@@ -188,7 +188,7 @@ class _TimerSystem {
 	}
 
 	public deleteAllTimers() {
-		this.timerList = [];
+		this.timerList.splice(0, this.timerList.length);
 	}
 
 	public logAllTimers() {
