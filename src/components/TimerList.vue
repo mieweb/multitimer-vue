@@ -3,11 +3,23 @@ import TimerItem from './TimerItem.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import { Settings } from '../data/Settings';
 import { Sortable } from 'sortablejs-vue3';
+import SortableJS from 'sortablejs';
 
 const dragOptions = {
 	animation: 150,
 	handle: '.handle'
 };
+const timerList = TimerSystem.getTimerList();
+
+const mutateList = (event: SortableJS.SortableEvent) => {
+	console.log(timerList[0].timer.title);
+	const { oldIndex, newIndex } = event;
+	if (oldIndex === undefined || newIndex === undefined) return;
+	const item = timerList.splice(oldIndex, 1)[0];
+	timerList.splice(newIndex, 0, item);
+	console.log(timerList[0].timer.title);
+};
+
 </script>
 <template>
 	<!-- <TransitionGroup
@@ -26,11 +38,12 @@ const dragOptions = {
 		/>
 	</TransitionGroup>  -->
 	<Sortable
-		:list="TimerSystem.getTimerList()"
+		:list="timerList"
 		item-key="id"
 		:options="dragOptions"
 		class="d-flex flex-column align-items-stretch py-4 gap-2 m-auto"
 		:style="`width: ${Settings.timerWidth}%`"
+		@end="mutateList"
 	>
 		<template #item="{ element }">
 			<Transition
@@ -42,7 +55,7 @@ const dragOptions = {
 					:key="element.id"
 					:timer-id="element.id"
 					:timer-data="element.timer"
-					:is-active="TimerSystem.activeTimerId === element.id"
+					:is-active="TimerSystem.activeTimerId() === element.id"
 				/>
 			</Transition>
 		</template>
