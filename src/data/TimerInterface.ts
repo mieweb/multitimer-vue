@@ -10,7 +10,7 @@ export interface TimerInterface {
     link: string,
     comment: string,
     billStatus: string,
-    controlsHidden: boolean
+    controlsHidden: boolean,
 }
 
 export interface TimerJSON {

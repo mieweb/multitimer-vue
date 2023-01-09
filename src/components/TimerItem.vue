@@ -168,6 +168,9 @@ const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-
 			>
 				Meeting Link
 			</a>
+			<i 
+				class="fa fa-grip-vertical handle"
+			/>
 		</div>
 	</div>
 </template>
@@ -256,4 +259,9 @@ export default {};
         grid-row-start: 1;
         grid-column-start: 7;
     }
+
+	.handle {
+		grid-column-start: 8;
+		cursor: grab;
+	}
 </style>

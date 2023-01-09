@@ -2,7 +2,6 @@ import { jsonToInterface, TimerInterface, TimerJSON } from './TimerInterface';
 import { reactive } from 'vue';
 import format from 'date-fns/format';
 import HMS from './HMS';
-import { Settings } from './Settings';
 
 export interface TimerFilter {
     search: string,
@@ -11,7 +10,8 @@ export interface TimerFilter {
 
 class _TimerSystem {
 	static lastId = -1;
-	private map: Map<number, TimerInterface> = new Map();
+	// private map: Map<number, TimerInterface> = new Map();
+	private timerList: { id: number, timer: TimerInterface }[] = [];
 	private _activeTimerId = NaN;
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
@@ -25,15 +25,34 @@ class _TimerSystem {
 	public addTimer(timerData: TimerInterface) {
 		if (this.issueExists(timerData.issue)) return;
 
-		this.map.set(this.id(), reactive(timerData));
-		console.log(this.map);
+		this.timerList.push({ id: this.id(), timer: reactive(timerData) });
+		// this.map.set(this.id(), reactive(timerData));
+	}
+
+	public getTimerList() {
+		return this.timerList;
+	}
+
+	public isFiltered(timerId: number): boolean {
+		const timer = this.getTimerById(timerId);
+		if (!timer) return false;
+		const filter = this.timerFilter;
+		const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
+		const title = timer.title.toLowerCase();
+		const issue = timer.issue;
+
+		if (filter.withTime && !timer.time.hasTime()) {
+			return false;
+		}
+
+		return !!title.match(regex) || !!issue.match(regex);
 	}
 
 	public* iterator(): IterableIterator<[number, TimerInterface]> {
 		const filter = this.timerFilter;
 		const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
 
-		for (const [id, timer] of this.map.entries()) {
+		for (const { id, timer } of this.timerList) {
 			if (filter.withTime && !timer.time.hasTime()) continue;
 			if (!searchMatches(timer, regex)) continue;
 
@@ -46,10 +65,6 @@ class _TimerSystem {
 
 			return !!title.match(regex) || !!issue.match(regex);
 		}
-	}
-
-	public allTimers() {
-		return this.map.values();
 	}
 
 	public updateFilter(userFilter: TimerFilter) {
@@ -94,9 +109,9 @@ class _TimerSystem {
 
 	public deleteTimer() {
 		const id = this.timerToConfirm;
-		const timer = this.map.get(id);
+		const timer = this.getTimerById(id);
 		if (!timer) return;
-		this.map.delete(id);
+		this.deleteTimerById(id);
 		this.timerToConfirm = NaN;
 	}
 
@@ -110,11 +125,15 @@ class _TimerSystem {
 		if (newTimer.issue && this.issueExists(newTimer.issue)) {
 			newTimer.issue = oldTimerData.issue;
 		}
-		this.map.set(id, newTimer);
+		for (let i = 0; i < this.timerList.length; ++i) {
+			if (this.timerList[i].id === id) {
+				this.timerList[i].timer = newTimer;
+			}
+		}
 	}
 
 	public selectedTimerData() {
-		return this.map.get(this.timerToConfirm);
+		return this.getTimerById(this.timerToConfirm);
 	}
     
 	public resetTimer() {
@@ -130,7 +149,7 @@ class _TimerSystem {
 
 	public addFavorite(): boolean {
 		const id = this.timerToConfirm;
-		const timerData = this.map.get(id);
+		const timerData = this.getTimerById(id);
 		if (!timerData) return false;
 		this.timerToConfirm = NaN;
 		return this.addFavoriteFromInterface(timerData);
@@ -162,17 +181,21 @@ class _TimerSystem {
 	}
 
 	public resetAllTimers() {
-		for (const timer of this.map.values()) {
+		for (const { timer } of this.timerList) {
 			timer.time.reset();
 		}
 	}
 
 	public deleteAllTimers() {
-		this.map.clear();
+		this.timerList.splice(0, this.timerList.length);
 	}
 
 	public logAllTimers() {
-		for (const timer of this.map.values()) {
+		const timersWithTime = this.timerList.filter(timerEntry => {
+			const { time } = timerEntry.timer;
+			return time.hasTime();
+		});
+		for (const { timer } of timersWithTime) {
 			this.logFromData(timer);
 		}
 	}
@@ -188,7 +211,7 @@ class _TimerSystem {
 
 	public totalTime() {
 		const totalTime = new HMS();
-		for (const timer of this.map.values()) {
+		for (const { timer } of this.timerList) {
 			const hms = new HMS(
 				timer.time.hours,
 				timer.time.minutes,
@@ -203,7 +226,7 @@ class _TimerSystem {
 	public saveData() {
 		const timers = [];
 		const favoriteTimers = this.favoriteTimers;
-		for (const timer of this.map.values()) {
+		for (const { timer } of this.timerList) {
 			timers.push(timer);
 		}
 
@@ -231,7 +254,7 @@ class _TimerSystem {
 	}
 
 	private pullFromMap() {
-		const timer = this.map.get(this.timerToConfirm);
+		const timer = this.getTimerById(this.timerToConfirm);
 		if (!timer) throw `PullFromMap: Timer doesn't exist with id ${this.timerToConfirm}`;
 		this.timerToConfirm = NaN;
 		return timer;
@@ -247,25 +270,10 @@ class _TimerSystem {
 	}
 
 	private logFromData(timer: TimerInterface) {
-		const workedTime = roundTime(timer.time);
+		const workedTime = timer.time.roundedTime();
 		const logDate = format(this.logDate, 'dd/MM/yyyy');
 		const url = `https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}`;
 		window.open(url);
-
-		function roundTime(time: HMS) {
-			let min = time.minutes;
-
-			if (time.seconds > 0) ++min;
-			min += time.hours * 60;
-			if (min === 0) return 0;
-
-			// Experimental rounding
-			return minToRound(min, Settings.roundToMinutes);
-
-			function minToRound(m: number, r: number): number {
-				return (Math.ceil(m / r) * r) / 60;
-			}
-		}
 	}
 
 	/**
@@ -275,10 +283,28 @@ class _TimerSystem {
 	 */
 	private issueExists(issue: string): boolean {
 		if (!issue) return false;
-		for (const timer of this.map.values()) {
+		for (const { timer }  of this.timerList) {
 			if (issue === timer.issue) return true;
 		}
 		return false;
+	}
+
+	private getTimerById(gettingId: number): TimerInterface | null {
+		for (let i = 0; i < this.timerList.length; ++i) {
+			if (this.timerList[i].id === gettingId) {
+				return this.timerList[i].timer;
+			}
+		}
+
+		return null;
+	}
+
+	private deleteTimerById(removingId: number) {
+		for (let i = 0; i < this.timerList.length; ++i) {
+			if (this.timerList[i].id === removingId) {
+				this.timerList.splice(i, 1);
+			}
+		}
 	}
 }
 

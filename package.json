@@ -18,13 +18,14 @@
     "bootstrap-vue-3": "^0.4.10",
     "date-fns": "^2.29.3",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.6.1",
     "sortablejs": "^1.15.0",
+    "sortablejs-vue3": "^1.2.5",
     "vue": "^3.2.41",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
+    "@types/sortablejs": "^1.15.0",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
     "@vitejs/plugin-vue": "^3.2.0",
