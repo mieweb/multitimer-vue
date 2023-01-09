@@ -75,10 +75,6 @@ const Timer = {
 		TimerSystem.editTimer({ billStatus: value });
 	}
 };
-const ExtraControlsClass = {
-	visibility: (visible: boolean) => visible ? 'd-none' : '',
-	bgAlt: (isActive: boolean) => isActive ? 'bg-alt-active' : 'bg-alt-default'
-};
 
 const showOnHover = computed(() => Settings.hideOptions ? 'hover-hide' : '');
 const hideLog = computed(() => !props.timerData.issue ? 'hide' : '');
