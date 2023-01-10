@@ -5,6 +5,7 @@ import QuickTimers from '../modals/QuickTimers.vue';
 import Help from '../modals/HelpText.vue';
 import SettingsBar from '../modals/SettingsPage.vue';
 import { Settings } from '../data/Settings';
+import PageBody from './PageBody.vue';
 
 const toggleDarkMode = () => {
 	Settings.toggleDarkMode();
@@ -12,6 +13,7 @@ const toggleDarkMode = () => {
 
 </script>
 <template>
+	<PageBody :dark-mode="Settings.darkMode" />
 	<nav class="bg-default">
 		<div class="d-flex justify-content-around align-items-center">
 			<div id="left-controls">
