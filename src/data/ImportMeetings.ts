@@ -1,5 +1,5 @@
+import { PublicClientApplication, AuthenticationResult } from '@azure/msal-browser';
 import { Settings } from './Settings';
-import * as msal from '@azure/msal-browser';
 
 export interface MeetingData {
     issue: string,
@@ -38,7 +38,7 @@ const msalConfig = {
 		// "http://localhost:5173/index.html",
 	},
 };
-const msalInstance = new msal.PublicClientApplication(msalConfig);
+const msalInstance = new PublicClientApplication(msalConfig);
 
 export async function importMeetings() {
 	return await msalInstance
@@ -48,7 +48,7 @@ export async function importMeetings() {
 			return msalInstance.loginPopup(loginRequest).then(getToken);
 		});
 
-	async function getToken(resData: msal.AuthenticationResult) {
+	async function getToken(resData: AuthenticationResult) {
 		const token = resData.accessToken;
 		const headers = new Headers();
 		const bearer = 'Bearer ' + token;
