@@ -10,8 +10,8 @@
 
 :not(#timer-list) input:not([type=checkbox]):not([type=radio]):focus  {
     background-color: var(--background);
-    color: var(--foreground);
     border-color: var(--background-alt);
+    color: var(--foreground);
 }
 
 .modal input:not([type=checkbox]):not([type=radio]) {
@@ -41,7 +41,7 @@
 .input-group-text {
     background-color: var(--background-alt);
     border-color: var(--background-alt);
-    color: var(--foreground)
+    color: var(--foreground-alt)
 }
 
 // .modal input, *.input-group input {
