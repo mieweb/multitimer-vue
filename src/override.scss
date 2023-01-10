@@ -1,42 +1,74 @@
+// Change modal background
 .modal {
     --bs-modal-bg: var(--background);
 }
 
-.modal *:not(.btn) {
+// Invert font color while retaining button colors
+:not(#timer-list) *:not(.btn) {
     color: var(--foreground);
 }
 
-.modal *:focus, *.input-group *:focus {
+:not(#timer-list) input:not([type=checkbox]):not([type=radio]):focus  {
     background-color: var(--background);
     color: var(--foreground);
     border-color: var(--background-alt);
 }
 
-.modal input, *.input-group input {
+.modal input:not([type=checkbox]):not([type=radio]) {
     background-color: var(--background);
     border-color: var(--background-alt);
     color: var(--foreground);
-}
-
-.modal input:not([type="radio"]):not([type="checkbox"]):focus {
-    background-color: var(--background);
 }
 
 .modal select {
     background-color: var(--background);
     border-color: var(--background-alt);
+    color: var(--foreground);
 }
 
-*.input-group-text {
+#top-controls input:not([type=checkbox]):not([type=radio]) {
+    background-color: var(--background);
+    border-color: var(--background-alt);
+    color: var(--foreground);
+}
+
+#top-controls select {
+    background-color: var(--background);
+    border-color: var(--background-alt);
+    color: var(--foreground);
+}
+
+.input-group-text {
     background-color: var(--background-alt);
     border-color: var(--background-alt);
     color: var(--foreground)
 }
 
-input[type="date"] {
-    border-color: var(--background-alt);
-    background-color: var(--background);
-    color: var(--foreground);
-    border-radius: 3px;
-    border: 1px solid;
-}
+// .modal input, *.input-group input {
+//     background-color: var(--background);
+//     border-color: var(--background-alt);
+//     color: var(--foreground);
+// }
+
+// .modal input:not([type="radio"]):not([type="checkbox"]):focus {
+//     background-color: var(--background);
+// }
+
+// .modal select {
+//     background-color: var(--background);
+//     border-color: var(--background-alt);
+// }
+
+// *.input-group-text {
+//     background-color: var(--background-alt);
+//     border-color: var(--background-alt);
+//     color: var(--foreground)
+// }
+
+// input[type="date"] {
+//     border-color: var(--background-alt);
+//     background-color: var(--background);
+//     color: var(--foreground);
+//     border-radius: 3px;
+//     border: 1px solid;
+// }
