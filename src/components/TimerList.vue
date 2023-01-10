@@ -23,6 +23,7 @@ const mutateList = (event: SortableJS.SortableEvent) => {
 </script>
 <template>
 	<Sortable
+		id="timer-list"
 		:list="timerList"
 		item-key="id"
 		:options="dragOptions"

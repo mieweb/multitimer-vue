@@ -27,7 +27,7 @@ export interface ModalData {
 	importMeetingData: MeetingData[]
 }
 
-export function openModal(newModalComponent: Component, incomingProps: Partial<ModalData>) {
+export function openModal(newModalComponent: Component, incomingProps?: Partial<ModalData>) {
 	const props = {
 		timerId: NaN,
 		timerData: {},

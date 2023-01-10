@@ -19,7 +19,10 @@ const filter: TimerFilter = {
 const updateFilter = () => TimerSystem.updateFilter(filter);
 </script>
 <template>
-	<div class="d-flex flex-column justify-content-center align-items-center">
+	<div
+		id="top-controls"
+		class="d-flex flex-column justify-content-center align-items-center"
+	>
 		<div class="d-flex justify-content-center pt-4 mb-3">
 			<div
 				class="btn-group"
