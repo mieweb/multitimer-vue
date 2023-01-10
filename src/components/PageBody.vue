@@ -15,3 +15,4 @@ if (bodyClassList) {
 	});
 }
 </script>
+<template><div /></template>

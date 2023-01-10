@@ -14,3 +14,4 @@ if (titleElement) {
 	});
 }
 </script>
+<template><div /></template>
