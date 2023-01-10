@@ -17,7 +17,8 @@ export interface SettingsInterface {
     timerWidth: number,
     meetingDetectStart: string,
     meetingDetectEnd: string,
-    meetingDetectPreset: MeetingPreset
+    meetingDetectPreset: MeetingPreset,
+	darkMode: boolean
 }
 
 class _Settings implements SettingsInterface {
@@ -30,6 +31,9 @@ class _Settings implements SettingsInterface {
 	public meetingDetectStart = format(new Date(), 'yyyy-MM-dd');
 	public meetingDetectEnd = this.meetingDetectStart;
 	public meetingDetectPreset: MeetingPreset = 'D';
+	
+	// "External" settings
+	public darkMode = false;
 
 	public updateSettings(obj: Partial<SettingsInterface>) {
 		for (const k of Object.keys(this)) {
@@ -38,8 +42,12 @@ class _Settings implements SettingsInterface {
 		}
 
 		// Post function calls
-		if (obj.autosaveInterval) {
+		if (obj.autosaveInterval !== undefined) {
 			getStorage().setAutosave(this.autosaveInterval);
+		}
+
+		if (obj.darkMode !== undefined) {
+			this.refreshDarkMode();
 		}
 	}
 
@@ -48,7 +56,6 @@ class _Settings implements SettingsInterface {
 			...this
 		};
 	}
-
 
 	public meetingDetectRange(): StartEndDate {
 		const current = new Date();
@@ -85,6 +92,22 @@ class _Settings implements SettingsInterface {
 		};
 
 		return t[this.meetingDetectPreset]();
+	}
+
+	public toggleDarkMode() {
+		this.darkMode = !this.darkMode;
+		this.refreshDarkMode();
+	}
+
+	private refreshDarkMode() {
+		const bodyClassList = document.querySelector('body')?.classList;
+		if (!bodyClassList) return;
+
+		if (this.darkMode) {
+			bodyClassList.add('dark');
+		} else {
+			bodyClassList.remove('dark');
+		}
 	}
 
 	private YMDDate(date: Date): string {

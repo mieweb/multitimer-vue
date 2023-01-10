@@ -4,16 +4,10 @@ import { openModal } from '../data/ModalHandler';
 import QuickTimers from '../modals/QuickTimers.vue';
 import Help from '../modals/HelpText.vue';
 import SettingsBar from '../modals/SettingsPage.vue';
+import { Settings } from '../data/Settings';
 
 const toggleDarkMode = () => {
-	const bodyClassList = document.querySelector('body')?.classList;
-	if (!bodyClassList) return;
-
-	if (bodyClassList.contains('dark')) {
-		bodyClassList.remove('dark');
-	} else {
-		bodyClassList.add('dark');
-	}
+	Settings.toggleDarkMode();
 };
 
 </script>
