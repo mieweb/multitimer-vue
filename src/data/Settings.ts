@@ -45,10 +45,6 @@ class _Settings implements SettingsInterface {
 		if (obj.autosaveInterval !== undefined) {
 			getStorage().setAutosave(this.autosaveInterval);
 		}
-
-		if (obj.darkMode !== undefined) {
-			this.refreshDarkMode();
-		}
 	}
 
 	public dataCopy(): SettingsInterface {
