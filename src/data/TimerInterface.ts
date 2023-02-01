@@ -46,22 +46,34 @@ export interface TimerJSON {
 export interface TimerForm {
     issue: string,
     title: string,
-    time?: HMS,
+    time: {
+        hours: number,
+        minutes: number,
+        seconds: number
+    },
     link: string,
-    comment?: string,
-    billStatus?: string,
-	chosen?: boolean
+    comment: string,
+    billStatus: string,
+	chosen: boolean
 }
 
-export function partialToInterface(form: Partial<TimerInterface>): TimerInterface {
-	const time = form.time ? HMS.fromObject(form.time) : new HMS();
+export function formToInterface(form: Partial<TimerForm>): TimerInterface {
+    const partial = {
+        ...form,
+        time: HMS.fromObject(form.time || {})
+    };
+    return partialToInterface(partial)
+}
+
+export function partialToInterface(partial: Partial<TimerInterface>): TimerInterface {
+	const time = partial.time ? HMS.fromObject(partial.time) : new HMS();
 	return {
-		issue: form.issue?.toString() || '', // .toString() because this ends up being a number
-		title: form.title?.trim() || '',
+		issue: partial.issue?.toString() || '', // .toString() because this ends up being a number
+		title: partial.title?.trim() || '',
 		time: time,
-		link: form.link?.trim() || '',
-		comment: form.comment?.trim() || '',
-		billStatus: form.billStatus || 'Non-Billable' as BillStatus,
+		link: partial.link?.trim() || '',
+		comment: partial.comment?.trim() || '',
+		billStatus: partial.billStatus || 'Non-Billable' as BillStatus,
 		controlsHidden: Settings.hideControls,
 	};
 }
