@@ -14,10 +14,24 @@ const handleAction = (action: Action) => {
 	}
 };
 
+const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
+	if (!actions) return;
+	for (const action of actions) {
+		if (!action.hotkey) continue;
+
+		console.log(event.key);
+		if (event.key === action.hotkey) {
+			handleAction(action);
+		}
+	}
+};
 </script>
 
 <template>
-	<div class="modal-content">
+	<div
+		class="modal-content"
+		@keypress="(event) => handleHotkey(event, actions)"
+	>
 		<div class="modal-header">
 			<h5
 				id="atm-label"

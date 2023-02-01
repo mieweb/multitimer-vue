@@ -39,19 +39,20 @@ const Timer = {
 		openModal(UpdateTime, { timerId: props.timerId });
 	},
 	favorite: () => {
-		TimerSystem.addFavorite(props.timerId);
-		anime({
-			targets: '.fa-ticket',
-			keyframes: [
-				{ value: 20, rotate: '-30deg' },
-				{ value: 40, rotate: '25deg' },
-				{ value: 60, rotate: '-15deg' },
-				{ value: 80, rotate: '5deg' },
-				{ value: 100, rotate: '0deg' }
-			],
-			duration: 1000,
-			easing: 'easeInOutSine'
-		});
+		if (TimerSystem.addFavorite(props.timerId)) {
+			anime({
+				targets: '.fa-ticket',
+				keyframes: [
+					{ value: 20, rotate: '-30deg' },
+					{ value: 40, rotate: '25deg' },
+					{ value: 60, rotate: '-15deg' },
+					{ value: 80, rotate: '5deg' },
+					{ value: 100, rotate: '0deg' }
+				],
+				duration: 1000,
+				easing: 'easeInOutSine'
+			});
+		}
 	},
 	toggleControls: () => {
 		TimerSystem.toggleControls(props.timerId);

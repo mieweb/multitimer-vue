@@ -11,6 +11,10 @@ const modalData = {
 
 export function init() {
 	modal = new Modal('#modal-container');
+	document.addEventListener('shown.bs.modal', () => {
+		const input: HTMLInputElement | null = document.querySelector('.modal-focus-input');
+		input?.focus();
+	});
 }
 
 export function componentReference() {
