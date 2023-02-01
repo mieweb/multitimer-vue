@@ -23,22 +23,21 @@ class _TimerSystem {
 	};
 
 	public addTimer(timerData: TimerInterface) {
-		if (this.issueExists(timerData.issue)) return;
 		const id = this.newId();
 		this.timerList.push({ id, timer: reactive(timerData) });
 		this.startTimer(id);
 	}
 
 	public splitTimer(timerData: TimerInterface) {
+		if (this.issueExists(timerData.issue)) return;
 		const splitFromTimer = this.getTimerById(this.activeTimerId);
 		const removeTime = new HMS(
 			-timerData.time.hours,
 			-timerData.time.minutes,
 			-timerData.time.seconds
 		);
-		console.log('SplitTimer ::', timerData);
 		splitFromTimer.time.updateTime(removeTime);
-		this.addTimer(timerData);
+		this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
 	}
 
 	public getTimerList() {

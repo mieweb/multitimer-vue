@@ -21,6 +21,7 @@ const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
 
 		console.log(event.key);
 		if (event.key === action.hotkey) {
+			event.preventDefault();
 			handleAction(action);
 		}
 	}

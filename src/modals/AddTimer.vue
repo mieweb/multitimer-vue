@@ -26,32 +26,32 @@ const formData: Omit<TimerForm, 'chosen'>  =   {
 
 const formElement = ref<HTMLFormElement>();
 
-// const clearFormData = () => {
-// 	formData.issue = '';
-// 	formData.title = '';
-// 	formData.time.hours = 0;
-// 	formData.time.minutes = 0;
-// 	formData.time.seconds = 0;
-// 	formData.billStatus = '';
-// 	formData.comment = '';
-// 	formData.link = '';
-// };
+const clearFormData = () => {
+	formData.issue = '';
+	formData.title = '';
+	formData.time.hours = NaN;
+	formData.time.minutes = NaN;
+	formData.time.seconds = NaN;
+	formData.billStatus = '';
+	formData.comment = '';
+	formData.link = '';
+	formElement.value?.reset();
+};
 
 const actions: Action[] = [
 	{
 		title: 'Split Timer',
 		action: () => {
-			formElement.value?.reset();
 			TimerSystem.splitTimer(formToInterface(formData))
+			clearFormData();
 		},
 		closeModal: true
 	},
 	{
 		title: 'Add Timer',
 		action: () => {
-			formElement.value?.reset();
-			// clearFormData();
 			TimerSystem.addTimer(formToInterface(formData));
+			clearFormData();
 		},
 		classes: 'btn-primary',
 		hotkey: 'Enter'
