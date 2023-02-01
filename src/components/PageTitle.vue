@@ -10,7 +10,7 @@ const titleBase = 'MultiTimer';
 const titleElement = document.querySelector('title');
 if (titleElement) {
 	watch(props, async(props) => {
-		titleElement.innerText = `${titleBase} [${props.time.toString()}]`;
+		titleElement.innerText = `(${props.time.toString()}) ${titleBase}`;
 	});
 }
 </script>
