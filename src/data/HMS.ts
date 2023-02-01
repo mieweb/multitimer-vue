@@ -12,8 +12,8 @@ class HMS {
 
 	static fromObject(obj: { hours?: number, minutes?: number, seconds?: number }) {
 		const hours = obj.hours || 0;
-		const minutes = obj.hours || 0;
-		const seconds = obj.hours || 0;
+		const minutes = obj.minutes || 0;
+		const seconds = obj.seconds || 0;
 
 		return new HMS(hours, minutes, seconds);
 	}

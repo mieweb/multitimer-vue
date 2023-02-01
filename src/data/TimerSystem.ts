@@ -1,4 +1,4 @@
-import { jsonToInterface, TimerInterface, TimerJSON, TimerId } from './TimerInterface';
+import { formToInterface, TimerInterface, TimerJSON, TimerId } from './TimerInterface';
 import { reactive } from 'vue';
 import format from 'date-fns/format';
 import HMS from './HMS';
@@ -24,9 +24,21 @@ class _TimerSystem {
 
 	public addTimer(timerData: TimerInterface) {
 		if (this.issueExists(timerData.issue)) return;
+		const id = this.newId();
+		this.timerList.push({ id, timer: reactive(timerData) });
+		this.startTimer(id);
+	}
 
-		this.timerList.push({ id: this.id(), timer: reactive(timerData) });
-		// this.map.set(this.id(), reactive(timerData));
+	public splitTimer(timerData: TimerInterface) {
+		const splitFromTimer = this.getTimerById(this.activeTimerId);
+		const removeTime = new HMS(
+			-timerData.time.hours,
+			-timerData.time.minutes,
+			-timerData.time.seconds
+		);
+		console.log('SplitTimer ::', timerData);
+		splitFromTimer.time.updateTime(removeTime);
+		this.addTimer(timerData);
 	}
 
 	public getTimerList() {
@@ -239,11 +251,11 @@ class _TimerSystem {
 				favoriteTimers: TimerJSON[]
 			} = JSON.parse(t);
 
-			for (const timer of saveData.timers.map(jsonToInterface)) {
-				this.addTimer(jsonToInterface(timer));
+			for (const timer of saveData.timers.map(formToInterface)) {
+				this.addTimer(formToInterface(timer));
 			}
 
-			for (const timer of saveData.favoriteTimers.map(jsonToInterface)) {
+			for (const timer of saveData.favoriteTimers.map(formToInterface)) {
 				this.addFavoriteFromInterface(timer);
 			}
 		});
@@ -255,7 +267,7 @@ class _TimerSystem {
 		return timer;
 	}
 
-	private id() {
+	private newId() {
 		let id = new Date().getTime();
 		while (id === _TimerSystem.lastId) {
 			id = new Date().getTime();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
-import { partialToInterface, TimerInterface } from '../data/TimerInterface';
+import { formToInterface, TimerForm } from '../data/TimerInterface';
 import { Ref, ref } from 'vue';
 import { TimerSystem } from '../data/TimerSystem';
 import HMS from '../data/HMS';
@@ -11,10 +11,14 @@ defineProps<{
 }>();
 defineEmits(['addTimer', 'splitTimer']);
 
-const formData: Omit<TimerInterface, 'controlsHidden'> = {
+const formData: Omit<TimerForm, 'chosen'>  =   {
 	issue: '',
 	title: '',
-	time: new HMS(),
+	time: {
+		hours: NaN,
+		minutes: NaN,
+		seconds: NaN
+	},
 	billStatus: '',
 	comment: '',
 	link: ''
@@ -38,6 +42,7 @@ const actions: Action[] = [
 		title: 'Split Timer',
 		action: () => {
 			formElement.value?.reset();
+			TimerSystem.splitTimer(formToInterface(formData))
 		},
 		closeModal: true
 	},
@@ -46,7 +51,7 @@ const actions: Action[] = [
 		action: () => {
 			formElement.value?.reset();
 			// clearFormData();
-			TimerSystem.addTimer(partialToInterface(formData));
+			TimerSystem.addTimer(formToInterface(formData));
 		},
 		classes: 'btn-primary',
 		hotkey: 'Enter'
