@@ -37,7 +37,9 @@ class _TimerSystem {
 			-timerData.time.seconds
 		);
 		splitFromTimer.time.updateTime(removeTime);
-		this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
+		const id = this.newId();
+		this.timerList.push({ id, timer: reactive(timerData) });
+		this.startTimer(id);
 	}
 
 	public getTimerList() {
