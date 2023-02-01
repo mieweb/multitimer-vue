@@ -2,14 +2,14 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
 import { partialToInterface, TimerInterface } from '../data/TimerInterface';
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
 import { TimerSystem } from '../data/TimerSystem';
 import HMS from '../data/HMS';
 
 defineProps<{
-    actions?: Action[]
+	forceSubmit: Ref<boolean>,
 }>();
-const emit = defineEmits(['addTimer', 'splitTimer']);
+defineEmits(['addTimer', 'splitTimer']);
 
 const formData: Omit<TimerInterface, 'controlsHidden'> = {
 	issue: '',
@@ -33,21 +33,23 @@ const formElement = ref<HTMLFormElement>();
 // 	formData.link = '';
 // };
 
-const actions = [
+const actions: Action[] = [
 	{
 		title: 'Split Timer',
 		action: () => {
-			emit('splitTimer');
+			formElement.value?.reset();
 		},
+		closeModal: true
 	},
 	{
 		title: 'Add Timer',
 		action: () => {
-			formElement?.value?.reset();
+			formElement.value?.reset();
 			// clearFormData();
 			TimerSystem.addTimer(partialToInterface(formData));
 		},
-		classes: 'btn-primary'
+		classes: 'btn-primary',
+		hotkey: 'Enter'
 	}
 ];
 </script>
@@ -63,7 +65,7 @@ const actions = [
 					id="atm-issue"
 					v-model="formData.issue"
 					type="number"
-					class="form-control"
+					class="form-control modal-focus-input"
 					placeholder="issue"
 				>
 				<label

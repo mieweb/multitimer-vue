@@ -47,7 +47,7 @@ const actions: Action[] = [
 						id="etm-issue"
 						v-model="formData.issue"
 						type="number"
-						class="form-control"
+						class="form-control modal-focus-input"
 						placeholder="New Issue"
 						maxlength="6"
 					>

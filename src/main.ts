@@ -3,10 +3,11 @@ import './style.scss';
 import App from './App.vue';
 import * as ModalHandler from './data/ModalHandler';
 import * as Save from './data/Save';
+import * as Hotkeys from './data/Hotkeys';
 
 const saveSystem = Save.getStorage();
 window.onbeforeunload = saveSystem.save;
 window.onload = saveSystem.load;
 createApp(App).mount('#app');
 ModalHandler.init();
-// TimerSorting.init();
+Hotkeys.init();

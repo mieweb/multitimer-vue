@@ -1,0 +1,229 @@
+From 06e70c7071a9b55b1687d1d14009a262c5158af6 Mon Sep 17 00:00:00 2001
+From: trip-flip <thomasbaugher@outlook.com>
+Date: Wed, 1 Feb 2023 09:40:19 -0500
+Subject: [PATCH] Focusing and hotkeys on some modals
+
+---
+ src/components/ModalTemplate.vue | 16 +++++++++++++++-
+ src/components/TimerItem.vue     | 27 ++++++++++++++-------------
+ src/data/Action.ts               |  3 ++-
+ src/data/Hotkeys.ts              | 14 ++++++++++++++
+ src/data/ModalHandler.ts         |  4 ++++
+ src/main.ts                      |  3 ++-
+ src/modals/AddTimer.vue          | 18 ++++++++++--------
+ src/modals/EditTimer.vue         |  2 +-
+ 8 files changed, 62 insertions(+), 25 deletions(-)
+ create mode 100644 src/data/Hotkeys.ts
+
+diff --git a/src/components/ModalTemplate.vue b/src/components/ModalTemplate.vue
+index f9900bf..8600924 100644
+--- a/src/components/ModalTemplate.vue
++++ b/src/components/ModalTemplate.vue
+@@ -14,10 +14,24 @@ const handleAction = (action: Action) => {
+ 	}
+ };
+ 
++const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
++	if (!actions) return;
++	for (const action of actions) {
++		if (!action.hotkey) continue;
++
++		console.log(event.key);
++		if (event.key === action.hotkey) {
++			handleAction(action);
++		}
++	}
++};
+ </script>
+ 
+ <template>
+-	<div class="modal-content">
++	<div
++		class="modal-content"
++		@keypress="(event) => handleHotkey(event, actions)"
++	>
+ 		<div class="modal-header">
+ 			<h5
+ 				id="atm-label"
+diff --git a/src/components/TimerItem.vue b/src/components/TimerItem.vue
+index 99fa36c..a94959a 100644
+--- a/src/components/TimerItem.vue
++++ b/src/components/TimerItem.vue
+@@ -39,19 +39,20 @@ const Timer = {
+ 		openModal(UpdateTime, { timerId: props.timerId });
+ 	},
+ 	favorite: () => {
+-		TimerSystem.addFavorite(props.timerId);
+-		anime({
+-			targets: '.fa-ticket',
+-			keyframes: [
+-				{ value: 20, rotate: '-30deg' },
+-				{ value: 40, rotate: '25deg' },
+-				{ value: 60, rotate: '-15deg' },
+-				{ value: 80, rotate: '5deg' },
+-				{ value: 100, rotate: '0deg' }
+-			],
+-			duration: 1000,
+-			easing: 'easeInOutSine'
+-		});
++		if (TimerSystem.addFavorite(props.timerId)) {
++			anime({
++				targets: '.fa-ticket',
++				keyframes: [
++					{ value: 20, rotate: '-30deg' },
++					{ value: 40, rotate: '25deg' },
++					{ value: 60, rotate: '-15deg' },
++					{ value: 80, rotate: '5deg' },
++					{ value: 100, rotate: '0deg' }
++				],
++				duration: 1000,
++				easing: 'easeInOutSine'
++			});
++		}
+ 	},
+ 	toggleControls: () => {
+ 		TimerSystem.toggleControls(props.timerId);
+diff --git a/src/data/Action.ts b/src/data/Action.ts
+index 6ffa6d9..22ecf42 100644
+--- a/src/data/Action.ts
++++ b/src/data/Action.ts
+@@ -2,6 +2,7 @@ interface Action {
+     title: string,
+     action: () => void,
+     classes?: string,
+-    closeModal?: boolean
++    closeModal?: boolean,
++    hotkey?: string
+ }
+ export default Action;
+\ No newline at end of file
+diff --git a/src/data/Hotkeys.ts b/src/data/Hotkeys.ts
+new file mode 100644
+index 0000000..7861098
+--- /dev/null
++++ b/src/data/Hotkeys.ts
+@@ -0,0 +1,14 @@
++import AddTimerVue from '../modals/AddTimer.vue';
++import { openModal } from './ModalHandler';
++
++// type HotkeyFunctionMap = { [index: string]: () => void };
++
++export function init() {
++	document.addEventListener('keypress', (e: KeyboardEvent) => {
++		switch (e.key) {
++		case '+':
++			openModal(AddTimerVue);
++			break;
++		}
++	});
++}
+\ No newline at end of file
+diff --git a/src/data/ModalHandler.ts b/src/data/ModalHandler.ts
+index 168d718..13467c9 100644
+--- a/src/data/ModalHandler.ts
++++ b/src/data/ModalHandler.ts
+@@ -11,6 +11,10 @@ const modalData = {
+ 
+ export function init() {
+ 	modal = new Modal('#modal-container');
++	document.addEventListener('shown.bs.modal', () => {
++		const input: HTMLInputElement | null = document.querySelector('.modal-focus-input');
++		input?.focus();
++	});
+ }
+ 
+ export function componentReference() {
+diff --git a/src/main.ts b/src/main.ts
+index 38167d9..ee51bda 100644
+--- a/src/main.ts
++++ b/src/main.ts
+@@ -3,10 +3,11 @@ import './style.scss';
+ import App from './App.vue';
+ import * as ModalHandler from './data/ModalHandler';
+ import * as Save from './data/Save';
++import * as Hotkeys from './data/Hotkeys';
+ 
+ const saveSystem = Save.getStorage();
+ window.onbeforeunload = saveSystem.save;
+ window.onload = saveSystem.load;
+ createApp(App).mount('#app');
+ ModalHandler.init();
+-// TimerSorting.init();
+\ No newline at end of file
++Hotkeys.init();
+\ No newline at end of file
+diff --git a/src/modals/AddTimer.vue b/src/modals/AddTimer.vue
+index 96d68cd..0b00cfc 100644
+--- a/src/modals/AddTimer.vue
++++ b/src/modals/AddTimer.vue
+@@ -2,14 +2,14 @@
+ import ModalTemplate from '../components/ModalTemplate.vue';
+ import Action from '../data/Action';
+ import { partialToInterface, TimerInterface } from '../data/TimerInterface';
+-import { ref } from 'vue';
++import { Ref, ref } from 'vue';
+ import { TimerSystem } from '../data/TimerSystem';
+ import HMS from '../data/HMS';
+ 
+ defineProps<{
+-    actions?: Action[]
++	forceSubmit: Ref<boolean>,
+ }>();
+-const emit = defineEmits(['addTimer', 'splitTimer']);
++defineEmits(['addTimer', 'splitTimer']);
+ 
+ const formData: Omit<TimerInterface, 'controlsHidden'> = {
+ 	issue: '',
+@@ -33,21 +33,23 @@ const formElement = ref<HTMLFormElement>();
+ // 	formData.link = '';
+ // };
+ 
+-const actions = [
++const actions: Action[] = [
+ 	{
+ 		title: 'Split Timer',
+ 		action: () => {
+-			emit('splitTimer');
++			formElement.value?.reset();
+ 		},
++		closeModal: true
+ 	},
+ 	{
+ 		title: 'Add Timer',
+ 		action: () => {
+-			formElement?.value?.reset();
++			formElement.value?.reset();
+ 			// clearFormData();
+ 			TimerSystem.addTimer(partialToInterface(formData));
+ 		},
+-		classes: 'btn-primary'
++		classes: 'btn-primary',
++		hotkey: 'Enter'
+ 	}
+ ];
+ </script>
+@@ -63,7 +65,7 @@ const actions = [
+ 					id="atm-issue"
+ 					v-model="formData.issue"
+ 					type="number"
+-					class="form-control"
++					class="form-control modal-focus-input"
+ 					placeholder="issue"
+ 				>
+ 				<label
+diff --git a/src/modals/EditTimer.vue b/src/modals/EditTimer.vue
+index 8d24af1..64b4d45 100644
+--- a/src/modals/EditTimer.vue
++++ b/src/modals/EditTimer.vue
+@@ -47,7 +47,7 @@ const actions: Action[] = [
+ 						id="etm-issue"
+ 						v-model="formData.issue"
+ 						type="number"
+-						class="form-control"
++						class="form-control modal-focus-input"
+ 						placeholder="New Issue"
+ 						maxlength="6"
+ 					>
+-- 
+2.33.0.windows.2
+
