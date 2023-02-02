@@ -43,9 +43,7 @@ class LocalStorage implements Save {
 		const favoriteTimers = loadFavoriteTimers().map(formToInterface);
 		const settings = loadSettings();
 
-		for (const timer of timers) {
-			TimerSystem.addTimer(timer);
-		}
+		TimerSystem.loadTimerList(timers);
 
 		for (const timer of favoriteTimers) {
 			TimerSystem.addFavoriteFromInterface(timer);

@@ -29,10 +29,11 @@ const actions: Action[] = [
 	{
 		title: 'Create timer(s)',
 		action: () => {
-			formDataCollection
-				.filter(formData => formData.chosen)
-				.map(partialToInterface)
-				.forEach((timerData: TimerInterface) => TimerSystem.addTimer(timerData));
+			TimerSystem.loadTimerList(
+				formDataCollection
+					.filter(formData => formData.chosen)
+					.map(partialToInterface)
+			);
 		},
 		closeModal: true,
 		classes: 'btn-primary'

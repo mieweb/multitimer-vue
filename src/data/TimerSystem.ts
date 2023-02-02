@@ -21,18 +21,20 @@ class _TimerSystem {
 		search: '',
 		withTime: false
 	};
-
-	public addTimer(timerData: TimerInterface): TimerId {
+	
+	public addTimer(timerData: TimerInterface) {
 		if (this.issueExists(timerData.issue)) return NaN;
 		const id = this.newId();
-		this.timerList.push({ id, timer: reactive(timerData) });
-
-		return id;
+		this.timerList.unshift({ id, timer: reactive(timerData) });
+		this.startTimer(id);
 	}
 
-	public splitTimer(timerData: TimerInterface): TimerId {
+	public splitTimer(timerData: TimerInterface) {
 		if (this.issueExists(timerData.issue)) return NaN;
-		if (!this.activeTimerId) return this.addTimer(timerData);
+		if (!this.activeTimerId) {
+			this.addTimer(timerData);
+			return;
+		}
 
 		const splitFromTimer = this.getTimerById(this.activeTimerId);
 		const removeTime = new HMS(
@@ -42,10 +44,21 @@ class _TimerSystem {
 		);
 		splitFromTimer.time.updateTime(removeTime);
 		const id = this.newId();
-		this.timerList.push({ id, timer: reactive(timerData) });
-
-		return id;
+		this.timerList.unshift({ id, timer: reactive(timerData) });
+		this.startTimer(id);
 	}
+
+	/**
+	 * Loads a list of timers to `timerList`. This does not destroy timers that may currently be in the list,
+	 * nor does it start any timers.
+	 * @param timerList A list of timers
+	 */
+	public loadTimerList(timerList: TimerInterface[]) {
+		for (const timerData of timerList) {
+			this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
+		}
+	}
+
 
 	public getTimerList() {
 		return this.timerList;
