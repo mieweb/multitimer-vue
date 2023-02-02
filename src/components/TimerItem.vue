@@ -73,6 +73,8 @@ const chevron = computed(() => props.timerData.controlsHidden ? 'fa-chevron-down
 const showExtraControls = computed(() => props.timerData.controlsHidden ? 'd-none' : '');
 const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-default');
 
+const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData.issue}`);
+
 </script>
 <template>
 	<div
@@ -84,9 +86,14 @@ const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-
 				:class="`fa fa-save pointer save-button ${showOnHover} ${hideLog}`"
 				@click="Timer.log"
 			/>
-			<p class="issue m-0 pointer">
+			<a 
+				:href="issueLink"
+				target="_blank"
+				rel="noreferrer noopener"
+				class="issue m-0 pointer"
+			>
 				{{ timerData.issue }}
-			</p>
+			</a>
 			<p
 				class="title m-0"
 				data-bs-toggle="tooltip"
@@ -198,6 +205,8 @@ export default {};
     }
 
     .issue {
+		color: inherit;
+		text-decoration: none;
         grid-column-start: 2;
     }
 
