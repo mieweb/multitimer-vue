@@ -90,7 +90,7 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 				:href="issueLink"
 				target="_blank"
 				rel="noreferrer noopener"
-				class="issue m-0 pointer"
+				class="issue m-0 pointer simple-link"
 			>
 				{{ timerData.issue }}
 			</a>
@@ -205,8 +205,6 @@ export default {};
     }
 
     .issue {
-		color: inherit;
-		text-decoration: none;
         grid-column-start: 2;
     }
 
