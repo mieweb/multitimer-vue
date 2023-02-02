@@ -5,8 +5,7 @@ import { partialToInterface, TimerInterface } from '../data/TimerInterface';
 import { callWithAsyncErrorHandling } from 'vue';
 
 const addTimer = (timer: TimerInterface) => {
-	const id = TimerSystem.addTimer(timer);
-	TimerSystem.startTimer(id);
+	TimerSystem.addTimer(timer);
 };
 
 const addCommonTimer = (partial: Partial<TimerInterface>) => {

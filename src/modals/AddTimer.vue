@@ -42,8 +42,7 @@ const actions: Action[] = [
 	{
 		title: 'Split Timer',
 		action: () => {
-			const id = TimerSystem.splitTimer(formToInterface(formData))
-			TimerSystem.startTimer(id);
+			TimerSystem.splitTimer(formToInterface(formData))
 			clearFormData();
 		},
 		closeModal: true
@@ -51,8 +50,7 @@ const actions: Action[] = [
 	{
 		title: 'Add Timer',
 		action: () => {
-			const id = TimerSystem.addTimer(formToInterface(formData));
-			TimerSystem.startTimer(id);
+			TimerSystem.addTimer(formToInterface(formData));
 			clearFormData();
 		},
 		classes: 'btn-primary',
