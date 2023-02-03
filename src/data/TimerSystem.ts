@@ -22,18 +22,18 @@ class _TimerSystem {
 		withTime: false
 	};
 	
-	public addTimer(timerData: TimerInterface) {
-		if (this.issueExists(timerData.issue)) return NaN;
+	public addTimer(timerData: TimerInterface): boolean {
+		if (this.issueExists(timerData.issue)) return false;
 		const id = this.newId();
 		this.timerList.unshift({ id, timer: reactive(timerData) });
 		this.startTimer(id);
+		return true;
 	}
 
-	public splitTimer(timerData: TimerInterface) {
-		if (this.issueExists(timerData.issue)) return NaN;
+	public splitTimer(timerData: TimerInterface): boolean {
+		if (this.issueExists(timerData.issue)) return false;
 		if (!this.activeTimerId) {
-			this.addTimer(timerData);
-			return;
+			return this.addTimer(timerData);
 		}
 
 		const splitFromTimer = this.getTimerById(this.activeTimerId);
@@ -46,6 +46,7 @@ class _TimerSystem {
 		const id = this.newId();
 		this.timerList.unshift({ id, timer: reactive(timerData) });
 		this.startTimer(id);
+		return true;
 	}
 
 	/**

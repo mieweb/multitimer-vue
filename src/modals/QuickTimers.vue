@@ -2,7 +2,6 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import { partialToInterface, TimerInterface } from '../data/TimerInterface';
-import { callWithAsyncErrorHandling } from 'vue';
 //@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
 import anime from 'animejs/lib/anime.es';
 
@@ -25,7 +24,7 @@ const addTimer = (event: MouseEvent, timer: TimerInterface) => {
 
 const addCommonTimer = (event: MouseEvent, partial: Partial<TimerInterface>) => {
 	addTimer(event, partialToInterface(partial));
-}
+};
 
 const commonTimers: Partial<TimerInterface>[] = [
 	{ issue: '34603', title: 'Cleanup call', },
@@ -43,7 +42,7 @@ const commonTimers: Partial<TimerInterface>[] = [
 		:modal-id="'quick-timer-modal'"
 		:title="'Quick Timers'"
 	>
-	 	<h5>Common Timers</h5>
+		<h5>Common Timers</h5>
 		<div
 			v-for="timer, index in commonTimers"
 			:key="index"
