@@ -3,13 +3,28 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import { partialToInterface, TimerInterface } from '../data/TimerInterface';
 import { callWithAsyncErrorHandling } from 'vue';
+//@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
+import anime from 'animejs/lib/anime.es';
 
-const addTimer = (timer: TimerInterface) => {
-	TimerSystem.addTimer(timer);
+const addTimer = (event: MouseEvent, timer: TimerInterface) => {
+	if (!TimerSystem.addTimer(timer)) {
+		const animatedElement = (event.target as Element).parentElement;
+		anime({
+			targets: animatedElement,
+			keyframes: [
+				{ value: 30, translate: '0.3rem' },
+				{ value: 60, translate: '-0.2rem' },
+				{ value: 90, translate: '0.1rem' },
+				{ value: 100, translate: '0.0rem'}
+			],
+			duration: 250,
+			easing: 'linear'
+		});
+	}
 };
 
-const addCommonTimer = (partial: Partial<TimerInterface>) => {
-	addTimer(partialToInterface(partial));
+const addCommonTimer = (event: MouseEvent, partial: Partial<TimerInterface>) => {
+	addTimer(event, partialToInterface(partial));
 }
 
 const commonTimers: Partial<TimerInterface>[] = [
@@ -35,7 +50,7 @@ const commonTimers: Partial<TimerInterface>[] = [
 		>
 			<button
 				class="plain-btn"
-				@click="addCommonTimer(timer)"
+				@click="e => addCommonTimer(e, timer)"
 			>
 				{{ timer.issue }} {{ timer.title }}
 			</button>
@@ -49,7 +64,7 @@ const commonTimers: Partial<TimerInterface>[] = [
 			>
 				<button
 					class="plain-btn"
-					@click="addTimer(timer)"
+					@click="e => addTimer(e, timer)"
 				>
 					{{ timer.issue }} {{ timer.title }}
 				</button>
