@@ -19,7 +19,7 @@ const formData: Omit<TimerForm, 'chosen'>  =   {
 		minutes: NaN,
 		seconds: NaN
 	},
-	billStatus: '',
+	billStatus: 'Non-Billable',
 	comment: '',
 	link: ''
 };
@@ -126,7 +126,7 @@ const actions: Action[] = [
 					v-model="formData.billStatus"
 					class="form-select"
 				>
-					<option selected>
+					<option>
 						Non-Billable
 					</option>
 					<option>Billable Time</option>
