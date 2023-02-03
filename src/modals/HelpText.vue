@@ -38,7 +38,7 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 			</li>
 			<li>
 				The <i class="fa fa-undo" /> reset button resets
-				the timer back to zero after a prompt of
+				the timer back to zero and erases the comment after a prompt of
 				confirmation.
 			</li>
 			<li>
@@ -63,6 +63,10 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 			<li>
 				The <i class="fa fa-chevron-up" />/<i class="fa fa-chevron-down" /> buttons
 				toggle the display of the extra controls.
+			</li>
+			<li>
+				The <i class="fa fa-grip-vertical" /> icon is used to drag the timer in the list. Click and hold your mouse over
+				the icon to drag the timer through the list.
 			</li>
 		</ul>
 		<h5>Extra Controls</h5>
@@ -190,5 +194,17 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 			</li>
 			<li>Your new timers should be completed. Great!</li>
 		</ul>
+		<hr>
+		<h4>About The MultiTimer</h4>
+		<p>The MultiTimer was authored by Thomas Baugher.</p>
+		<p>
+			Head to the <a class="link-primary" href="https://github.mieweb.com/tbaugher/multitimer-vue" target="_blank" rel="noreferrer noopener">Repo</a>
+			to check out the code.
+		</p>
+		<p>
+			Have an issue, bug, or feature idea you want to report?
+			Head to the <a class="link-primary" href="https://github.mieweb.com/tbaugher/multitimer-vue/issues" target="_blank" rel="noreferrer noopener">issues page</a>
+			on the repo.
+		</p>
 	</ModalTemplate>
 </template>
