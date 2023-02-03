@@ -219,8 +219,8 @@ class _TimerSystem {
 
 	public logAllTimers() {
 		const timersWithTime = this.timerList.filter(timerEntry => {
-			const { time } = timerEntry.timer;
-			return time.hasTime();
+			const { time, issue } = timerEntry.timer;
+			return time.hasTime() && issue.length;
 		});
 		for (const { timer } of timersWithTime) {
 			this.logFromData(timer);
