@@ -3,6 +3,7 @@ interface Action {
     action: () => void,
     classes?: string,
     closeModal?: boolean,
-    hotkey?: string
+    hotkey?: string,
+    disabled?: boolean
 }
 export default Action;

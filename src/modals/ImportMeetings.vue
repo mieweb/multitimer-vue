@@ -36,10 +36,16 @@ const actions: Action[] = [
 			);
 		},
 		closeModal: true,
-		classes: 'btn-primary'
+		classes: 'btn-primary',
+		disabled: formDataCollection.length ? false : true
 	}
 ];
-// const reactions = [ '😖', '😯', '😴', 'ಠ_ಠ', '(╯°□°）╯︵ ┻━┻', '(⌐■_■)'];
+
+const randomReaction = () => {
+	const reactions = [ '😖', '😯', '😴', 'ಠ_ಠ', '(╯°□°）╯︵ ┻━┻', '(⌐■_■)'];
+	const randomIndex = Math.floor(Math.random() * reactions.length);
+	return reactions[randomIndex];
+};
 // const randomReaction = () => reactions[Math.floor(Math.random() * reactions.length)];
 </script>
 <template>
@@ -48,7 +54,7 @@ const actions: Action[] = [
 		title="Import Modals from Outlook"
 	>
 		<div v-if="formDataCollection.length === 0">
-			<p>No meeting timers could be found</p>
+			<p>No meeting timers could be found {{ randomReaction() }}</p>
 		</div>
 		<form
 			v-for="formData of formDataCollection"

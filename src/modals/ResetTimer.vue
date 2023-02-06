@@ -9,13 +9,13 @@ const props = defineProps<{
 }>();
 const actions: Action[] = [
 	{
-		title: 'Reset',
+		title: 'Reset Timer',
 		action: () => {
 			console.log(props);
 			TimerSystem.resetTimer(props.modalData.timerId);
 		},
 		closeModal: true,
-		classes: 'btn-primary'
+		classes: 'btn-danger'
 	}
 ];
 

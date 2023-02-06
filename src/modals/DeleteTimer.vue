@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 const actions: Action[] = [
 	{
-		title: 'Delete',
+		title: 'Delete Timer',
 		action: () => {
 			TimerSystem.deleteTimer(props.modalData.timerId);
 		},

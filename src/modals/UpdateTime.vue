@@ -17,7 +17,7 @@ const formData = {
 
 const actions: Action[] = [
 	{
-		title: 'Update',
+		title: 'Update Timer',
 		action: () => {
 			let signFactor = 1;
 			if (formData.toSubtract) {
