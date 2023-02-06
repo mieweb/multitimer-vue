@@ -7,12 +7,7 @@ defineProps<{
     title: string
 }>();
 
-const handleAction = (action: Action) => {
-	action.action();
-	if (action.closeModal) {
-		clearModal();
-	}
-};
+const handleAction = (action: Action) => action.action();
 
 const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
 	if (!actions) return;
@@ -61,8 +56,9 @@ const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
 			<button 
 				v-for="(a, i) in actions" 
 				:key="i" 
-				:class="'btn ' + (a.classes ? a.classes : 'btn-outline-primary')" 
+				:class="`btn ${(a.classes ? a.classes : 'btn-outline-primary')}`" 
 				:data-bs-dismiss="a.closeModal ? 'modal' : ''"
+				:disabled="a.disabled"
 				@click="handleAction(a)"
 			>
 				{{ a.title }}

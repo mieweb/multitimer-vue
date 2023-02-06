@@ -15,6 +15,9 @@ export function init() {
 		const input: HTMLInputElement | null = document.querySelector('.modal-focus-input');
 		input?.focus();
 	});
+	document.addEventListener('hidden.bs.modal', () => {
+		clearModal();
+	});
 }
 
 export function componentReference() {
