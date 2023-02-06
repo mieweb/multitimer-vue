@@ -23,7 +23,7 @@ class _TimerSystem {
 	};
 	
 	public addTimer(timerData: TimerInterface): boolean {
-		if (this.issueExists(timerData.issue)) return false;
+		if (this.issueExistsInTimerList(timerData.issue)) return false;
 		const id = this.newId();
 		this.timerList.unshift({ id, timer: reactive(timerData) });
 		this.startTimer(id);
@@ -31,7 +31,7 @@ class _TimerSystem {
 	}
 
 	public splitTimer(timerData: TimerInterface): boolean {
-		if (this.issueExists(timerData.issue)) return false;
+		if (this.issueExistsInTimerList(timerData.issue)) return false;
 		if (!this.activeTimerId) {
 			return this.addTimer(timerData);
 		}
@@ -66,18 +66,21 @@ class _TimerSystem {
 	}
 
 	public isFiltered(id: TimerId): boolean {
-		const timer = this.getTimerById(id);
-		if (!timer) return false;
-		const filter = this.timerFilter;
-		const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
-		const title = timer.title.toLowerCase();
-		const issue = timer.issue;
+		try {
+			const timer = this.getTimerById(id);
+			const filter = this.timerFilter;
+			const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
+			const title = timer.title.toLowerCase();
+			const issue = timer.issue;
 
-		if (filter.withTime && !timer.time.hasTime()) {
+			if (filter.withTime && !timer.time.hasTime()) {
+				return false;
+			}
+
+			return !!title.match(regex) || !!issue.match(regex);
+		} catch {
 			return false;
 		}
-
-		return !!title.match(regex) || !!issue.match(regex);
 	}
 
 	public* iterator(): IterableIterator<[number, TimerInterface]> {
@@ -148,7 +151,7 @@ class _TimerSystem {
 			...oldTimerData,
 			...changes
 		};
-		if (newTimerData.issue && this.issueExists(newTimerData.issue)) {
+		if (newTimerData.issue && this.issueExistsInTimerList(newTimerData.issue)) {
 			newTimerData.issue = oldTimerData.issue;
 		}
 		for (let i = 0; i < this.timerList.length; ++i) {
@@ -156,10 +159,6 @@ class _TimerSystem {
 				this.timerList[i].timer = newTimerData;
 			}
 		}
-	}
-
-	public selectedTimerData() {
-		return this.getTimerById(this.timerToConfirm);
 	}
 
 	public timerIsActive(id: TimerId) {
@@ -177,9 +176,16 @@ class _TimerSystem {
 		timer.time?.updateTime(hms);
 	}
 
-	public addFavorite(id: TimerId): boolean {
-		const timerData = this.getTimerById(id);
-		return this.addFavoriteFromInterface(timerData);
+	public addFavoriteFromId(id: TimerId): boolean {
+		try {
+			const timerData = {
+				...this.getTimerById(id),
+				time: new HMS()
+			};
+			return this.addFavoriteFromInterface(timerData);
+		} catch {
+			return false;
+		}
 	}
 
 	public addFavoriteFromInterface(timerData: TimerInterface): boolean {
@@ -281,12 +287,6 @@ class _TimerSystem {
 		});
 	}
 
-	private pullFromMap() {
-		const timer = this.getTimerById(this.timerToConfirm);
-		this.timerToConfirm = NaN;
-		return timer;
-	}
-
 	private newId() {
 		let id = new Date().getTime();
 		while (id === _TimerSystem.lastId) {
@@ -308,12 +308,9 @@ class _TimerSystem {
 	 * Always returns false if `issue` parameter is empty. 
 	 * @param issue Issue string, can be empty.
 	 */
-	private issueExists(issue: string): boolean {
+	private issueExistsInTimerList(issue: string): boolean {
 		if (!issue) return false;
-		for (const { timer }  of this.timerList) {
-			if (issue === timer.issue) return true;
-		}
-		return false;
+		return this.timerList.some(({ timer }) => timer.issue === issue);
 	}
 
 	private getTimerById(id: TimerId): TimerInterface {

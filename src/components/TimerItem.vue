@@ -39,7 +39,7 @@ const Timer = {
 		openModal(UpdateTime, { timerId: props.timerId });
 	},
 	favorite: () => {
-		if (TimerSystem.addFavorite(props.timerId)) {
+		if (TimerSystem.addFavoriteFromId(props.timerId)) {
 			anime({
 				targets: '.fa-ticket',
 				keyframes: [
