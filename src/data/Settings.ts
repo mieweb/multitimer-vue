@@ -43,7 +43,7 @@ class _Settings implements SettingsInterface {
 
 		// Post function calls
 		if (obj.autosaveInterval !== undefined) {
-			getStorage().setAutosave(this.autosaveInterval);
+			getStorage().setAutosaveInterval(this.autosaveInterval);
 		}
 	}
 
