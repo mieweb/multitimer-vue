@@ -10,7 +10,7 @@ export interface SaveData {
 }
 
 interface Save {
-	setAutosave(interval: number): void;
+	setAutosaveInterval(interval: number): void;
     save(): void;
     load(): void;
 }
@@ -18,7 +18,8 @@ interface Save {
 class LocalStorage implements Save {
 	private intervalId = NaN;
 
-	public setAutosave(interval: number) {
+	public setAutosaveInterval(seconds: number) {
+		const interval = seconds * 60000;
 		window.clearInterval(this.intervalId);
 		this.intervalId = window.setInterval(() => {
 			console.log('Saved!');
