@@ -8,6 +8,6 @@ export default defineConfig({
 		chunkSizeWarningLimit: 800
 	},
 	define: {
-		'__MULTITIMER_VERSION': JSON.stringify(process.env.npm_package_version)
+		MULTITIMER_VERSION: JSON.stringify(process.env.npm_package_version)
 	}
 });
