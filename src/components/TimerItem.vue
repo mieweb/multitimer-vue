@@ -152,7 +152,7 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 				:class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
 				placeholder="Comment..."
 				:value="timerData.comment"
-				@change="Timer.updateComment($event)"
+				@input="Timer.updateComment($event)"
 			>
 			<a 
 				target="_blank" 
