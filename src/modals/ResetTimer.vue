@@ -11,7 +11,6 @@ const actions: Action[] = [
 	{
 		title: 'Reset Timer',
 		action: () => {
-			console.log(props);
 			TimerSystem.resetTimer(props.modalData.timerId);
 		},
 		closeModal: true,

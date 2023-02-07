@@ -21,6 +21,7 @@ class LocalStorage implements Save {
 	public setAutosave(interval: number) {
 		window.clearInterval(this.intervalId);
 		this.intervalId = window.setInterval(() => {
+			console.log('Saved!');
 			this.save();
 		}, interval);
 	}

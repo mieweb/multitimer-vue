@@ -12,12 +12,10 @@ const dragOptions = {
 const timerList = TimerSystem.getTimerList();
 
 const mutateList = (event: SortableJS.SortableEvent) => {
-	console.log(timerList[0].timer.title);
 	const { oldIndex, newIndex } = event;
 	if (oldIndex === undefined || newIndex === undefined) return;
 	const item = timerList.splice(oldIndex, 1)[0];
 	timerList.splice(newIndex, 0, item);
-	console.log(timerList[0].timer.title);
 };
 
 </script>

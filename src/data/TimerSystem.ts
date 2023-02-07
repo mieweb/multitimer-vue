@@ -120,7 +120,6 @@ class _TimerSystem {
 
 		let expected = Date.now() + interval;
 		const timeStep = () => {
-			console.log('Bink');
 			const drift = Date.now() - expected;
 			timer.time?.updateTime(new HMS(0, 0, 1));
 			expected += interval;
