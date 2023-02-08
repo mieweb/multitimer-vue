@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
+// eslint-disable-next-line no-undef
+const versionNumber = MULTITIMER_VERSION;
 </script>
 <template>
 	<ModalTemplate
@@ -195,16 +197,27 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 			<li>Your new timers should be completed. Great!</li>
 		</ul>
 		<hr>
-		<h4>About The MultiTimer</h4>
-		<p>The MultiTimer was authored by Thomas Baugher.</p>
-		<p>
-			Head to the <a class="link-primary" href="https://github.mieweb.com/tbaugher/multitimer-vue" target="_blank" rel="noreferrer noopener">Repo</a>
-			to check out the code.
-		</p>
-		<p>
-			Have an issue, bug, or feature idea you want to report?
-			Head to the <a class="link-primary" href="https://github.mieweb.com/tbaugher/multitimer-vue/issues" target="_blank" rel="noreferrer noopener">issues page</a>
-			on the repo.
-		</p>
+		<h4>About The MultiTimer ⏱️</h4>
+		<h6 class="text-muted">
+			Version: {{ versionNumber }}
+		</h6>
+		<h6 class="text-muted">
+			Author: Thomas Baugher
+		</h6>
+		<h6 class="text-muted">
+			<a
+				class="link-secondary"
+				href="https://github.mieweb.com/tbaugher/multitimer-vue"
+				target="_blank"
+				rel="noreferrer noopener"
+			>Repo</a>
+			and
+			<a
+				class="link-primary"
+				href="https://github.mieweb.com/tbaugher/multitimer-vue/issues"
+				target="_blank"
+				rel="noreferrer noopener"
+			>Issues</a>
+		</h6>
 	</ModalTemplate>
 </template>
