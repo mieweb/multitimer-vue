@@ -1,5 +1,5 @@
 import { Settings, SettingsInterface } from './Settings';
-import { formToInterface, TimerForm, TimerJSON } from './TimerInterface';
+import { jsonToInterface, TimerJSON } from './TimerInterface';
 import { TimerSystem } from './TimerSystem';
 
 export interface SaveData {
@@ -40,8 +40,9 @@ class LocalStorage implements Save {
 	}
 
 	public load() {
-		const timers = loadTimers().map(formToInterface);
-		const favoriteTimers = loadFavoriteTimers().map(formToInterface);
+		console.log(TimerSystem);
+		const timers = loadTimers().map(jsonToInterface);
+		const favoriteTimers = loadFavoriteTimers().map(jsonToInterface);
 		const settings = loadSettings();
 
 		TimerSystem.loadTimerList(timers);

@@ -2,13 +2,9 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
 import { formToInterface, TimerForm } from '../data/TimerInterface';
-import { Ref, ref } from 'vue';
+import { ref } from 'vue';
 import { TimerSystem } from '../data/TimerSystem';
-import HMS from '../data/HMS';
 
-defineProps<{
-	forceSubmit: Ref<boolean>,
-}>();
 defineEmits(['addTimer', 'splitTimer']);
 
 const formData: Omit<TimerForm, 'chosen'>  =   {

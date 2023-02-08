@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Action from '../data/Action';
-import { clearModal } from '../data/ModalHandler';
 
 defineProps<{
     actions?: Action[],
