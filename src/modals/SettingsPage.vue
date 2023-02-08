@@ -3,8 +3,11 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 import { Settings, SettingsInterface } from '../data/Settings';
 import Action from '../data/Action';
 import { TimerSystem } from '../data/TimerSystem';
+import { SaveData } from '../data/Save';
+import { ref } from 'vue';
 
 const formData = Settings.dataCopy();
+const fileUpload = ref<HTMLInputElement>();
 
 const saveAction = () => {
 	const validRange = validateMeetingRange(formData);
@@ -30,20 +33,31 @@ const saveAction = () => {
 };
 
 const importData = () => {
-	const fileUpload = document.querySelector('#import-files') as HTMLInputElement;
-	if (!fileUpload.files) {
+	if (!fileUpload.value || !fileUpload.value.files) {
 		return;
 	}
-	const file = fileUpload.files[0];
-	fileUpload.value = '';
+	const file = fileUpload.value.files[0];
+	fileUpload.value.files = null;
 
 	if (!file) return;
-	TimerSystem.importFromFile(file);
+	file.text().then(jsonText => {
+		TimerSystem.importFromSaveJSON(JSON.parse(jsonText) as Partial<SaveData>);
+	});
+};
+
+const recoverData = () => {
+	const localStorageTimers = localStorage.getItem('timers');
+	const localStorageFavorites = localStorage.getItem('customTimers');
+	const saveData: Partial<SaveData> = {
+		timers: localStorageTimers ? JSON.parse(localStorageTimers) : [],
+		favoriteTimers: localStorageFavorites ? JSON.parse(localStorageFavorites) : []
+	};
+	TimerSystem.importFromSaveJSON(saveData);
 };
 
 const exportData = () => {
 	const a = document.createElement('a');
-	const saveData = JSON.stringify(TimerSystem.saveData());
+	const saveData = JSON.stringify(TimerSystem.toSaveData());
 	const date = new Date().toISOString().slice(0, 19).replace('T', '_');
 	a.href = URL.createObjectURL(
 		new Blob([saveData], {
@@ -229,30 +243,36 @@ const actions: Action[] = [
                 <input type="date" class="form-control" id="meeting-detect-end">
             </div>
         </div> -->
-		<h5>Exporting</h5>
+		<h5>Importing/Exporting</h5>
 		<hr>
 		<button
-			id="export-data"
 			class="mb-3 btn btn-outline-primary"
 			@click="exportData"
 		>
-			Export Timer Data
+			Export Save Data
 		</button>
 		<div class="input-group mb-3">
 			<button
-				id="import-data"
 				class="btn btn-outline-success"
 				@click="importData"
 			>
-				Import Timer Data
+				Import Save Data
 			</button>
 			<input
-				id="import-files"
+				ref="fileUpload"
 				class="form-control"
 				type="file"
 				accept=".json"
 			>
 		</div>
-	</ModalTemplate>
+		<hr>
+		<button
+			class="mb-3 btn btn-outline-primary"
+			ModalTemplate
+			@click="recoverData"
+		>
+			Recover Save Data
+		</button>
+	</modaltemplate>
 </template>
 <script lang="ts">export default {};</script>

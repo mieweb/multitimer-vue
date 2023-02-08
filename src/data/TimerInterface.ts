@@ -58,11 +58,22 @@ export interface TimerForm {
 }
 
 export function formToInterface(form: Partial<TimerForm>): TimerInterface {
-    const partial = {
-        ...form,
-        time: HMS.fromObject(form.time || {})
-    };
-    return partialToInterface(partial)
+	const partial = {
+		...form,
+		time: HMS.fromObject(form.time || {})
+	};
+	return partialToInterface(partial);
+}
+
+export function interfaceToJSON(timerData: TimerInterface): TimerJSON {
+	return {
+		...timerData,
+		time: {
+			hours: timerData.time.hours,
+			minutes: timerData.time.minutes,
+			seconds: timerData.time.seconds
+		}
+	};
 }
 
 export function partialToInterface(partial: Partial<TimerInterface>): TimerInterface {

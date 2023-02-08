@@ -42,7 +42,7 @@ const actions: Action[] = [
 	{
 		title: 'Split Timer',
 		action: () => {
-			TimerSystem.splitTimer(formToInterface(formData))
+			TimerSystem.splitTimer(formToInterface(formData));
 			clearFormData();
 		},
 		closeModal: true
