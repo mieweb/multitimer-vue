@@ -1,5 +1,6 @@
-import { formToInterface, TimerInterface, TimerJSON, TimerId } from './TimerInterface';
+import { formToInterface, TimerInterface, TimerId, interfaceToJSON } from './TimerInterface';
 import { reactive } from 'vue';
+import { SaveData } from './Save';
 import format from 'date-fns/format';
 import HMS from './HMS';
 
@@ -55,7 +56,7 @@ class _TimerSystem {
 	 * @param timerList A list of timers
 	 */
 	public loadTimerList(timerList: TimerInterface[]) {
-		for (const timerData of timerList) {
+		for (const timerData of timerList.filter(timer => !this.issueExistsInTimerList(timer.issue))) {
 			this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
 		}
 	}
@@ -256,12 +257,9 @@ class _TimerSystem {
 		return totalTime;
 	}
 
-	public saveData() {
-		const timers = [];
-		const favoriteTimers = this.favoriteTimers;
-		for (const { timer } of this.timerList) {
-			timers.push(timer);
-		}
+	public toSaveData(): Pick<SaveData, 'timers' | 'favoriteTimers'> {
+		const favoriteTimers = this.favoriteTimers.map(interfaceToJSON);
+		const timers = this.timerList.map(({ timer }) => interfaceToJSON(timer));
 
 		return {
 			timers,
@@ -269,21 +267,19 @@ class _TimerSystem {
 		};
 	}
 
-	public importFromFile(file: File) {
-		file.text().then((t) => {
-			const saveData: { 
-				timers: TimerJSON[],
-				favoriteTimers: TimerJSON[]
-			} = JSON.parse(t);
+	/**
+	 * Imports from save data.
+	 * @param saveData Savedata to load
+	 */
+	public importFromSaveData(saveData: Partial<SaveData>) {
+		const timers = saveData.timers || [];
+		const favoriteTimers = saveData.favoriteTimers || [];
 
-			for (const timer of saveData.timers.map(formToInterface)) {
-				this.addTimer(formToInterface(timer));
-			}
+		this.loadTimerList(timers.map(formToInterface));
 
-			for (const timer of saveData.favoriteTimers.map(formToInterface)) {
-				this.addFavoriteFromInterface(timer);
-			}
-		});
+		for (const timer of favoriteTimers.map(formToInterface)) {
+			this.addFavoriteFromInterface(timer);
+		}
 	}
 
 	private newId() {

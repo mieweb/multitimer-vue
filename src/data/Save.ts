@@ -1,12 +1,11 @@
 import { Settings, SettingsInterface } from './Settings';
-import { formToInterface, TimerInterface, TimerJSON } from './TimerInterface';
+import { formToInterface, TimerForm, TimerJSON } from './TimerInterface';
 import { TimerSystem } from './TimerSystem';
 
 export interface SaveData {
-    timers: {
-        timerData: TimerInterface
-    }[],
-    settings: SettingsInterface
+    timers: TimerJSON[],
+    settings: SettingsInterface,
+	favoriteTimers: TimerJSON[]
 }
 
 interface Save {
@@ -33,7 +32,7 @@ class LocalStorage implements Save {
 		const {
 			timers,
 			favoriteTimers
-		} = TimerSystem.saveData();
+		} = TimerSystem.toSaveData();
 
 		localStorage.setItem('timers', JSON.stringify(timers));
 		localStorage.setItem('settings', JSON.stringify(settings));

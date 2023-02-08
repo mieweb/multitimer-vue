@@ -149,6 +149,27 @@ import ModalTemplate from '../components/ModalTemplate.vue';
 			</li>
 		</ul>
 		<hr>
+		<h4>Timer Save Data</h4>
+		<p>
+			Currently, all save data is relegated to your browser's <i>localStorage</i>, meaning that changing
+			to a different browser or a different device will result in you having no timers. Since save data is not loaded
+			onto another server (at the moment (?)), a work around is exporting your data.
+		</p>
+		<p>
+			At the bottom of the <i class="fa fa-cog" /> settings page, a collection of buttons represent the <i>Import/Exporting</i>
+			section. Simply click the <span class="text-primary">Export Save Data</span> button to save a JSON file to your PC,
+			and you can distribute that to another session and import all your data with <span class="text-success">Import Save Data</span>.
+		</p>	
+		<p>
+			Do not assume that this save data will always be compatible with MultiTimer. If an update gets pushed in the time
+			it takes to import that file, it may potentially fail.
+		</p>
+		<p>
+			In the event that you magically have lost all your save data on the same browser and device (probably due to an update), click
+			the <span class="text-primary">Recover Save Data</span> button to attempt to recover this data. This recovery process will attempt
+			to account for the previous version's save data shape and recreate your previous session.
+		</p>
+		<hr>
 		<h4>Importing Meetings as Timers</h4>
 		<p>
 			A stellar feature is the ability to take meetings from Outlook and import
