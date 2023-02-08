@@ -168,7 +168,6 @@ class _TimerSystem {
 	public resetTimer(id: TimerId) {
 		const timer = this.getTimerById(id);
 		timer.time.reset();
-		timer.comment = '';
 	}
 
 	public updateTime(id: TimerId, hms: HMS) {
@@ -214,9 +213,8 @@ class _TimerSystem {
 	}
 
 	public resetAllTimers() {
-		for (const { timer } of this.timerList) {
-			timer.time.reset();
-			timer.comment = '';
+		for (const { id } of this.timerList) {
+			TimerSystem.resetTimer(id);
 		}
 	}
 
