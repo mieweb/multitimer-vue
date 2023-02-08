@@ -41,7 +41,7 @@ const importData = () => {
 
 	if (!file) return;
 	file.text().then(jsonText => {
-		TimerSystem.importFromSaveJSON(JSON.parse(jsonText) as Partial<SaveData>);
+		TimerSystem.importFromSaveData(JSON.parse(jsonText) as Partial<SaveData>);
 	});
 };
 
@@ -52,7 +52,7 @@ const recoverData = () => {
 		timers: localStorageTimers ? JSON.parse(localStorageTimers) : [],
 		favoriteTimers: localStorageFavorites ? JSON.parse(localStorageFavorites) : []
 	};
-	TimerSystem.importFromSaveJSON(saveData);
+	TimerSystem.importFromSaveData(saveData);
 };
 
 const exportData = () => {
