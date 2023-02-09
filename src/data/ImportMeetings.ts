@@ -87,9 +87,28 @@ export async function importMeetings() {
 	}
 
 	function composeMeetingData(rawDataCollection: RawMeetingData[]): MeetingData[] {
-		const meetingData: MeetingData[] = [];
 		const r = /#\d+/;
 
+		if (!Settings.onlyImportIssuedMeetings) {
+			return rawDataCollection.map(rawData => {
+				const issueMatches = rawData.subject.match(r);
+				let issue = '';
+				let title = rawData.subject.trim();
+				if (issueMatches) {
+					issue = issueMatches[0].substring(1);
+					title = title.replace(issueMatches[0], '').trim();
+				}
+				return {
+					issue,
+					title,
+					start: rawData.start.dateTime + 'Z',
+					end: rawData.end.dateTime + 'Z',
+					link: rawData.location.displayName
+				} as MeetingData;
+			});
+		}
+
+		const meetingData: MeetingData[] = [];
 		for (const rawData of rawDataCollection) {
 			const matches = rawData.subject.match(r);
 			if (!matches) continue;
