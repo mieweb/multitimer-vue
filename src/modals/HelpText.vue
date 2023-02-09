@@ -199,6 +199,12 @@ const versionNumber = MULTITIMER_VERSION;
 			it requires that the first "from" date is takes place before the
 			second "to" date, otherwise will revert back to its initial set range.
 		</p>
+		<p>
+			If you want to view all your meetings (and events) from your calendar instead of just the ones that have a
+			issue number attached to it, you can go to the settings and uncheck the checkbox with the label
+			"Only import meetings with a detectable issue number". This will show all your meetings in the configured
+			range.
+		</p>
 		The instructions to create timers from today's meetings are:
 		<ul>
 			<li>
