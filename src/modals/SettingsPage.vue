@@ -233,6 +233,18 @@ const actions: Action[] = [
 				</div>
 			</div>
 		</div>
+		<div class="form-check mb-3">
+			<input
+				v-model="formData.onlyImportIssuedMeetings"
+				type="checkbox"
+				class="form-check-input"
+				name="import-all-meetings"
+			>
+			<label
+				class="form-label"
+				for="import-all-meetings"
+			>Only import meetings with detectable issue number</label>
+		</div>
 		<!-- <div>
             <label class="form-label" for="meeting-date-range">
                 Date range to detect meetings:

@@ -18,7 +18,8 @@ export interface SettingsInterface {
     meetingDetectStart: string,
     meetingDetectEnd: string,
     meetingDetectPreset: MeetingPreset,
-	darkMode: boolean
+	darkMode: boolean,
+	onlyImportIssuedMeetings: boolean
 }
 
 class _Settings implements SettingsInterface {
@@ -31,6 +32,7 @@ class _Settings implements SettingsInterface {
 	public meetingDetectStart = format(new Date(), 'yyyy-MM-dd');
 	public meetingDetectEnd = this.meetingDetectStart;
 	public meetingDetectPreset: MeetingPreset = 'D';
+	public onlyImportIssuedMeetings = true;
 	
 	// "External" settings
 	public darkMode = false;
