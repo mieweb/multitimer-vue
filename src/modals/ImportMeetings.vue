@@ -56,11 +56,11 @@ const randomReaction = () => {
 		<div v-if="formDataCollection.length === 0">
 			<p>No meeting timers could be found {{ randomReaction() }}</p>
 		</div>
-		<form
+		<div
 			v-for="formData of formDataCollection"
 			v-else
 			:key="formData.issue"
-			ref="formElement"
+			class="detected-meeting"
 		>
 			<div class="form-floating mb-3">
 				<input
@@ -168,7 +168,13 @@ const randomReaction = () => {
 					class="form-check-input add-timer-cb"
 				>
 			</div>
-		</form>
+			<hr>
+		</div>
 	</ModalTemplate>
 </template>
 <script lang="ts">export default {};</script>
+<style>
+.detected-meeting:nth-last-child(1) > hr {
+	display: none;
+}
+</style>
