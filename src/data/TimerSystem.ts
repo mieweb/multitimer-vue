@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 import { SaveData } from './Save';
 import format from 'date-fns/format';
 import HMS from './HMS';
+import { exit } from 'process';
 
 export interface TimerFilter {
     search: string,
@@ -61,6 +62,20 @@ class _TimerSystem {
 		}
 	}
 
+	/**
+	 * Special function similar to `loadTimerList`, but updates timers that already exists from the given data
+	 * @param meetings Outlook meetings to import
+	 */
+	public importOutlookMeetings(meetings: TimerInterface[]) {
+		for (const meeting of meetings) {
+			const existingTimer = this.issueExistsInTimerList(meeting.issue);
+			if (existingTimer) {
+				existingTimer.time = HMS.fromObject(meeting.time);
+			} else {
+				this.timerList.push({ id: this.newId(), timer: reactive(meeting) });
+			}
+		}
+	}
 
 	public getTimerList() {
 		return this.timerList;
@@ -301,9 +316,10 @@ class _TimerSystem {
 	 * Always returns false if `issue` parameter is empty. 
 	 * @param issue Issue string, can be empty.
 	 */
-	private issueExistsInTimerList(issue: string): boolean {
-		if (!issue) return false;
-		return this.timerList.some(({ timer }) => timer.issue === issue);
+	private issueExistsInTimerList(issue: string): TimerInterface | undefined {
+		if (!issue) return;
+		const result = this.timerList.find(({ timer }) => timer.issue === issue);
+		return result ? result.timer : undefined; 
 	}
 
 	private getTimerById(id: TimerId): TimerInterface {

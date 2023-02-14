@@ -29,7 +29,7 @@ const actions: Action[] = [
 	{
 		title: 'Create timer(s)',
 		action: () => {
-			TimerSystem.loadTimerList(
+			TimerSystem.importOutlookMeetings(
 				formDataCollection
 					.filter(formData => formData.chosen)
 					.map(partialToInterface)
