@@ -25,6 +25,7 @@ const actions: Action[] = [
 	{
 		title: 'Update Timer',
 		action: () => {
+			formData.issue = ((formData.issue as unknown) as number).toString(); // This converts to a number by Vue, convert back to string
 			TimerSystem.editTimer(props.modalData.timerId, formData);
 			formElement?.value?.reset();
 			// clearFormData();
