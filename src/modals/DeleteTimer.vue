@@ -22,7 +22,6 @@ const actions: Action[] = [
 <template>
 	<ModalTemplate
 		:actions="actions"
-		:modal-id="'delete-timer-modal'"
 		:title="'Delete Timer?'"
 	>
 		<div class="modal-body">

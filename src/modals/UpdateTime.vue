@@ -31,7 +31,8 @@ const actions: Action[] = [
 			TimerSystem.updateTime(props.modalData.timerId, hms);
 		},
 		closeModal: true,
-		classes: 'btn-primary'
+		classes: 'btn-primary',
+		hotkey: 'Enter'
 	}
 ];
 
@@ -39,8 +40,7 @@ const actions: Action[] = [
 <template>
 	<ModalTemplate
 		:actions="actions"
-		modal-id="reset-timer-modal"
-		title="Reset Timer?"
+		title="Update Time?"
 	>
 		<div class="form-check form-switch">
 			<input

@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import Action from '../data/Action';
+import { closeModal } from '../data/ModalHandler';
 
 defineProps<{
     actions?: Action[],
     title: string
 }>();
 
-const handleAction = (action: Action) => action.action();
+const handleAction = (action: Action) => {
+	action.action();
+	if (action.closeModal)
+		closeModal();
+};
 
 const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
 	if (!actions) return;
@@ -55,7 +60,6 @@ const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
 				v-for="(a, i) in actions" 
 				:key="i" 
 				:class="`btn ${(a.classes ? a.classes : 'btn-outline-primary')}`" 
-				:data-bs-dismiss="a.closeModal ? 'modal' : ''"
 				:disabled="a.disabled"
 				@click="handleAction(a)"
 			>
