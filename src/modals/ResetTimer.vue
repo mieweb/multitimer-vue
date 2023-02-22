@@ -14,7 +14,8 @@ const actions: Action[] = [
 			TimerSystem.resetTimer(props.modalData.timerId);
 		},
 		closeModal: true,
-		classes: 'btn-danger'
+		classes: 'btn-danger',
+		hotkey: 'Enter'
 	}
 ];
 

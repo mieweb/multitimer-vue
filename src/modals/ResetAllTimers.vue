@@ -9,7 +9,8 @@ const actions: Action[] = [
 			TimerSystem.resetAllTimers();
 		},
 		closeModal: true,
-		classes: 'btn-danger'
+		classes: 'btn-danger',
+		hotkey: 'Enter'
 	}
 ];
 
