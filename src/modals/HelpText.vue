@@ -5,7 +5,6 @@ const versionNumber = MULTITIMER_VERSION;
 </script>
 <template>
 	<ModalTemplate
-		:modal-id="'help-modal'"
 		:title="'Help'"
 	>
 		<h4>Creating a Timer</h4>

@@ -30,14 +30,14 @@ const actions: Action[] = [
 			// clearFormData();
 		},
 		closeModal: true,
-		classes: 'btn-primary'
+		classes: 'btn-primary',
+		hotkey: 'Enter'
 	}
 ];
 </script>
 <template>
 	<ModalTemplate
 		:actions="actions"
-		:modal-id="'edit-timer-modal'"
 		:title="'Edit Timer'"
 	>
 		<form ref="formElement">

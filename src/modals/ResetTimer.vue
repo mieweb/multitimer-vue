@@ -22,7 +22,6 @@ const actions: Action[] = [
 <template>
 	<ModalTemplate
 		:actions="actions"
-		modal-id="reset-timer-modal"
 		title="Reset Timer?"
 	>
 		<label class="form-label">Are you sure you want to reset this timer?</label>

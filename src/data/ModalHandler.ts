@@ -46,6 +46,10 @@ export function openModal(newModalComponent: Component, incomingProps?: Partial<
 	modal.show();
 }
 
+export function closeModal() {
+	modal.hide();
+}
+
 export function clearModal() {
 	modalData.component.value = undefined;
 	modalData.props = {};
