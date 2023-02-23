@@ -150,6 +150,19 @@ const versionNumber = MULTITIMER_VERSION;
 			</li>
 		</ul>
 		<hr>
+		<h4>Quick Timers</h4>
+		<p>
+			Quick timers feature two lists of entries: <b>Common Timers</b> and <b>Favorite Timers</b>. Each list has a list of entries that
+			can create a new timer by clicking on the text of said entry. The former section is a static list of predefined entries which
+			cannot be modified. The latter can be added to and deleted from.
+		</p>
+		<p>
+			To modify the list of <b>Favorite Timers</b>, click the <i class="fa fa-star" /> button on an existing timer. This
+			copies over the issue number and the title of the timer the button belongs to, and a new timer can be created with that data when
+			you click on related entry in the list. To remove the entry, click the <i class="fa fa-trash-alt" /> button next to entry you
+			want deleted.
+		</p>
+		<hr>
 		<h4>Timer Save Data</h4>
 		<p>
 			Currently, all save data is relegated to your browser's <i>localStorage</i>, meaning that changing

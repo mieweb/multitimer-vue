@@ -55,8 +55,8 @@ const commonTimers: Partial<TimerInterface>[] = [
 			</button>
 		</div>
 		<hr>
-		<h5>Custom Timers</h5>
-		<div id="custom-tickets-list">
+		<h5>Favorite Timers</h5>
+		<div>
 			<div
 				v-for="timer, index in TimerSystem.favorites()"
 				:key="index"
