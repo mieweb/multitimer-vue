@@ -6,7 +6,7 @@ import { partialToInterface, TimerInterface } from '../data/TimerInterface';
 import anime from 'animejs/lib/anime.es';
 
 const addTimer = (event: MouseEvent, timer: TimerInterface) => {
-	if (!TimerSystem.addTimer(timer)) {
+	if (!TimerSystem.addTimer(partialToInterface(timer))) {
 		const animatedElement = (event.target as Element).parentElement;
 		anime({
 			targets: animatedElement,
