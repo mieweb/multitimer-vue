@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
-import { formToInterface, TimerForm } from '../data/TimerInterface';
+import { activities, formToInterface, TimerForm } from '../data/TimerInterface';
 import { ref } from 'vue';
 import { TimerSystem } from '../data/TimerSystem';
+import { Settings } from '../data/Settings';
 
 defineEmits(['addTimer', 'splitTimer']);
 
-const formData: Omit<TimerForm, 'chosen'>  =   {
+const formData: Omit<TimerForm, 'chosen'> = {
 	issue: '',
 	title: '',
 	time: {
@@ -17,7 +18,8 @@ const formData: Omit<TimerForm, 'chosen'>  =   {
 	},
 	billStatus: 'Non-Billable',
 	comment: '',
-	link: ''
+	link: '',
+	activity: Settings.defaultActivity
 };
 
 const formElement = ref<HTMLFormElement>();
@@ -32,6 +34,7 @@ const clearFormData = () => {
 	formData.comment = '';
 	formData.link = '';
 	formElement.value?.reset();
+	formData.activity = Settings.defaultActivity;
 };
 
 const actions: Action[] = [
@@ -128,6 +131,24 @@ const actions: Action[] = [
 					<option>Billable Time</option>
 					<option>SOW Line Item</option>
 					<option>MIE Goodwill (non-billable)</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<label
+					for="atm-activity"
+					class="form-label"
+				>Timer Activity</label>
+				<select
+					id="atm-activity"
+					v-model="formData.activity"
+					class="form-select"
+				>
+					<option
+						v-for="entry of activities"
+						:key="entry.activity"
+					>
+						{{ entry.activity }}
+					</option>
 				</select>
 			</div>
 			<div class="form-floating mb-3">

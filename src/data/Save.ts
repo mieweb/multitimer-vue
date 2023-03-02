@@ -21,8 +21,13 @@ class LocalStorage implements Save {
 		const interval = seconds * 60000;
 		window.clearInterval(this.intervalId);
 		this.intervalId = window.setInterval(() => {
-			console.log('Saved!');
 			this.save();
+			console.log(
+				'[%c%s%c] Autosaved all multitimer data into localstorage', 
+				'color: blue',
+				Date().slice(0, 24),
+				'color: initial',
+			);
 		}, interval);
 	}
 
@@ -40,7 +45,6 @@ class LocalStorage implements Save {
 	}
 
 	public load() {
-		console.log(TimerSystem);
 		const timers = loadTimers().map(jsonToInterface);
 		const favoriteTimers = loadFavoriteTimers().map(jsonToInterface);
 		const settings = loadSettings();

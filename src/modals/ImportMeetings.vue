@@ -2,9 +2,10 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
 import HMS from '../data/HMS';
-import { partialToInterface, TimerInterface, BillStatus } from '../data/TimerInterface';
+import { BillStatus, TimerForm, formToInterface } from '../data/TimerInterface';
 import { TimerSystem } from '../data/TimerSystem';
 import type { ModalData } from '../data/ModalHandler';
+import { Settings } from '../data/Settings';
 
 const props = defineProps<{
 	modalData: ModalData
@@ -13,7 +14,7 @@ const props = defineProps<{
 const formDataCollection = props.modalData.importMeetingData?.map(meeting => {
 	const startEndDifference = new Date(meeting.end).getTime() - new Date(meeting.start).getTime();
 	const time = HMS.fromSeconds(startEndDifference / 1000);
-	const timerForm: Omit<TimerInterface, 'controlsHidden'> & { chosen: boolean } = {
+	const timerForm: TimerForm = {
 		issue: meeting.issue,
 		title: meeting.title,
 		time: time,
@@ -21,6 +22,7 @@ const formDataCollection = props.modalData.importMeetingData?.map(meeting => {
 		comment: '',
 		link: meeting.link,
 		chosen: false,
+		activity: Settings.defaultActivity
 	};
 
 	return timerForm;
@@ -32,7 +34,7 @@ const actions: Action[] = [
 			TimerSystem.importOutlookMeetings(
 				formDataCollection
 					.filter(formData => formData.chosen)
-					.map(partialToInterface)
+					.map(formToInterface)
 			);
 		},
 		closeModal: true,
@@ -46,7 +48,6 @@ const randomReaction = () => {
 	const randomIndex = Math.floor(Math.random() * reactions.length);
 	return reactions[randomIndex];
 };
-// const randomReaction = () => reactions[Math.floor(Math.random() * reactions.length)];
 </script>
 <template>
 	<ModalTemplate

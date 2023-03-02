@@ -2,7 +2,7 @@
 import { TimerFilter, TimerSystem } from '../data/TimerSystem';
 import { openModal } from '../data/ModalHandler';
 import ResetAllTimers from '../modals/ResetAllTimers.vue';
-import DeleteAllTimers from '../modals/DeleteAllTimers.vue';
+import RemoveAllTimers from '../modals/RemoveAllTimers.vue';
 import { parse } from 'date-fns';
 
 const updateLogDate = (event: Event) => {
@@ -51,9 +51,9 @@ const updateFilter = () => TimerSystem.updateFilter(filter);
 					</button>
 					<button
 						class="btn btn-outline-danger"
-						@click="openModal(DeleteAllTimers)"
+						@click="openModal(RemoveAllTimers)"
 					>
-						Delete All Timers
+						Remove All Timers
 					</button>
 				</div>
 			</div>

@@ -2,6 +2,25 @@ import HMS from './HMS';
 import { Settings } from './Settings';
 
 export type BillStatus = 'Non-Billable' | 'Billable Time' | 'SOW Line Item' | 'MIE Goodwill (non-billable)';
+export type Activity = 'Acct Management'
+	| 'Administrative'
+	| 'DB Administration'
+	| 'Design'
+	| 'Development'
+	| 'Documentation'
+	| 'Forms'
+	| 'Implementation'
+	| 'Layouts'
+	| 'Meeting'
+	| 'Project Management'
+	| 'Research'
+	| 'Sales'
+	| 'System Administration'
+	| 'Training'
+	| 'Testing'
+	| 'Other'
+	| 'Helpdesk Support';
+
 export type TimerId = number;
 
 export interface TimerInterface {
@@ -12,6 +31,7 @@ export interface TimerInterface {
     comment: string,
     billStatus: string,
     controlsHidden: boolean,
+	activity: string
 }
 
 export interface TimerJSON {
@@ -26,6 +46,7 @@ export interface TimerJSON {
     comment: string,
     billStatus: string,
     controlsHidden: boolean
+	activity: string
 }
 
 /**
@@ -55,6 +76,7 @@ export interface TimerForm {
     comment: string,
     billStatus: string,
 	chosen: boolean
+	activity: string
 }
 
 export function formToInterface(form: Partial<TimerForm>): TimerInterface {
@@ -86,6 +108,7 @@ export function partialToInterface(partial: Partial<TimerInterface>): TimerInter
 		comment: partial.comment?.trim() || '',
 		billStatus: partial.billStatus || 'Non-Billable' as BillStatus,
 		controlsHidden: Settings.hideControls,
+		activity: partial.activity || 'Development'
 	};
 }
 
@@ -95,4 +118,35 @@ export function jsonToInterface(json: TimerJSON): TimerInterface {
 		...json,
 		time: new HMS(hours, minutes, seconds)
 	};
+}
+
+export const activities = [
+	{ activity: 'Acct Management', value: 36 },
+	{ activity: 'Administrative', value: 31 },
+	{ activity: 'DB Administration', value: 14 },
+	{ activity: 'Design', value: 8 },
+	{ activity: 'Development', value: 9 },
+	{ activity: 'Documentation', value: 12 },
+	{ activity: 'Forms', value: 34 },
+	{ activity: 'Implementation', value: 16 },
+	{ activity: 'Layouts', value: 30 },
+	{ activity: 'Meeting', value: 10 },
+	{ activity: 'Project Management', value: 17 },
+	{ activity: 'Research', value: 11 },
+	{ activity: 'Sales', value: 35 },
+	{ activity: 'System Administration', value: 13 },
+	{ activity: 'Training', value: 18 },
+	{ activity: 'Testing', value: 33 },
+	{ activity: 'Other', value: 19 },
+	{ activity: 'Helpdesk Support', value: 87 }
+];
+
+export function getActivityValue(activity: string): number {
+	for (const entry of activities) {
+		if (entry.activity === activity) {
+			return entry.value;
+		}
+	}
+
+	throw new Error(`Activity with name '${activity}' does not exist`);
 }

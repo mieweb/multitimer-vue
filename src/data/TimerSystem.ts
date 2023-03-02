@@ -1,4 +1,4 @@
-import { formToInterface, TimerInterface, TimerId, interfaceToJSON } from './TimerInterface';
+import { getActivityValue, formToInterface, TimerInterface, TimerId, interfaceToJSON } from './TimerInterface';
 import { reactive } from 'vue';
 import { SaveData } from './Save';
 import format from 'date-fns/format';
@@ -152,7 +152,7 @@ class _TimerSystem {
 		this.setTimeoutId = NaN;
 	}
 
-	public deleteTimer(id: TimerId) {
+	public removeTimer(id: TimerId) {
 		for (let i = 0; i < this.timerList.length; ++i) {
 			if (this.timerList[i].id === id) {
 				this.timerList.splice(i, 1);
@@ -190,29 +190,24 @@ class _TimerSystem {
 		timer.time?.updateTime(hms);
 	}
 
-	public addFavoriteFromId(id: TimerId): boolean {
-		try {
-			const timerData = {
-				...this.getTimerById(id),
-				time: new HMS()
-			};
-			return this.addFavoriteFromInterface(timerData);
-		} catch {
-			return false;
-		}
+	public addFavoriteFromId(id: TimerId) {
+		const timerData = {
+			...this.getTimerById(id),
+			time: new HMS()
+		};
+		return this.addFavoriteFromInterface(timerData);
 	}
 
-	public addFavoriteFromInterface(timerData: TimerInterface): boolean {
+	public addFavoriteFromInterface(timerData: TimerInterface) {
 		for (const timer of this.favoriteTimers) {
 			if (timer.issue === timerData.issue) {
-				return false;
+				throw new Error(`A favorite with issue ${timerData.issue} already exists`);
 			}
 		}
 		this.favoriteTimers.push(timerData);
-		return true;
 	}
 
-	public deleteFavorite(issue: string) {
+	public removeFavorite(issue: string) {
 		for (let i = 0; i < this.favoriteTimers.length; ++i) {
 			const timer = this.favoriteTimers[i];
 			if (timer.issue === issue) {
@@ -233,7 +228,7 @@ class _TimerSystem {
 		}
 	}
 
-	public deleteAllTimers() {
+	public removeAllTimers() {
 		this.timerList.splice(0, this.timerList.length);
 	}
 
@@ -307,7 +302,8 @@ class _TimerSystem {
 	private logFromData(timer: TimerInterface) {
 		const workedTime = timer.time.roundedTime();
 		const logDate = format(this.logDate, 'dd/MM/yyyy');
-		const url = `https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}`;
+		const url = 
+			`https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}&time_entry[activity_id]=${getActivityValue(timer.activity)}`;
 		window.open(url);
 	}
 

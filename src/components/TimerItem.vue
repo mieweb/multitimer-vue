@@ -1,70 +1,82 @@
 <script setup lang="ts">
 import { billStatuses } from '../data/BillStatus';
-import { TimerInterface } from '../data/TimerInterface';
+import { TimerInterface, activities, getActivityValue } from '../data/TimerInterface';
 import { TimerSystem } from '../data/TimerSystem';
 import { openModal } from '../data/ModalHandler';
-import DeleteTimer from '../modals/DeleteTimer.vue';
+import RemoveTimer from '../modals/RemoveTimer.vue';
 import EditTimer from '../modals/EditTimer.vue';
 import ResetTimer from '../modals/ResetTimer.vue';
 import UpdateTime from '../modals/UpdateTime.vue';
 import { Settings } from '../data/Settings';
 //@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
 import anime from 'animejs/lib/anime.es';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 const props = defineProps<{
     timerId: number,
     timerData: TimerInterface,
     isActive: boolean,
 }>();
-const Timer = {
-	log: () => {
-		TimerSystem.logTimer(props.timerId);
-	},
-	start: () => {
-		TimerSystem.startTimer(props.timerId);
-	},
-	pause: () => {
-		TimerSystem.pauseActiveTimer();
-	},
-	delete: () => {
-		openModal(DeleteTimer, { timerId: props.timerId });
-	},
-	edit: () => {
-		openModal(EditTimer, { timerId: props.timerId, timerData: props.timerData });
-	},
-	reset: () => {
-		openModal(ResetTimer, { timerId: props.timerId });
-	},
-	updateTime: () => {
-		openModal(UpdateTime, { timerId: props.timerId });
-	},
-	favorite: () => {
-		if (TimerSystem.addFavoriteFromId(props.timerId)) {
-			anime({
-				targets: '.fa-ticket',
-				keyframes: [
-					{ value: 20, rotate: '-30deg' },
-					{ value: 40, rotate: '25deg' },
-					{ value: 60, rotate: '-15deg' },
-					{ value: 80, rotate: '5deg' },
-					{ value: 100, rotate: '0deg' }
-				],
-				duration: 1000,
-				easing: 'easeInOutSine'
-			});
-		}
-	},
-	toggleControls: () => {
-		TimerSystem.toggleControls(props.timerId);
-	},
-	updateComment: (event: Event) => {
-		const value = (event.target as HTMLInputElement).value;
-		TimerSystem.editTimer(props.timerId, { comment: value });
-	},
-	updateBillStatus: (event: Event) => {
-		const value = (event.target as HTMLInputElement).value;
-		TimerSystem.editTimer(props.timerId, { billStatus: value });
+const billableSelect = ref<HTMLSelectElement>();
+const activitySelect = ref<HTMLSelectElement>();
+const commentField = ref<HTMLInputElement>();
+
+const log = () => {
+	TimerSystem.logTimer(props.timerId);
+};
+const start = () => {
+	TimerSystem.startTimer(props.timerId);
+};
+const pause = () => {
+	TimerSystem.pauseActiveTimer();
+};
+const remove = () => {
+	openModal(RemoveTimer, { timerId: props.timerId });
+};
+const edit = () => {
+	openModal(EditTimer, { timerId: props.timerId, timerData: props.timerData });
+};
+const reset = () => {
+	openModal(ResetTimer, { timerId: props.timerId });
+};
+const updateTime = () => {
+	openModal(UpdateTime, { timerId: props.timerId });
+};
+const favorite = () => {
+	try {
+		TimerSystem.addFavoriteFromId(props.timerId);
 	}
+	catch {
+		anime({
+			targets: '.fa-ticket',
+			keyframes: [
+				{ value: 20, rotate: '-30deg' },
+				{ value: 40, rotate: '25deg' },
+				{ value: 60, rotate: '-15deg' },
+				{ value: 80, rotate: '5deg' },
+				{ value: 100, rotate: '0deg' }
+			],
+			duration: 1000,
+			easing: 'easeInOutSine'
+		});
+	}
+};
+const toggleControls = () => {
+	TimerSystem.toggleControls(props.timerId);
+};
+const updateComment = () => {
+	TimerSystem.editTimer(props.timerId, {
+		comment: commentField?.value?.value
+	});
+};
+const updateBillStatus = () => {
+	TimerSystem.editTimer(props.timerId, {
+		billStatus: billableSelect?.value?.value
+	});
+};
+const updateActivity = () => {
+	TimerSystem.editTimer(props.timerId, {
+		activity: activitySelect?.value?.value
+	});
 };
 
 const showOnHover = computed(() => Settings.hideOptions ? 'hover-hide' : '');
@@ -84,7 +96,7 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 		<div class="timer-grid">
 			<i
 				:class="`fa fa-save pointer save-button ${showOnHover} ${hideLog}`"
-				@click="Timer.log"
+				@click="log"
 			/>
 			<a 
 				:href="issueLink"
@@ -107,61 +119,84 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 			<div :class="`timer-options d-flex ${showOnHover}`">
 				<i
 					class="fa fa-edit pointer"
-					@click="Timer.edit"
+					@click="edit"
 				/>
 				<i
 					class="fa fa-undo pointer"
-					@click="Timer.reset"
+					@click="reset"
 				/>
 				<i
 					class="fa fa-plus pointer"
-					@click="Timer.updateTime"
+					@click="updateTime"
 				/>
 				<i
 					class="fa fa-star pointer"
-					@click="Timer.favorite"
+					@click="favorite"
 				/>
 				<i
 					class="fa fa-trash-alt pointer"
-					@click="Timer.delete"
+					@click="remove"
 				/>
 			</div>
 			<i
 				class="fa pointer" 
 				:class="isActive ? 'fa-pause' : 'fa-play'"
-				@click="isActive ? Timer.pause() : Timer.start()"
+				@click="isActive ? pause() : start()"
 			/>
 			<i 
 				:class="`fa control-toggle pointer ${chevron}`"
-				@click="Timer.toggleControls"
+				@click="toggleControls"
 			/>
-			<select 
-				:class="`form-select form-select-sm billable  ${activeBgColor} ${showExtraControls}`"
-				@change="Timer.updateBillStatus($event)"
-			>
-				<option
-					v-for="status in billStatuses"
-					:key="status"
-					:value="status"
+			<div class="second-row">
+				<div 
+					:class="`selects ${showExtraControls}`"
 				>
-					{{ status }}
-				</option>
-			</select>
-			<input
-				type="text"
-				:class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
-				placeholder="Comment..."
-				:value="timerData.comment"
-				@input="Timer.updateComment($event)"
-			>
-			<a 
-				target="_blank" 
-				rel="noopener noreferrer" 
-				:href="timerData.link" 
-				:class="`link btn btn-sm ${activeBgColor} ${showExtraControls}`"
-			>
-				Meeting Link
-			</a>
+					<select 
+						ref="billableSelect"
+						:class="`form-select form-select-sm billable ${activeBgColor}`"
+						:value="timerData.billStatus"
+						@change="updateBillStatus"
+					>
+						<option
+							v-for="status in billStatuses"
+							:key="status"
+							:value="status"
+						>
+							{{ status }}
+						</option>
+					</select>
+					<select
+						ref="activitySelect"
+						:class="`form-select form-select-sm activity ${activeBgColor}`"
+						:value="getActivityValue(timerData.activity)"
+						@change="updateBillStatus"
+					>
+						<option
+							v-for="entry of activities"
+							:key="entry.activity"
+							:value="entry.value"
+						> 
+							{{ entry.activity }}
+						</option>
+					</select>
+				</div>
+				<input
+					ref="commentField"
+					type="text"
+					:class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
+					placeholder="Comment..."
+					:value="timerData.comment"
+					@input="updateComment"
+				>
+				<a 
+					target="_blank" 
+					rel="noopener noreferrer" 
+					:href="timerData.link" 
+					:class="`link btn btn-sm ${activeBgColor} ${showExtraControls}`"
+				>
+					Meeting Link
+				</a>
+			</div>
 			<i 
 				class="fa fa-grip-vertical handle"
 			/>
@@ -208,6 +243,16 @@ export default {};
         grid-column-start: 2;
     }
 
+	.second-row {
+		grid-row-start: 2;
+		display: flex;
+		grid-column-start: 1;
+		grid-column-end: 9;
+		gap: 0.5rem;
+		justify-content: space-between;
+		align-items: center;
+	}
+
     .title {
         grid-column-start: 3;
         text-overflow: ellipsis;
@@ -228,24 +273,28 @@ export default {};
         grid-column-start: 6;
     }
 
-    .billable {
-        grid-row-start: 2;
-        grid-column-start: 1;
-        grid-column-end: 3;
+	.selects {
+		display:flex;
+		grid-row-start: 2;
+		grid-column-start: 1;
+		grid-column-end: 3;
+	}
+
+    .billable,.activity {
         border-color: rgba(0, 0, 0, 0);
     }
 
     .comment {
         grid-row-start: 2;
         grid-column-start: 3;
-        grid-column-end: 5;
+        grid-column-end: 6;
         border-color: rgba(0, 0, 0, 0);
     }
 
     .link {
         grid-row-start: 2;
-        grid-column-start: 5;
-        grid-column-end: 8;
+        grid-column-start: 6;
+        grid-column-end: 9;
         transition: none !important;
     }
 

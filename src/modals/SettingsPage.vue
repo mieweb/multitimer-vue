@@ -5,6 +5,7 @@ import Action from '../data/Action';
 import { TimerSystem } from '../data/TimerSystem';
 import { SaveData } from '../data/Save';
 import { ref } from 'vue';
+import { activities } from '../data/TimerInterface';
 
 const formData = Settings.dataCopy();
 const fileUpload = ref<HTMLInputElement>();
@@ -104,11 +105,29 @@ const actions: Action[] = [
 				for="round-minute"
 			>Minute Increment To Round To:</label>
 			<input
-				id="round-minute"
 				v-model="formData.roundToMinutes"
+				name="round-minute"
 				class="form-control"
 				type="number"
 			>
+		</div>
+		<div class="mb-3">
+			<label
+				class="form-label"
+				for="default-activity"
+			>Default activity for new timers:</label>
+			<select
+				v-model="formData.defaultActivity"
+				class="form-select"
+				name="default-activity"
+			>
+				<option
+					v-for="entry of activities"
+					:key="entry.activity"
+				>
+					{{ entry.activity }}
+				</option>
+			</select>
 		</div>
 		<h5>Timers</h5>
 		<hr>
