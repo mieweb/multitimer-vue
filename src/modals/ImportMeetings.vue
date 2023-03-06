@@ -2,7 +2,7 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
 import HMS from '../data/HMS';
-import { BillStatus, TimerForm, formToInterface } from '../data/TimerInterface';
+import { BillStatus, RawTimerData, rawToTimerData } from '../data/TimerData';
 import { TimerSystem } from '../data/TimerSystem';
 import type { ModalData } from '../data/ModalHandler';
 import { Settings } from '../data/Settings';
@@ -14,18 +14,19 @@ const props = defineProps<{
 const formDataCollection = props.modalData.importMeetingData?.map(meeting => {
 	const startEndDifference = new Date(meeting.end).getTime() - new Date(meeting.start).getTime();
 	const time = HMS.fromSeconds(startEndDifference / 1000);
-	const timerForm: TimerForm = {
+	const timerForm: Omit<RawTimerData, 'controlsHidden'> = {
 		issue: meeting.issue,
 		title: meeting.title,
-		time: time,
+		time: {
+			...time
+		},
 		billStatus: 'Non-Billable' as BillStatus,
 		comment: '',
 		link: meeting.link,
-		chosen: false,
-		activity: Settings.defaultActivity
+		activity: 'Meeting'
 	};
 
-	return timerForm;
+	return { timerData: timerForm, chosen: false };
 }) || [];
 const actions: Action[] = [
 	{
@@ -34,7 +35,7 @@ const actions: Action[] = [
 			TimerSystem.importOutlookMeetings(
 				formDataCollection
 					.filter(formData => formData.chosen)
-					.map(formToInterface)
+					.map(({ timerData }) => rawToTimerData(timerData))
 			);
 		},
 		closeModal: true,
@@ -60,13 +61,13 @@ const randomReaction = () => {
 		<div
 			v-for="formData of formDataCollection"
 			v-else
-			:key="formData.issue"
+			:key="formData.timerData.issue"
 			class="detected-meeting"
 		>
 			<div class="form-floating mb-3">
 				<input
 					id="atm-issue"
-					v-model="formData.issue"
+					v-model="formData.timerData.issue"
 					type="number"
 					class="form-control"
 					placeholder="issue"
@@ -79,7 +80,7 @@ const randomReaction = () => {
 			<div class="form-floating mb-3">
 				<input
 					id="atm-title"
-					v-model.trim="formData.title"
+					v-model.trim="formData.timerData.title"
 					type="text"
 					class="form-control"
 					placeholder="title"
@@ -92,7 +93,7 @@ const randomReaction = () => {
 			<div class="input-group mb-3">
 				<input
 					id="atm-hours"
-					v-model="formData.time.hours"
+					v-model="formData.timerData.time.hours"
 					type="number"
 					class="form-control"
 					placeholder="Hrs."
@@ -100,7 +101,7 @@ const randomReaction = () => {
 				<span class="input-group-text">:</span>
 				<input
 					id="atm-minutes"
-					v-model="formData.time.minutes"
+					v-model="formData.timerData.time.minutes"
 					type="number"
 					class="form-control"
 					placeholder="Mins."
@@ -108,7 +109,7 @@ const randomReaction = () => {
 				<span class="input-group-text">:</span>
 				<input
 					id="atm-seconds"
-					v-model="formData.time.seconds"
+					v-model="formData.timerData.time.seconds"
 					type="number"
 					class="form-control"
 					placeholder="Secs."
@@ -121,7 +122,7 @@ const randomReaction = () => {
 				>Timer Bill Status</label>
 				<select
 					id="atm-billable"
-					v-model="formData.billStatus"
+					v-model="formData.timerData.billStatus"
 					class="form-select"
 				>
 					<option selected>
@@ -135,7 +136,7 @@ const randomReaction = () => {
 			<div class="form-floating mb-3">
 				<input
 					id="atm-comment"
-					v-model.trim="formData.comment"
+					v-model.trim="formData.timerData.comment"
 					type="text"
 					class="form-control"
 					placeholder="comment"
@@ -148,7 +149,7 @@ const randomReaction = () => {
 			<div class="form-floating mb-3">
 				<input
 					id="atm-link"
-					v-model.trim="formData.link"
+					v-model.trim="formData.timerData.link"
 					type="text"
 					class="form-control"
 					placeholder="meeting link"

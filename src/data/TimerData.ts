@@ -23,7 +23,7 @@ export type Activity = 'Acct Management'
 
 export type TimerId = number;
 
-export interface TimerInterface {
+export type TimerData = {
     issue: string,
     title: string,
     time: HMS,
@@ -31,23 +31,11 @@ export interface TimerInterface {
     comment: string,
     billStatus: string,
     controlsHidden: boolean,
-	activity: string
-}
+	activity: Activity
+};
 
-export interface TimerJSON {
-    issue: string,
-    title: string,
-    time: {
-        hours: number,
-        minutes: number,
-        seconds: number
-    },
-    link: string,
-    comment: string,
-    billStatus: string,
-    controlsHidden: boolean
-	activity: string
-}
+export type RawTimerData = Omit<TimerData, 'time'> 
+	& { time: { hours: number, minutes: number, seconds: number } };
 
 /**
  * General interface for working with form data across modals.
@@ -64,30 +52,15 @@ export interface TimerJSON {
  * ...unless a better way exists to silence the linter beyond a linter ignore comment.
  * ```
  */
-export interface TimerForm {
-    issue: string,
-    title: string,
-    time: {
-        hours: number,
-        minutes: number,
-        seconds: number
-    },
-    link: string,
-    comment: string,
-    billStatus: string,
-	chosen: boolean
-	activity: string
-}
-
-export function formToInterface(form: Partial<TimerForm>): TimerInterface {
+export function rawToTimerData(form: Partial<RawTimerData>): TimerData {
 	const partial = {
 		...form,
 		time: HMS.fromObject(form.time || {})
 	};
-	return partialToInterface(partial);
+	return partialToTimerData(partial);
 }
 
-export function interfaceToJSON(timerData: TimerInterface): TimerJSON {
+export function timerDataToRaw(timerData: TimerData): RawTimerData {
 	return {
 		...timerData,
 		time: {
@@ -98,7 +71,7 @@ export function interfaceToJSON(timerData: TimerInterface): TimerJSON {
 	};
 }
 
-export function partialToInterface(partial: Partial<TimerInterface>): TimerInterface {
+export function partialToTimerData(partial: Partial<TimerData>): TimerData {
 	const time = partial.time ? HMS.fromObject(partial.time) : new HMS();
 	return {
 		issue: partial.issue?.toString() || '', // .toString() because this ends up being a number
@@ -109,14 +82,6 @@ export function partialToInterface(partial: Partial<TimerInterface>): TimerInter
 		billStatus: partial.billStatus || 'Non-Billable' as BillStatus,
 		controlsHidden: Settings.hideControls,
 		activity: partial.activity || 'Development'
-	};
-}
-
-export function jsonToInterface(json: TimerJSON): TimerInterface {
-	const { hours, minutes, seconds } = json.time;
-	return {
-		...json,
-		time: new HMS(hours, minutes, seconds)
 	};
 }
 

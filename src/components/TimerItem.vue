@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { billStatuses } from '../data/BillStatus';
-import { TimerInterface, activities, getActivityValue } from '../data/TimerInterface';
+import { Activity, TimerData, activities, getActivityValue } from '../data/TimerData';
 import { TimerSystem } from '../data/TimerSystem';
 import { openModal } from '../data/ModalHandler';
 import RemoveTimer from '../modals/RemoveTimer.vue';
@@ -13,12 +13,13 @@ import anime from 'animejs/lib/anime.es';
 import { computed, ref } from 'vue';
 const props = defineProps<{
     timerId: number,
-    timerData: TimerInterface,
+    timerData: TimerData,
     isActive: boolean,
 }>();
 const billableSelect = ref<HTMLSelectElement>();
 const activitySelect = ref<HTMLSelectElement>();
 const commentField = ref<HTMLInputElement>();
+const activitySelected = ref(false);
 
 const log = () => {
 	TimerSystem.logTimer(props.timerId);
@@ -74,9 +75,13 @@ const updateBillStatus = () => {
 	});
 };
 const updateActivity = () => {
+	const activity = activitySelect?.value?.value as Activity;
 	TimerSystem.editTimer(props.timerId, {
-		activity: activitySelect?.value?.value
+		activity
 	});
+};
+const toggleDropdown = () => {
+	activitySelected.value = !activitySelected.value;
 };
 
 const showOnHover = computed(() => Settings.hideOptions ? 'hover-hide' : '');
@@ -147,56 +152,55 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 				:class="`fa control-toggle pointer ${chevron}`"
 				@click="toggleControls"
 			/>
-			<div class="second-row">
-				<div 
-					:class="`selects ${showExtraControls}`"
+			<i
+				id="toggle-dropdown"
+				:class="`fa fa-retweet pointer ${showExtraControls}`"
+				@click="toggleDropdown"
+			/>
+			<select
+				v-if="activitySelected"
+				ref="activitySelect"
+				:class="`form-select form-select-sm activity ${activeBgColor} ${showExtraControls}`"
+				@change="updateActivity"
+			>
+				<option
+					v-for="entry of activities"
+					:key="entry.activity"
+				> 
+					{{ entry.activity }}
+				</option>
+			</select>
+			<select 
+				v-else
+				ref="billableSelect"
+				:class="`form-select form-select-sm billable ${activeBgColor} ${showExtraControls}`"
+				:value="timerData.billStatus"
+				@change="updateBillStatus"
+			>
+				<option
+					v-for="status in billStatuses"
+					:key="status"
+					:value="status"
 				>
-					<select 
-						ref="billableSelect"
-						:class="`form-select form-select-sm billable ${activeBgColor}`"
-						:value="timerData.billStatus"
-						@change="updateBillStatus"
-					>
-						<option
-							v-for="status in billStatuses"
-							:key="status"
-							:value="status"
-						>
-							{{ status }}
-						</option>
-					</select>
-					<select
-						ref="activitySelect"
-						:class="`form-select form-select-sm activity ${activeBgColor}`"
-						:value="getActivityValue(timerData.activity)"
-						@change="updateBillStatus"
-					>
-						<option
-							v-for="entry of activities"
-							:key="entry.activity"
-							:value="entry.value"
-						> 
-							{{ entry.activity }}
-						</option>
-					</select>
-				</div>
-				<input
-					ref="commentField"
-					type="text"
-					:class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
-					placeholder="Comment..."
-					:value="timerData.comment"
-					@input="updateComment"
-				>
-				<a 
-					target="_blank" 
-					rel="noopener noreferrer" 
-					:href="timerData.link" 
-					:class="`link btn btn-sm ${activeBgColor} ${showExtraControls}`"
-				>
-					Meeting Link
-				</a>
-			</div>
+					{{ status }}
+				</option>
+			</select>
+			<input
+				ref="commentField"
+				type="text"
+				:class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
+				placeholder="Comment..."
+				:value="timerData.comment"
+				@input="updateComment"
+			>
+			<a 
+				target="_blank" 
+				rel="noopener noreferrer" 
+				:href="timerData.link" 
+				:class="`link btn btn-sm ${activeBgColor} ${showExtraControls}`"
+			>
+				Meeting Link
+			</a>
 			<i 
 				class="fa fa-grip-vertical handle"
 			/>
@@ -228,7 +232,7 @@ export default {};
 
     .timer-grid {
         display: grid;
-        grid-template-columns: min-content 54px 1fr 62px min-content min-content min-content;
+        grid-template-columns: min-content 90px 1fr 62px min-content min-content min-content;
         align-items: center;
         column-gap: 2rem;
         row-gap: 0.5rem;
@@ -242,16 +246,6 @@ export default {};
     .issue {
         grid-column-start: 2;
     }
-
-	.second-row {
-		grid-row-start: 2;
-		display: flex;
-		grid-column-start: 1;
-		grid-column-end: 9;
-		gap: 0.5rem;
-		justify-content: space-between;
-		align-items: center;
-	}
 
     .title {
         grid-column-start: 3;
@@ -273,28 +267,33 @@ export default {};
         grid-column-start: 6;
     }
 
-	.selects {
-		display:flex;
-		grid-row-start: 2;
-		grid-column-start: 1;
-		grid-column-end: 3;
-	}
-
     .billable,.activity {
         border-color: rgba(0, 0, 0, 0);
     }
 
+	.activity {
+		grid-row-start: 2;
+		grid-column-start: 2;
+		grid-column-end: 3;
+	}
+
+	.billable {
+		grid-row-start: 2;
+		grid-column-start: 2;
+		grid-column-end: 3;
+	}
+
     .comment {
         grid-row-start: 2;
         grid-column-start: 3;
-        grid-column-end: 6;
+        grid-column-end: 5;
         border-color: rgba(0, 0, 0, 0);
     }
 
     .link {
         grid-row-start: 2;
-        grid-column-start: 6;
-        grid-column-end: 9;
+        grid-column-start: 5;
+        grid-column-end: 8;
         transition: none !important;
     }
 
@@ -306,5 +305,11 @@ export default {};
 	.handle {
 		grid-column-start: 8;
 		cursor: grab;
+	}
+
+	#toggle-dropdown {
+		grid-row-start: 2;
+		grid-column-start: 1;
+		grid-column-end: 2;
 	}
 </style>

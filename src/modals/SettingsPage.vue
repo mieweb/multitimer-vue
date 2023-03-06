@@ -5,7 +5,7 @@ import Action from '../data/Action';
 import { TimerSystem } from '../data/TimerSystem';
 import { SaveData } from '../data/Save';
 import { ref } from 'vue';
-import { activities } from '../data/TimerInterface';
+import { activities } from '../data/TimerData';
 
 const formData = Settings.dataCopy();
 const fileUpload = ref<HTMLInputElement>();

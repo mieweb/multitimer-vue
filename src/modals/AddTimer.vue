@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
-import { activities, formToInterface, TimerForm } from '../data/TimerInterface';
-import { ref } from 'vue';
+import { activities, rawToTimerData, RawTimerData } from '../data/TimerData';
+import { reactive } from 'vue';
 import { TimerSystem } from '../data/TimerSystem';
 import { Settings } from '../data/Settings';
 
 defineEmits(['addTimer', 'splitTimer']);
 
-const formData: Omit<TimerForm, 'chosen'> = {
+const formData: Omit<RawTimerData, 'controlsHidden'> = reactive({
 	issue: '',
 	title: '',
 	time: {
@@ -20,9 +20,7 @@ const formData: Omit<TimerForm, 'chosen'> = {
 	comment: '',
 	link: '',
 	activity: Settings.defaultActivity
-};
-
-const formElement = ref<HTMLFormElement>();
+});
 
 const clearFormData = () => {
 	formData.issue = '';
@@ -30,18 +28,14 @@ const clearFormData = () => {
 	formData.time.hours = NaN;
 	formData.time.minutes = NaN;
 	formData.time.seconds = NaN;
-	formData.billStatus = '';
 	formData.comment = '';
-	formData.link = '';
-	formElement.value?.reset();
-	formData.activity = Settings.defaultActivity;
 };
 
 const actions: Action[] = [
 	{
 		title: 'Split Timer',
 		action: () => {
-			TimerSystem.splitTimer(formToInterface(formData));
+			TimerSystem.splitTimer(rawToTimerData(formData));
 			clearFormData();
 		},
 		closeModal: true
@@ -49,7 +43,7 @@ const actions: Action[] = [
 	{
 		title: 'Add Timer',
 		action: () => {
-			TimerSystem.addTimer(formToInterface(formData));
+			TimerSystem.addTimer(rawToTimerData(formData));
 			clearFormData();
 		},
 		classes: 'btn-primary',
@@ -63,7 +57,7 @@ const actions: Action[] = [
 		title="Add Timer"
 		:actions="actions"
 	>
-		<form ref="formElement">
+		<form>
 			<div class="form-floating mb-3">
 				<input
 					id="atm-issue"
