@@ -161,6 +161,7 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 				v-if="activitySelected"
 				ref="activitySelect"
 				:class="`form-select form-select-sm activity ${activeBgColor} ${showExtraControls}`"
+				:value="timerData.activity"
 				@change="updateActivity"
 			>
 				<option
