@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
 import { TimerSystem } from '../data/TimerSystem';
-import { TimerInterface } from '../data/TimerInterface';
+import { RawTimerData } from '../data/TimerData';
 import type { ModalData } from '../data/ModalHandler';
 
 const props = defineProps<{
@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 const formElement = ref<HTMLFormElement>();
-const formData: Pick<TimerInterface, 'issue' | 'title' | 'link'> = {
+const formData: Pick<RawTimerData, 'issue' | 'title' | 'link'> = {
 	issue: props.modalData.timerData.issue || '',
 	title: props.modalData.timerData.title || '',
 	link: props.modalData.timerData.link || ''

@@ -11,7 +11,7 @@ const actions: Action[] = [
 	{
 		title: 'Delete Timer',
 		action: () => {
-			TimerSystem.deleteTimer(props.modalData.timerId);
+			TimerSystem.removeTimer(props.modalData.timerId);
 		},
 		closeModal: true,
 		classes: 'btn-danger',

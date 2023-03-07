@@ -1,6 +1,6 @@
 import { Modal } from 'bootstrap';
 import { Component, shallowRef } from 'vue';
-import { TimerId, TimerInterface } from './TimerInterface';
+import { TimerId, TimerData } from './TimerData';
 import { MeetingData } from '../data/ImportMeetings';
 
 let modal: Modal;
@@ -30,7 +30,7 @@ export function show() {
 
 export interface ModalData {
 	timerId: TimerId,
-	timerData: Partial<TimerInterface>,
+	timerData: Partial<TimerData>,
 	importMeetingData: MeetingData[]
 }
 

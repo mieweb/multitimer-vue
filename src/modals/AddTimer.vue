@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import Action from '../data/Action';
-import { formToInterface, TimerForm } from '../data/TimerInterface';
-import { ref } from 'vue';
+import { activities, rawToTimerData, RawTimerData } from '../data/TimerData';
+import { reactive } from 'vue';
 import { TimerSystem } from '../data/TimerSystem';
+import { Settings } from '../data/Settings';
 
 defineEmits(['addTimer', 'splitTimer']);
 
-const formData: Omit<TimerForm, 'chosen'>  =   {
+const formData: Omit<RawTimerData, 'controlsHidden'> = reactive({
 	issue: '',
 	title: '',
 	time: {
@@ -17,10 +18,9 @@ const formData: Omit<TimerForm, 'chosen'>  =   {
 	},
 	billStatus: 'Non-Billable',
 	comment: '',
-	link: ''
-};
-
-const formElement = ref<HTMLFormElement>();
+	link: '',
+	activity: Settings.defaultActivity
+});
 
 const clearFormData = () => {
 	formData.issue = '';
@@ -28,17 +28,14 @@ const clearFormData = () => {
 	formData.time.hours = NaN;
 	formData.time.minutes = NaN;
 	formData.time.seconds = NaN;
-	formData.billStatus = '';
 	formData.comment = '';
-	formData.link = '';
-	formElement.value?.reset();
 };
 
 const actions: Action[] = [
 	{
 		title: 'Split Timer',
 		action: () => {
-			TimerSystem.splitTimer(formToInterface(formData));
+			TimerSystem.splitTimer(rawToTimerData(formData));
 			clearFormData();
 		},
 		closeModal: true
@@ -46,7 +43,7 @@ const actions: Action[] = [
 	{
 		title: 'Add Timer',
 		action: () => {
-			TimerSystem.addTimer(formToInterface(formData));
+			TimerSystem.addTimer(rawToTimerData(formData));
 			clearFormData();
 		},
 		classes: 'btn-primary',
@@ -60,7 +57,7 @@ const actions: Action[] = [
 		title="Add Timer"
 		:actions="actions"
 	>
-		<form ref="formElement">
+		<form>
 			<div class="form-floating mb-3">
 				<input
 					id="atm-issue"
@@ -128,6 +125,24 @@ const actions: Action[] = [
 					<option>Billable Time</option>
 					<option>SOW Line Item</option>
 					<option>MIE Goodwill (non-billable)</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<label
+					for="atm-activity"
+					class="form-label"
+				>Timer Activity</label>
+				<select
+					id="atm-activity"
+					v-model="formData.activity"
+					class="form-select"
+				>
+					<option
+						v-for="entry of activities"
+						:key="entry.activity"
+					>
+						{{ entry.activity }}
+					</option>
 				</select>
 			</div>
 			<div class="form-floating mb-3">
