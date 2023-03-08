@@ -1,11 +1,11 @@
 import { Settings, SettingsInterface } from './Settings';
-import { jsonToInterface, TimerJSON } from './TimerInterface';
+import { rawToTimerData, RawTimerData } from './TimerData';
 import { TimerSystem } from './TimerSystem';
 
 export interface SaveData {
-    timers: TimerJSON[],
+    timers: RawTimerData[],
     settings: SettingsInterface,
-	favoriteTimers: TimerJSON[]
+	favoriteTimers: RawTimerData[]
 }
 
 interface Save {
@@ -21,8 +21,13 @@ class LocalStorage implements Save {
 		const interval = seconds * 60000;
 		window.clearInterval(this.intervalId);
 		this.intervalId = window.setInterval(() => {
-			console.log('Saved!');
 			this.save();
+			console.log(
+				'[%c%s%c] Autosaved all multitimer data into localstorage', 
+				'color: blue',
+				Date().slice(0, 24),
+				'color: initial',
+			);
 		}, interval);
 	}
 
@@ -40,9 +45,8 @@ class LocalStorage implements Save {
 	}
 
 	public load() {
-		console.log(TimerSystem);
-		const timers = loadTimers().map(jsonToInterface);
-		const favoriteTimers = loadFavoriteTimers().map(jsonToInterface);
+		const timers = loadTimers().map(rawToTimerData);
+		const favoriteTimers = loadFavoriteTimers().map(rawToTimerData);
 		const settings = loadSettings();
 
 		TimerSystem.loadTimerList(timers);
@@ -53,7 +57,7 @@ class LocalStorage implements Save {
 
 		Settings.updateSettings(settings);
 
-		function loadTimers(): TimerJSON[] {
+		function loadTimers(): RawTimerData[] {
 			const timers = localStorage.getItem('timers');
 			return timers ? JSON.parse(timers) : [];
 		}
@@ -63,7 +67,7 @@ class LocalStorage implements Save {
 			return settings ? JSON.parse(settings) : {};
 		}
 
-		function loadFavoriteTimers(): TimerJSON[] {
+		function loadFavoriteTimers(): RawTimerData[] {
 			const timers = localStorage.getItem('favoriteTimers');
 			return timers ? JSON.parse(timers) : [];
 		}

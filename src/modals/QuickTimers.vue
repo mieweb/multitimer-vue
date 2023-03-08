@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
-import { partialToInterface, TimerInterface } from '../data/TimerInterface';
+import { partialToTimerData, TimerData } from '../data/TimerData';
 //@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
 import anime from 'animejs/lib/anime.es';
 
-const addTimer = (event: MouseEvent, timer: TimerInterface) => {
-	if (!TimerSystem.addTimer(partialToInterface(timer))) {
+const addTimer = (event: MouseEvent, timer: TimerData) => {
+	if (!TimerSystem.addTimer(partialToTimerData(timer))) {
 		const animatedElement = (event.target as Element).parentElement;
 		anime({
 			targets: animatedElement,
@@ -22,11 +22,11 @@ const addTimer = (event: MouseEvent, timer: TimerInterface) => {
 	}
 };
 
-const addCommonTimer = (event: MouseEvent, partial: Partial<TimerInterface>) => {
-	addTimer(event, partialToInterface(partial));
+const addCommonTimer = (event: MouseEvent, partial: Partial<TimerData>) => {
+	addTimer(event, partialToTimerData(partial));
 };
 
-const commonTimers: Partial<TimerInterface>[] = [
+const commonTimers: Partial<TimerData>[] = [
 	{ issue: '34603', title: 'Cleanup call', },
 	{ issue: '34511', title: 'Hotfix review', },
 	{ issue: '35270', title: 'Senior dev', },
@@ -69,7 +69,7 @@ const commonTimers: Partial<TimerInterface>[] = [
 				</button>
 				<button
 					class="plain-btn"
-					@click="TimerSystem.deleteFavorite(timer.issue)"
+					@click="TimerSystem.removeFavorite(timer.issue)"
 				>
 					<i class="fa fa-trash-alt" />
 				</button>

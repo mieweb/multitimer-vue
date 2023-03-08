@@ -1,6 +1,7 @@
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { reactive } from 'vue';
 import { getStorage } from './Save';
+import { Activity } from './TimerData';
 
 type MeetingPreset = 'D' | 'W' | 'M' | 'R';
 type StartEndDate = {
@@ -19,7 +20,8 @@ export interface SettingsInterface {
     meetingDetectEnd: string,
     meetingDetectPreset: MeetingPreset,
 	darkMode: boolean,
-	onlyImportIssuedMeetings: boolean
+	onlyImportIssuedMeetings: boolean,
+	defaultActivity: Activity
 }
 
 class _Settings implements SettingsInterface {
@@ -33,6 +35,7 @@ class _Settings implements SettingsInterface {
 	public meetingDetectEnd = this.meetingDetectStart;
 	public meetingDetectPreset: MeetingPreset = 'D';
 	public onlyImportIssuedMeetings = true;
+	public defaultActivity: Activity = 'Development';
 	
 	// "External" settings
 	public darkMode = false;

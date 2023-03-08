@@ -6,7 +6,7 @@ const actions: Action[] = [
 	{
 		title: 'Remove All Timers',
 		action: () => {
-			TimerSystem.deleteAllTimers();
+			TimerSystem.removeAllTimers();
 		},
 		closeModal: true,
 		classes: 'btn-danger',

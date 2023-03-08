@@ -69,6 +69,9 @@ const versionNumber = MULTITIMER_VERSION;
 				The <i class="fa fa-grip-vertical" /> icon is used to drag the timer in the list. Click and hold your mouse over
 				the icon to drag the timer through the list.
 			</li>
+			<li>
+				The <i class="fa fa-retweet" /> icon switchs the right-adjacent dropdown between a billable dropdown and an activity dropdown
+			</li>
 		</ul>
 		<h5>Extra Controls</h5>
 		These controls are featured on the "second row" of the timer, and can be hidden with
@@ -76,8 +79,15 @@ const versionNumber = MULTITIMER_VERSION;
 		Describing these controls left to right:
 		<ul>
 			<li>
-				Considered the bill status dropdown, can select how this timer is billed when you log
-				it to Redmine.
+				Two dropdowns exist within this control, toggled with the <i class="fa fa-retweet" /> button:
+				<ul>
+					<li>
+						The billable dropdown controls how the issue is billed on logging to Redmine.
+					</li>
+					<li>
+						The activity dropdown controls the associated activity for the issue, which is filled out on Redmine.
+					</li>
+				</ul>
 			</li>
 			<li>
 				The comment input box, type out a comment that gets filled out when logging to Redmine.

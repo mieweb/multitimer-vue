@@ -1,9 +1,8 @@
-import { formToInterface, TimerInterface, TimerId, interfaceToJSON } from './TimerInterface';
+import { getActivityValue, rawToTimerData, TimerData, TimerId, timerDataToRaw } from './TimerData';
 import { reactive } from 'vue';
 import { SaveData } from './Save';
 import format from 'date-fns/format';
 import HMS from './HMS';
-import { exit } from 'process';
 
 export interface TimerFilter {
     search: string,
@@ -13,18 +12,18 @@ export interface TimerFilter {
 class _TimerSystem {
 	static lastId = -1;
 	// private map: Map<number, TimerInterface> = new Map();
-	private timerList: { id: TimerId, timer: TimerInterface }[] = [];
+	private timerList: { id: TimerId, timer: TimerData }[] = [];
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
 	public activeTimerId = NaN;
-	private favoriteTimers: TimerInterface[] = [];
+	private favoriteTimers: TimerData[] = [];
 	private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
 	private timerFilter: TimerFilter = {
 		search: '',
 		withTime: false
 	};
 	
-	public addTimer(timerData: TimerInterface): boolean {
+	public addTimer(timerData: TimerData): boolean {
 		if (this.issueExistsInTimerList(timerData.issue)) return false;
 		const id = this.newId();
 		this.timerList.unshift({ id, timer: reactive(timerData) });
@@ -32,7 +31,7 @@ class _TimerSystem {
 		return true;
 	}
 
-	public splitTimer(timerData: TimerInterface): boolean {
+	public splitTimer(timerData: TimerData): boolean {
 		if (this.issueExistsInTimerList(timerData.issue)) return false;
 		if (!this.activeTimerId) {
 			return this.addTimer(timerData);
@@ -56,7 +55,7 @@ class _TimerSystem {
 	 * nor does it start any timers.
 	 * @param timerList A list of timers
 	 */
-	public loadTimerList(timerList: TimerInterface[]) {
+	public loadTimerList(timerList: TimerData[]) {
 		for (const timerData of timerList.filter(timer => !this.issueExistsInTimerList(timer.issue))) {
 			this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
 		}
@@ -66,7 +65,7 @@ class _TimerSystem {
 	 * Special function similar to `loadTimerList`, but updates timers that already exists from the given data
 	 * @param meetings Outlook meetings to import
 	 */
-	public importOutlookMeetings(meetings: TimerInterface[]) {
+	public importOutlookMeetings(meetings: TimerData[]) {
 		for (const meeting of meetings) {
 			const existingTimer = this.issueExistsInTimerList(meeting.issue);
 			if (existingTimer) {
@@ -99,7 +98,7 @@ class _TimerSystem {
 		}
 	}
 
-	public* iterator(): IterableIterator<[number, TimerInterface]> {
+	public* iterator(): IterableIterator<[number, TimerData]> {
 		const filter = this.timerFilter;
 		const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
 
@@ -110,7 +109,7 @@ class _TimerSystem {
 			yield [id, timer];
 		}
 
-		function searchMatches(timer: TimerInterface, regex: RegExp): boolean {
+		function searchMatches(timer: TimerData, regex: RegExp): boolean {
 			const title = timer.title.toLowerCase();
 			const issue = timer.issue;
 
@@ -152,7 +151,7 @@ class _TimerSystem {
 		this.setTimeoutId = NaN;
 	}
 
-	public deleteTimer(id: TimerId) {
+	public removeTimer(id: TimerId) {
 		for (let i = 0; i < this.timerList.length; ++i) {
 			if (this.timerList[i].id === id) {
 				this.timerList.splice(i, 1);
@@ -160,7 +159,7 @@ class _TimerSystem {
 		}
 	}
 
-	public editTimer(id: TimerId, changes: Partial<TimerInterface>) {
+	public editTimer(id: TimerId, changes: Partial<TimerData>) {
 		const oldTimerData = this.getTimerById(id);
 		const newTimerData = {
 			...oldTimerData,
@@ -190,29 +189,24 @@ class _TimerSystem {
 		timer.time?.updateTime(hms);
 	}
 
-	public addFavoriteFromId(id: TimerId): boolean {
-		try {
-			const timerData = {
-				...this.getTimerById(id),
-				time: new HMS()
-			};
-			return this.addFavoriteFromInterface(timerData);
-		} catch {
-			return false;
-		}
+	public addFavoriteFromId(id: TimerId) {
+		const timerData = {
+			...this.getTimerById(id),
+			time: new HMS()
+		};
+		return this.addFavoriteFromInterface(timerData);
 	}
 
-	public addFavoriteFromInterface(timerData: TimerInterface): boolean {
+	public addFavoriteFromInterface(timerData: TimerData) {
 		for (const timer of this.favoriteTimers) {
 			if (timer.issue === timerData.issue) {
-				return false;
+				throw new Error(`A favorite with issue ${timerData.issue} already exists`);
 			}
 		}
 		this.favoriteTimers.push(timerData);
-		return true;
 	}
 
-	public deleteFavorite(issue: string) {
+	public removeFavorite(issue: string) {
 		for (let i = 0; i < this.favoriteTimers.length; ++i) {
 			const timer = this.favoriteTimers[i];
 			if (timer.issue === issue) {
@@ -223,7 +217,7 @@ class _TimerSystem {
 		this.timerToConfirm = NaN;
 	}
 
-	public favorites(): TimerInterface[] {
+	public favorites(): TimerData[] {
 		return this.favoriteTimers;
 	}
 
@@ -233,7 +227,7 @@ class _TimerSystem {
 		}
 	}
 
-	public deleteAllTimers() {
+	public removeAllTimers() {
 		this.timerList.splice(0, this.timerList.length);
 	}
 
@@ -271,8 +265,8 @@ class _TimerSystem {
 	}
 
 	public toSaveData(): Pick<SaveData, 'timers' | 'favoriteTimers'> {
-		const favoriteTimers = this.favoriteTimers.map(interfaceToJSON);
-		const timers = this.timerList.map(({ timer }) => interfaceToJSON(timer));
+		const favoriteTimers = this.favoriteTimers.map(timerDataToRaw);
+		const timers = this.timerList.map(({ timer }) => timerDataToRaw(timer));
 
 		return {
 			timers,
@@ -288,9 +282,9 @@ class _TimerSystem {
 		const timers = saveData.timers || [];
 		const favoriteTimers = saveData.favoriteTimers || [];
 
-		this.loadTimerList(timers.map(formToInterface));
+		this.loadTimerList(timers.map(rawToTimerData));
 
-		for (const timer of favoriteTimers.map(formToInterface)) {
+		for (const timer of favoriteTimers.map(rawToTimerData)) {
 			this.addFavoriteFromInterface(timer);
 		}
 	}
@@ -304,10 +298,12 @@ class _TimerSystem {
 		return id;
 	}
 
-	private logFromData(timer: TimerInterface) {
+	private logFromData(timer: TimerData) {
+		debugger;
 		const workedTime = timer.time.roundedTime();
 		const logDate = format(this.logDate, 'dd/MM/yyyy');
-		const url = `https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}`;
+		const url = 
+			`https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}&time_entry[activity_id]=${getActivityValue(timer.activity)}`;
 		window.open(url);
 	}
 
@@ -316,13 +312,13 @@ class _TimerSystem {
 	 * Always returns false if `issue` parameter is empty. 
 	 * @param issue Issue string, can be empty.
 	 */
-	private issueExistsInTimerList(issue: string): TimerInterface | undefined {
+	private issueExistsInTimerList(issue: string): TimerData | undefined {
 		if (!issue) return;
 		const result = this.timerList.find(({ timer }) => timer.issue === issue);
 		return result ? result.timer : undefined; 
 	}
 
-	private getTimerById(id: TimerId): TimerInterface {
+	private getTimerById(id: TimerId): TimerData {
 		for (let i = 0; i < this.timerList.length; ++i) {
 			if (this.timerList[i].id === id) {
 				return this.timerList[i].timer;
