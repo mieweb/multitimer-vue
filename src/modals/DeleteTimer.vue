@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 const actions: Action[] = [
 	{
-		title: 'Delete Timer',
+		title: 'Remove Timer',
 		action: () => {
 			TimerSystem.deleteTimer(props.modalData.timerId);
 		},
@@ -23,10 +23,10 @@ const actions: Action[] = [
 <template>
 	<ModalTemplate
 		:actions="actions"
-		:title="'Delete Timer?'"
+		:title="'Remove Timer?'"
 	>
 		<div class="modal-body">
-			<label class="form-label">Are you sure you want to delete this timer?</label>
+			<label class="form-label">Are you sure you want to remove this timer?</label>
 		</div>
 	</ModalTemplate>
 </template>

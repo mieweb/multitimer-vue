@@ -52,8 +52,8 @@ const versionNumber = MULTITIMER_VERSION;
 				modal.
 			</li>
 			<li>
-				The <i class="fa fa-trash-alt" /> delete button
-				deletes the timer after a prompt.
+				The <i class="fa fa-trash-alt" /> remove button
+				removes the timer after a prompt.
 			</li>
 			<li>
 				The <i class="fa fa-play" /> start button starts
@@ -99,7 +99,7 @@ const versionNumber = MULTITIMER_VERSION;
 				<span class="text-danger">Reset All Timers</span> will reset all timers with time back to zero.
 			</li>
 			<li>
-				<span class="text-danger">Delete All Timers</span> will delete all timers, clearing your timer list.
+				<span class="text-danger">Remove All Timers</span> will remove all timers, clearing your timer list.
 			</li>
 			<li>
 				A search bar labeled 
@@ -154,13 +154,13 @@ const versionNumber = MULTITIMER_VERSION;
 		<p>
 			Quick timers feature two lists of entries: <b>Common Timers</b> and <b>Favorite Timers</b>. Each list has a list of entries that
 			can create a new timer by clicking on the text of said entry. The former section is a static list of predefined entries which
-			cannot be modified. The latter can be added to and deleted from.
+			cannot be modified. The latter can be added to and removed from.
 		</p>
 		<p>
 			To modify the list of <b>Favorite Timers</b>, click the <i class="fa fa-star" /> button on an existing timer. This
 			copies over the issue number and the title of the timer the button belongs to, and a new timer can be created with that data when
 			you click on related entry in the list. To remove the entry, click the <i class="fa fa-trash-alt" /> button next to entry you
-			want deleted.
+			want removed.
 		</p>
 		<hr>
 		<h4>Timer Save Data</h4>
