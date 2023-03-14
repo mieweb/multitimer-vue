@@ -46,7 +46,12 @@ class LocalStorage implements Save {
 
 	public load() {
 		const timers = loadTimers().map(rawToTimerData);
-		const favoriteTimers = loadFavoriteTimers().map(rawToTimerData);
+		const favoriteTimers = loadFavoriteTimers().map(rawTimerData => {
+			rawTimerData.time.hours = 0;
+			rawTimerData.time.minutes = 0;
+			rawTimerData.time.seconds = 0;
+			return rawToTimerData(rawTimerData);
+		});
 		const settings = loadSettings();
 
 		TimerSystem.loadTimerList(timers);
