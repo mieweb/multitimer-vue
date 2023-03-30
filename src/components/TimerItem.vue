@@ -44,7 +44,7 @@ const updateTime = () => {
 };
 const favorite = () => {
 	try {
-		TimerSystem.addFavoriteFromId(props.timerId);
+		TimerSystem.createFavoriteFromId(props.timerId);
 	}
 	catch {
 		anime({

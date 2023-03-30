@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
-import { partialToTimerData, TimerData } from '../data/TimerData';
+import { FavoriteTimer } from '../data/TimerData';
 //@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
 import anime from 'animejs/lib/anime.es';
 
-const addTimer = (event: MouseEvent, timer: TimerData) => {
-	if (!TimerSystem.addTimer(partialToTimerData(timer))) {
+const addTimer = (event: MouseEvent, timer: FavoriteTimer) => {
+	if (!TimerSystem.addFavoriteToTimerList(timer)) {
 		const animatedElement = (event.target as Element).parentElement;
 		anime({
 			targets: animatedElement,
@@ -22,19 +22,15 @@ const addTimer = (event: MouseEvent, timer: TimerData) => {
 	}
 };
 
-const addCommonTimer = (event: MouseEvent, partial: Partial<TimerData>) => {
-	addTimer(event, partialToTimerData(partial));
-};
-
-const commonTimers: Partial<TimerData>[] = [
-	{ issue: '34603', title: 'Cleanup call', },
-	{ issue: '34511', title: 'Hotfix review', },
-	{ issue: '35270', title: 'Senior dev', },
-	{ issue: '36587', title: 'Zeus-web downtime', },
-	{ issue: '36209', title: 'Company-wide meeting', },
-	{ issue: '49022', title: 'EH Master Build Call', },
-	{ issue: '80204', title: 'Encounter UI', },
-	{ issue: '95143', title: 'Dev PTO 2021', },
+const commonTimers: FavoriteTimer[] = [
+	{ issue: '34603', title: 'Cleanup call', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
+	{ issue: '34511', title: 'Hotfix review', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
+	{ issue: '35270', title: 'Senior dev', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
+	{ issue: '36587', title: 'Zeus-web downtime', link: '', billStatus: 'Non-Billable', activity: 'Other' },
+	{ issue: '36209', title: 'Company-wide meeting', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
+	{ issue: '49022', title: 'EH Master Build Call', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
+	{ issue: '80204', title: 'Encounter UI', link: '', billStatus: 'Non-Billable', activity: 'Other' },
+	{ issue: '95143', title: 'Dev PTO 2021', link: '', billStatus: 'Non-Billable', activity: 'Other'},
 ];
 </script>
 <template>
@@ -49,7 +45,7 @@ const commonTimers: Partial<TimerData>[] = [
 		>
 			<button
 				class="plain-btn"
-				@click="e => addCommonTimer(e, timer)"
+				@click="e => addTimer(e, timer)"
 			>
 				{{ timer.issue }} {{ timer.title }}
 			</button>
