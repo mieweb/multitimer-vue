@@ -29,10 +29,12 @@ export type TimerData = {
     time: HMS,
     link: string,
     comment: string,
-    billStatus: string,
+    billStatus: BillStatus,
     controlsHidden: boolean,
 	activity: Activity
 };
+
+export type FavoriteTimer = Omit<TimerData, 'time' | 'comment' | 'controlsHidden'>;
 
 export type RawTimerData = Omit<TimerData, 'time'> 
 	& { time: { hours: number, minutes: number, seconds: number } };

@@ -1,12 +1,6 @@
 import { Settings, SettingsInterface } from './Settings';
-import { rawToTimerData, RawTimerData } from './TimerData';
+import { RawTimerData } from './TimerData';
 import { TimerSystem } from './TimerSystem';
-
-export interface SaveData {
-    timers: RawTimerData[],
-    settings: SettingsInterface,
-	favoriteTimers: RawTimerData[]
-}
 
 interface Save {
 	setAutosaveInterval(interval: number): void;
@@ -37,7 +31,7 @@ class LocalStorage implements Save {
 		const {
 			timers,
 			favoriteTimers
-		} = TimerSystem.toSaveData();
+		} = TimerSystem.toTimerSystemData();
 
 		localStorage.setItem('timers', JSON.stringify(timers));
 		localStorage.setItem('settings', JSON.stringify(settings));
@@ -45,22 +39,9 @@ class LocalStorage implements Save {
 	}
 
 	public load() {
-		const timers = loadTimers().map(rawToTimerData);
-		const favoriteTimers = loadFavoriteTimers().map(rawTimerData => {
-			rawTimerData.time.hours = 0;
-			rawTimerData.time.minutes = 0;
-			rawTimerData.time.seconds = 0;
-			return rawToTimerData(rawTimerData);
-		});
-		const settings = loadSettings();
-
-		TimerSystem.loadTimerList(timers);
-
-		for (const timer of favoriteTimers) {
-			TimerSystem.addFavoriteFromInterface(timer);
-		}
-
-		Settings.updateSettings(settings);
+		TimerSystem.timersFromRaw(loadTimers());
+		TimerSystem.favoriteTimersFromRaw(loadFavoriteTimers());
+		Settings.updateSettings(loadSettings());
 
 		function loadTimers(): RawTimerData[] {
 			const timers = localStorage.getItem('timers');
@@ -73,8 +54,10 @@ class LocalStorage implements Save {
 		}
 
 		function loadFavoriteTimers(): RawTimerData[] {
-			const timers = localStorage.getItem('favoriteTimers');
-			return timers ? JSON.parse(timers) : [];
+			const favoritesJSONString = localStorage.getItem('favoriteTimers');
+			if (!favoritesJSONString) return [];
+			
+			return JSON.parse(favoritesJSONString);
 		}
 	}
 }

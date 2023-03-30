@@ -2,8 +2,7 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { Settings, SettingsInterface } from '../data/Settings';
 import Action from '../data/Action';
-import { TimerSystem } from '../data/TimerSystem';
-import { SaveData } from '../data/Save';
+import { TimerSystem, TimerSystemData } from '../data/TimerSystem';
 import { ref } from 'vue';
 import { activities } from '../data/TimerData';
 
@@ -42,30 +41,31 @@ const importData = () => {
 
 	if (!file) return;
 	file.text().then(jsonText => {
-		TimerSystem.importFromSaveData(JSON.parse(jsonText) as Partial<SaveData>);
+		const timerData = JSON.parse(jsonText) as TimerSystemData;
+		TimerSystem.timersFromRaw(timerData.timers);
+		TimerSystem.favoriteTimersFromRaw(timerData.favoriteTimers);
 	});
 };
 
 const recoverData = () => {
 	const localStorageTimers = localStorage.getItem('timers');
-	const localStorageFavorites = localStorage.getItem('customTimers');
-	const saveData: Partial<SaveData> = {
-		timers: localStorageTimers ? JSON.parse(localStorageTimers) : [],
-		favoriteTimers: localStorageFavorites ? JSON.parse(localStorageFavorites) : []
-	};
-	TimerSystem.importFromSaveData(saveData);
+	const localStorageFavorites = localStorage.getItem('favoriteTimers');
+	const rawTimers = localStorageTimers ? JSON.parse(localStorageTimers) : [];
+	const rawFavorites = localStorageFavorites ? JSON.parse(localStorageFavorites) : [];
+	TimerSystem.timersFromRaw(rawTimers);
+	TimerSystem.favoriteTimersFromRaw(rawFavorites);
 };
 
 const exportData = () => {
 	const a = document.createElement('a');
-	const saveData = JSON.stringify(TimerSystem.toSaveData());
-	const date = new Date().toISOString().slice(0, 19).replace('T', '_');
+	const saveData = JSON.stringify(TimerSystem.toTimerSystemData());
+	const date = new Date().toISOString().slice(0, 10);
 	a.href = URL.createObjectURL(
 		new Blob([saveData], {
 			type: 'application/json'
 		})
 	);
-	a.download = `save-data-${date}`;
+	a.download = `multitimer-${date}`;
 	a.click();
 };
 

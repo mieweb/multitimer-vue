@@ -1,12 +1,22 @@
-import { getActivityValue, rawToTimerData, TimerData, TimerId, timerDataToRaw } from './TimerData';
+import { getActivityValue, TimerData, TimerId, timerDataToRaw, FavoriteTimer, BillStatus, RawTimerData } from './TimerData';
 import { reactive } from 'vue';
-import { SaveData } from './Save';
 import format from 'date-fns/format';
 import HMS from './HMS';
+import { Settings } from './Settings';
+import { billStatuses } from './BillStatus';
 
 export interface TimerFilter {
     search: string,
     withTime: boolean
+}
+
+export type TimerSystemData = {
+	timers: RawTimerData[],
+	favoriteTimers: FavoriteTimer[]
+};
+
+function checkBillStatus(billString: string): BillStatus {
+	return billStatuses.includes(billString) ? billString as BillStatus : 'Non-Billable';
 }
 
 class _TimerSystem {
@@ -16,7 +26,7 @@ class _TimerSystem {
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
 	public activeTimerId = NaN;
-	private favoriteTimers: TimerData[] = [];
+	private favoriteTimers: FavoriteTimer[] = [];
 	private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
 	private timerFilter: TimerFilter = {
 		search: '',
@@ -189,15 +199,28 @@ class _TimerSystem {
 		timer.time?.updateTime(hms);
 	}
 
-	public addFavoriteFromId(id: TimerId) {
-		const timerData = {
-			...this.getTimerById(id),
-			time: new HMS()
+	public createFavoriteFromId(id: TimerId) {
+		const timerRef = this.getTimerById(id);
+		const timerData: FavoriteTimer = {
+			issue: timerRef.issue,
+			title: timerRef.title,
+			link: timerRef.link,
+			billStatus: timerRef.billStatus,
+			activity: timerRef.activity
 		};
-		return this.addFavoriteFromInterface(timerData);
+		return this.createFavoriteFromInterface(timerData);
 	}
 
-	public addFavoriteFromInterface(timerData: TimerData) {
+	public addFavoriteToTimerList(timer: FavoriteTimer): boolean {
+		return this.addTimer({
+			...timer,
+			time: new HMS(),
+			comment: '',
+			controlsHidden: Settings.hideControls
+		});
+	}
+
+	public createFavoriteFromInterface(timerData: FavoriteTimer) {
 		for (const timer of this.favoriteTimers) {
 			if (timer.issue === timerData.issue) {
 				throw new Error(`A favorite with issue ${timerData.issue} already exists`);
@@ -217,7 +240,7 @@ class _TimerSystem {
 		this.timerToConfirm = NaN;
 	}
 
-	public favorites(): TimerData[] {
+	public favorites(): FavoriteTimer[] {
 		return this.favoriteTimers;
 	}
 
@@ -264,29 +287,50 @@ class _TimerSystem {
 		return totalTime;
 	}
 
-	public toSaveData(): Pick<SaveData, 'timers' | 'favoriteTimers'> {
-		const favoriteTimers = this.favoriteTimers.map(timerDataToRaw);
-		const timers = this.timerList.map(({ timer }) => timerDataToRaw(timer));
-
+	public toTimerSystemData(): TimerSystemData {
 		return {
-			timers,
-			favoriteTimers
-		};
+			timers: Array.from(this.timerList.map(te => timerDataToRaw(te.timer))),
+			favoriteTimers: Array.from(this.favoriteTimers)
+		} as TimerSystemData;
+	}
+
+	public timersFromRaw(rawTimers: RawTimerData[]) {
+		for (const rawTimer of rawTimers) {
+			this.timerList.push({ 
+				id: this.newId(),
+				timer: reactive({
+					issue: rawTimer.issue,
+					title: rawTimer.title,
+					time: HMS.fromObject(rawTimer.time),
+					link: rawTimer.link ?? '',
+					comment: rawTimer.comment ?? '',
+					billStatus: checkBillStatus(rawTimer.billStatus),
+					controlsHidden: rawTimer.controlsHidden ?? Settings.hideControls,
+					activity: rawTimer.activity ?? Settings.defaultActivity
+				} as TimerData)
+			});
+		}
+	}
+
+	public favoriteTimersFromRaw(rawFavorites: FavoriteTimer[]) {
+		for (const rawTimer of rawFavorites) {
+			this.createFavoriteFromInterface({
+				issue: rawTimer.issue ?? '',
+				title: rawTimer.title ?? '',
+				link: rawTimer.link ?? '',
+				billStatus: checkBillStatus(rawTimer.billStatus),
+				activity: rawTimer.activity ?? Settings.defaultActivity
+			});
+		}
 	}
 
 	/**
 	 * Imports from save data.
 	 * @param saveData Savedata to load
 	 */
-	public importFromSaveData(saveData: Partial<SaveData>) {
-		const timers = saveData.timers || [];
-		const favoriteTimers = saveData.favoriteTimers || [];
-
-		this.loadTimerList(timers.map(rawToTimerData));
-
-		for (const timer of favoriteTimers.map(rawToTimerData)) {
-			this.addFavoriteFromInterface(timer);
-		}
+	public importTimerSystemData(timerSystemData: TimerSystemData) {
+		this.timersFromRaw(timerSystemData.timers as RawTimerData[] ?? []);
+		this.favoriteTimersFromRaw(timerSystemData.favoriteTimers as RawTimerData[] ?? []);
 	}
 
 	private newId() {
@@ -299,7 +343,6 @@ class _TimerSystem {
 	}
 
 	private logFromData(timer: TimerData) {
-		debugger;
 		const workedTime = timer.time.roundedTime();
 		const logDate = format(this.logDate, 'dd/MM/yyyy');
 		const url = 
