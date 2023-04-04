@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host localhost",
     "build": "vue-tsc && vite build --base=./",
+    "check": "vue-tsc --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
