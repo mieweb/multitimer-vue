@@ -4,20 +4,36 @@ BASE_DIR=$HOME/public_html/multitimer-vue
 SRC=$BASE_DIR/src
 DIST=$BASE_DIR/dist
 PUBLIC=$BASE_DIR/public
-TARGET_DIR=$HOME/public_html/multitimer-testing
 
 if [ $(hostname) != "zeus.med-web.com" ]; then
     echo Deploying on a system that is not Zeus is deactivated. Exitting. >&2
     exit 1
 fi
 
-if [ "$1" == "--release" ]; then
-    TARGET_DIR=$HOME/public_html/multitimer
+function usage() {
+    echo "Usage: deploy.sh [ --testing | --release | --qa ]"
+}
+
+if [ "$#" != "1" ]; then
+    usage
+    exit 1
 fi
 
-if [ "$1" == "--qa" ]; then
-    TARGET_DIR=tbaugher@zeus-qa:/www/docrootssl/public/multitimer
-fi
+case "$1" in
+    "--testing")
+        TARGET_DIR=$HOME/public_html/multitimer-testing
+        ;;
+    "--release")
+        TARGET_DIR=$HOME/public_html/multitimer
+        ;;
+    "--qa")
+        TARGET_DIR=tbaugher@zeus-qa:/www/docrootssl/public/multitimer
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
 
 function build() {
     echo Building timer... && \
