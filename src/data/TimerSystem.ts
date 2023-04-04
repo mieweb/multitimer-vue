@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 import format from 'date-fns/format';
 import HMS from './HMS';
 import { Settings } from './Settings';
-import { billStatuses } from './BillStatus';
+import { isBillStatus } from './TimerData';
 
 export interface TimerFilter {
     search: string,
@@ -16,7 +16,7 @@ export type TimerSystemData = {
 };
 
 function checkBillStatus(billString: string): BillStatus {
-	return billStatuses.includes(billString) ? billString as BillStatus : 'Non-Billable';
+	return isBillStatus(billString) ? billString : 'Non-Billable';
 }
 
 class _TimerSystem {

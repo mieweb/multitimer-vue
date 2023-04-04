@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { billStatuses } from '../data/BillStatus';
-import { Activity, TimerData, activities, getActivityValue } from '../data/TimerData';
+import { Activity, TimerData, activities, isBillStatus, billStatuses } from '../data/TimerData';
 import { TimerSystem } from '../data/TimerSystem';
 import { openModal } from '../data/ModalHandler';
 import RemoveTimer from '../modals/RemoveTimer.vue';
@@ -70,8 +69,11 @@ const updateComment = () => {
 	});
 };
 const updateBillStatus = () => {
+	const billStatus = billableSelect?.value?.value;
+	if (!billStatus || !isBillStatus(billStatus)) return;
+
 	TimerSystem.editTimer(props.timerId, {
-		billStatus: billableSelect?.value?.value
+		billStatus
 	});
 };
 const updateActivity = () => {

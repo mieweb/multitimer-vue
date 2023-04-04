@@ -2,6 +2,19 @@ import HMS from './HMS';
 import { Settings } from './Settings';
 
 export type BillStatus = 'Non-Billable' | 'Billable Time' | 'SOW Line Item' | 'MIE Goodwill (non-billable)';
+export const billStatuses = ['Non-Billable', 'Billable Time', 'SOW Line Item', 'MIE Goodwill (non-billable)'];
+export function isBillStatus(bsString: string): bsString is BillStatus {
+	switch (bsString) {
+	case 'Non-Billable':
+	case 'Billable Time': 
+	case 'SOW Line Item':
+	case 'MIE Goodwill (non-billable)':
+		return true;
+	default:
+		return false;
+	}
+}
+
 export type Activity = 'Acct Management'
 	| 'Administrative'
 	| 'DB Administration'
