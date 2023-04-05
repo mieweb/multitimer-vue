@@ -8,7 +8,7 @@ import { Settings } from '../data/Settings';
 
 defineEmits(['addTimer', 'splitTimer']);
 
-const formData: Omit<RawTimerData, 'controlsHidden'> = reactive({
+const formData: Omit<RawTimerData, 'controlsHidden' | 'lastUsed'> = reactive({
 	issue: '',
 	title: '',
 	time: {
@@ -19,7 +19,7 @@ const formData: Omit<RawTimerData, 'controlsHidden'> = reactive({
 	billStatus: 'Non-Billable',
 	comment: '',
 	link: '',
-	activity: Settings.defaultActivity
+	activity: Settings.defaultActivity,
 });
 
 const clearFormData = () => {

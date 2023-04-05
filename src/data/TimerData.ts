@@ -44,10 +44,11 @@ export type TimerData = {
     comment: string,
     billStatus: BillStatus,
     controlsHidden: boolean,
-	activity: Activity
+	activity: Activity,
+	lastUsed: number
 };
 
-export type FavoriteTimer = Omit<TimerData, 'time' | 'comment' | 'controlsHidden'>;
+export type FavoriteTimer = Omit<TimerData, 'time' | 'comment' | 'controlsHidden' | 'lastUsed'>;
 
 export type RawTimerData = Omit<TimerData, 'time'> 
 	& { time: { hours: number, minutes: number, seconds: number } };
@@ -77,26 +78,34 @@ export function rawToTimerData(form: Partial<RawTimerData>): TimerData {
 
 export function timerDataToRaw(timerData: TimerData): RawTimerData {
 	return {
-		...timerData,
+		title: timerData.title,
+		issue: timerData.issue,
+		comment: timerData.comment,
+		link: timerData.link,
+		billStatus: timerData.billStatus,
+		activity: timerData.activity,
+		controlsHidden: timerData.controlsHidden,
+		lastUsed: timerData.lastUsed,
 		time: {
 			hours: timerData.time.hours,
 			minutes: timerData.time.minutes,
 			seconds: timerData.time.seconds
-		}
+		},
 	};
 }
 
 export function partialToTimerData(partial: Partial<TimerData>): TimerData {
 	const time = partial.time ? HMS.fromObject(partial.time) : new HMS();
 	return {
-		issue: partial.issue?.toString() || '', // .toString() because this ends up being a number
-		title: partial.title?.trim() || '',
+		issue: partial.issue?.toString() ?? '', // .toString() because this ends up being a number
+		title: partial.title?.trim() ?? '',
 		time: time,
-		link: partial.link?.trim() || '',
+		link: partial.link?.trim() ?? '',
 		comment: partial.comment?.trim() || '',
-		billStatus: partial.billStatus || 'Non-Billable' as BillStatus,
+		billStatus: partial.billStatus ?? 'Non-Billable' as BillStatus,
 		controlsHidden: Settings.hideControls,
-		activity: partial.activity || 'Development'
+		activity: partial.activity ?? 'Development',
+		lastUsed: partial.lastUsed ?? Date.now()
 	};
 }
 

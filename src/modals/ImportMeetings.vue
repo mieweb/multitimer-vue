@@ -5,7 +5,6 @@ import HMS from '../data/HMS';
 import { BillStatus, RawTimerData, rawToTimerData } from '../data/TimerData';
 import { TimerSystem } from '../data/TimerSystem';
 import type { ModalData } from '../data/ModalHandler';
-import { Settings } from '../data/Settings';
 
 const props = defineProps<{
 	modalData: ModalData
@@ -14,7 +13,7 @@ const props = defineProps<{
 const formDataCollection = props.modalData.importMeetingData?.map(meeting => {
 	const startEndDifference = new Date(meeting.end).getTime() - new Date(meeting.start).getTime();
 	const time = HMS.fromSeconds(startEndDifference / 1000);
-	const timerForm: Omit<RawTimerData, 'controlsHidden'> = {
+	const timerForm: Omit<RawTimerData, 'controlsHidden' | 'lastUsed'> = {
 		issue: meeting.issue,
 		title: meeting.title,
 		time: {

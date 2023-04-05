@@ -21,7 +21,8 @@ export interface SettingsInterface {
     meetingDetectPreset: MeetingPreset,
 	darkMode: boolean,
 	onlyImportIssuedMeetings: boolean,
-	defaultActivity: Activity
+	defaultActivity: Activity,
+	lastUsedForLogging: boolean
 }
 
 class _Settings implements SettingsInterface {
@@ -36,6 +37,7 @@ class _Settings implements SettingsInterface {
 	public meetingDetectPreset: MeetingPreset = 'D';
 	public onlyImportIssuedMeetings = true;
 	public defaultActivity: Activity = 'Development';
+	public lastUsedForLogging = false;
 	
 	// "External" settings
 	public darkMode = false;

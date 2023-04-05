@@ -129,6 +129,19 @@ const actions: Action[] = [
 				</option>
 			</select>
 		</div>
+		<div class="mb-3 form-check">
+			<label
+				class="form-check-label"
+				for="last-used-logging"
+			>Used last used time for logging</label>
+			<input
+				id="last-used-logging"
+				v-model="formData.lastUsedForLogging"
+				name="last-used-logging"
+				class="form-check-input"
+				type="checkbox"
+			>
+		</div>
 		<h5>Timers</h5>
 		<hr>
 		<div>
