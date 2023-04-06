@@ -73,6 +73,10 @@ const versionNumber = MULTITIMER_VERSION;
 				The <i class="fa fa-retweet" /> icon switchs the right-adjacent dropdown between a billable dropdown and an activity dropdown
 			</li>
 		</ul>
+		<p>
+			For every timer, there is also an invisible "last used time" that is set everytime the timer starts. This "last used time"
+			can be used for logging if the associated setting is toggled on, where the date will fill out accordingly based on that time.
+		</p>
 		<h5>Extra Controls</h5>
 		These controls are featured on the "second row" of the timer, and can be hidden with
 		the <i class="fa fa-chevron-up" />/<i class="fa fa-chevron-down" /> toggle control.
@@ -104,6 +108,7 @@ const versionNumber = MULTITIMER_VERSION;
 			<li>
 				<span class="text-primary">Log All Timers</span> will log all the timers that have time; timers with no time will be excluded.
 				This features includes a date selector which will affect the log date, which defaults to the current date upon refresh of the site.
+				The date selector does nothing if the "last used time" for timers is used for logging (toggled in the settings).
 			</li>
 			<li>
 				<span class="text-danger">Reset All Timers</span> will reset all timers with time back to zero.
