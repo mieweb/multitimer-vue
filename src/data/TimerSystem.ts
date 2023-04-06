@@ -1,4 +1,4 @@
-import { getActivityValue, TimerData, TimerId, timerDataToRaw, FavoriteTimer, BillStatus, RawTimerData } from './TimerData';
+import { getActivityValue, TimerData, TimerId, timerDataToRaw, FavoriteTimer, BillStatus, RawTimerData, rawToTimerData } from './TimerData';
 import { reactive } from 'vue';
 import format from 'date-fns/format';
 import HMS from './HMS';
@@ -142,16 +142,19 @@ class _TimerSystem {
 	public startTimer(id: TimerId) {
 		const timer = this.getTimerById(id);
 		const interval = 1000;
+		const startDate = Date.now();
 
-		let expected = Date.now() + interval;
+		timer.lastUsed = startDate;
+		this.pauseActiveTimer();
+		this.activeTimerId = id;
+
+		let expected = startDate + interval;
 		const timeStep = () => {
 			const drift = Date.now() - expected;
 			timer.time?.updateTime(new HMS(0, 0, 1));
 			expected += interval;
 			this.setTimeoutId = window.setTimeout(timeStep, interval - drift);
 		};
-		this.pauseActiveTimer();
-		this.activeTimerId = id;
 		this.setTimeoutId = window.setTimeout(timeStep, interval);
 	}
 
@@ -216,7 +219,8 @@ class _TimerSystem {
 			...timer,
 			time: new HMS(),
 			comment: '',
-			controlsHidden: Settings.hideControls
+			controlsHidden: Settings.hideControls,
+			lastUsed: Date.now()
 		});
 	}
 
@@ -298,16 +302,7 @@ class _TimerSystem {
 		for (const rawTimer of rawTimers) {
 			this.timerList.push({ 
 				id: this.newId(),
-				timer: reactive({
-					issue: rawTimer.issue,
-					title: rawTimer.title,
-					time: HMS.fromObject(rawTimer.time),
-					link: rawTimer.link ?? '',
-					comment: rawTimer.comment ?? '',
-					billStatus: checkBillStatus(rawTimer.billStatus),
-					controlsHidden: rawTimer.controlsHidden ?? Settings.hideControls,
-					activity: rawTimer.activity ?? Settings.defaultActivity
-				} as TimerData)
+				timer: reactive(rawToTimerData(rawTimer))
 			});
 		}
 	}
@@ -344,7 +339,10 @@ class _TimerSystem {
 
 	private logFromData(timer: TimerData) {
 		const workedTime = timer.time.roundedTime();
-		const logDate = format(this.logDate, 'dd/MM/yyyy');
+		const logDate = format(
+			Settings.lastUsedForLogging ? new Date(timer.lastUsed) : this.logDate,
+			'dd/MM/yyyy'
+		);
 		const url = 
 			`https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}&time_entry[activity_id]=${getActivityValue(timer.activity)}`;
 		window.open(url);
