@@ -102,7 +102,7 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 	>
 		<div class="timer-grid">
 			<i
-				:class="`fa fa-save pointer save-button ${showOnHover} ${hideLog}`"
+				:class="`fa fa-save save-button timer-button ${showOnHover} ${hideLog}`"
 				@click="log"
 			/>
 			<a 
@@ -125,38 +125,38 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 			</p>
 			<div :class="`timer-options d-flex ${showOnHover}`">
 				<i
-					class="fa fa-edit pointer"
+					class="fa fa-edit timer-button"
 					@click="edit"
 				/>
 				<i
-					class="fa fa-undo pointer"
+					class="fa fa-undo timer-button"
 					@click="reset"
 				/>
 				<i
-					class="fa fa-plus pointer"
+					class="fa fa-plus timer-button"
 					@click="updateTime"
 				/>
 				<i
-					class="fa fa-star pointer"
+					class="fa fa-star timer-button"
 					@click="favorite"
 				/>
 				<i
-					class="fa fa-trash-alt pointer"
+					class="fa fa-trash-alt timer-button"
 					@click="remove"
 				/>
 			</div>
 			<i
-				class="fa pointer" 
+				class="fa timer-button" 
 				:class="isActive ? 'fa-pause' : 'fa-play'"
 				@click="isActive ? pause() : start()"
 			/>
 			<i 
-				:class="`fa control-toggle pointer ${chevron}`"
+				:class="`fa control-toggle timer-button ${chevron}`"
 				@click="toggleControls"
 			/>
 			<i
 				id="toggle-dropdown"
-				:class="`fa fa-retweet pointer ${showExtraControls}`"
+				:class="`fa fa-retweet timer-button ${showExtraControls}`"
 				@click="toggleDropdown"
 			/>
 			<select
@@ -242,12 +242,15 @@ export default {};
         overflow-y: hidden; 
     }
 
-    .save-button-grid {
+    .save-button {
         grid-column-start: 1;
+		text-align: center;
     }
 
     .issue {
         grid-column-start: 2;
+		padding: 0.25rem;
+		text-align: center;
     }
 
     .title {
@@ -314,5 +317,15 @@ export default {};
 		grid-row-start: 2;
 		grid-column-start: 1;
 		grid-column-end: 2;
+	}
+
+	.timer-button {
+		padding: 0.25rem;
+		cursor: pointer;
+		border-radius: 2px;
+	}
+
+	.timer-button:hover {
+		background-color: rgba(0.0, 0.0, 0.0, 0.2);
 	}
 </style>
