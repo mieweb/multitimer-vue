@@ -15,6 +15,13 @@ const props = defineProps<{
     timerData: TimerData,
     isActive: boolean,
 }>();
+
+const timerContainer = ref<Element>();
+const timerGrid = ref<Element>();
+const title = ref<Element>();
+const time = ref<Element>();
+const favoriteStar = ref<Element>();
+
 const billableSelect = ref<HTMLSelectElement>();
 const activitySelect = ref<HTMLSelectElement>();
 const commentField = ref<HTMLInputElement>();
@@ -44,8 +51,6 @@ const updateTime = () => {
 const favorite = () => {
 	try {
 		TimerSystem.createFavoriteFromId(props.timerId);
-	}
-	catch {
 		anime({
 			targets: '.fa-ticket',
 			keyframes: [
@@ -58,6 +63,26 @@ const favorite = () => {
 			duration: 1000,
 			easing: 'easeInOutSine'
 		});
+		anime({
+			targets: favoriteStar.value,
+			rotate: '1turn',
+			duration: 1000,
+			easing: 'easeOutElastic'
+		});
+	}
+	catch {
+		anime({
+			targets: favoriteStar.value,
+			keyframes: [
+				{ value: 30, translate: '0.3rem' },
+				{ value: 60, translate: '-0.2rem' },
+				{ value: 90, translate: '0.1rem' },
+				{ value: 100, translate: '0.0rem'}
+			],
+			duration: 250,
+			easing: 'linear'
+		});
+		return;
 	}
 };
 const toggleControls = () => {
@@ -85,24 +110,46 @@ const updateActivity = () => {
 const toggleDropdown = () => {
 	activitySelected.value = !activitySelected.value;
 };
+const interactTimer = (event: Event) => {
+	const validTargets = [
+		timerGrid.value,
+		timerContainer.value,
+		title.value,
+		time.value
+	] as Element[];
+	if (!Settings.startOnTimerClick) return;
+	if (!event.target) return;
+	if (!validTargets.includes(event.target as Element)) return;
+
+
+	if (props.isActive)
+		TimerSystem.pauseActiveTimer();
+	else 
+		TimerSystem.startTimer(props.timerId);
+
+};
 
 const showOnHover = computed(() => Settings.hideOptions ? 'hover-hide' : '');
 const hideLog = computed(() => !props.timerData.issue ? 'hide' : '');
 const chevron = computed(() => props.timerData.controlsHidden ? 'fa-chevron-down' : 'fa-chevron-up');
 const showExtraControls = computed(() => props.timerData.controlsHidden ? 'd-none' : '');
 const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-default');
-
 const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData.issue}`);
 
 </script>
 <template>
 	<div
-		class="timer py-3 px-4"
+		ref="timerContainer"
+		class="timer py-2 px-3"
 		:class="isActive ? 'bg-active' : 'bg-default'"
+		@click="interactTimer"
 	>
-		<div class="timer-grid">
+		<div
+			ref="timerGrid"
+			class="timer-grid"
+		>
 			<i
-				:class="`fa fa-save pointer save-button ${showOnHover} ${hideLog}`"
+				:class="`fa fa-save save-button timer-button ${showOnHover} ${hideLog}`"
 				@click="log"
 			/>
 			<a 
@@ -114,49 +161,54 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 				{{ timerData.issue }}
 			</a>
 			<p
+				ref="title"
 				class="title m-0"
 				data-bs-toggle="tooltip"
 				data-bs-title=""
 			>
 				{{ timerData.title }}
 			</p>
-			<p class="time m-0">
+			<p
+				ref="time"
+				class="time m-0"
+			>
 				{{ timerData.time }}
 			</p>
 			<div :class="`timer-options d-flex ${showOnHover}`">
 				<i
-					class="fa fa-edit pointer"
+					class="fa fa-edit timer-button"
 					@click="edit"
 				/>
 				<i
-					class="fa fa-undo pointer"
+					class="fa fa-undo timer-button"
 					@click="reset"
 				/>
 				<i
-					class="fa fa-plus pointer"
+					class="fa fa-plus timer-button"
 					@click="updateTime"
 				/>
 				<i
-					class="fa fa-star pointer"
+					class="fa fa-star timer-button"
+					ref="favoriteStar"
 					@click="favorite"
 				/>
 				<i
-					class="fa fa-trash-alt pointer"
+					class="fa fa-trash-alt timer-button"
 					@click="remove"
 				/>
 			</div>
 			<i
-				class="fa pointer" 
+				class="fa timer-button" 
 				:class="isActive ? 'fa-pause' : 'fa-play'"
 				@click="isActive ? pause() : start()"
 			/>
 			<i 
-				:class="`fa control-toggle pointer ${chevron}`"
+				:class="`fa control-toggle timer-button ${chevron}`"
 				@click="toggleControls"
 			/>
 			<i
 				id="toggle-dropdown"
-				:class="`fa fa-retweet pointer ${showExtraControls}`"
+				:class="`fa fa-retweet timer-button ${showExtraControls}`"
 				@click="toggleDropdown"
 			/>
 			<select
@@ -242,12 +294,15 @@ export default {};
         overflow-y: hidden; 
     }
 
-    .save-button-grid {
+    .save-button {
         grid-column-start: 1;
+		text-align: center;
     }
 
     .issue {
         grid-column-start: 2;
+		padding: 0.25rem;
+		text-align: center;
     }
 
     .title {
@@ -314,5 +369,15 @@ export default {};
 		grid-row-start: 2;
 		grid-column-start: 1;
 		grid-column-end: 2;
+	}
+
+	.timer-button {
+		padding: 0.25rem;
+		cursor: pointer;
+		border-radius: 2px;
+	}
+
+	.timer-button:hover {
+		background-color: rgba(0.0, 0.0, 0.0, 0.2);
 	}
 </style>

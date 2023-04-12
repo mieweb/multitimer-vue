@@ -23,6 +23,7 @@ export interface SettingsInterface {
 	onlyImportIssuedMeetings: boolean,
 	defaultActivity: Activity,
 	lastUsedForLogging: boolean
+	startOnTimerClick: boolean
 }
 
 class _Settings implements SettingsInterface {
@@ -38,6 +39,7 @@ class _Settings implements SettingsInterface {
 	public onlyImportIssuedMeetings = true;
 	public defaultActivity: Activity = 'Development';
 	public lastUsedForLogging = false;
+	public startOnTimerClick = false;
 	
 	// "External" settings
 	public darkMode = false;

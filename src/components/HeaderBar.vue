@@ -18,7 +18,7 @@ const toggleDarkMode = () => {
 		<div class="d-flex justify-content-around align-items-center">
 			<div id="left-controls">
 				<i
-					class="header-control fa fa-plus p-0 pointer"
+					class="header-control fa fa-plus mt-button"
 					@click="openModal(AddTimer)"
 				/>
 			</div>
@@ -32,22 +32,33 @@ const toggleDarkMode = () => {
 				class="d-flex gap-1"
 			>
 				<i
-					class="fa fa-cog pointer"
+					class="fa fa-cog mt-button"
 					@click="openModal(SettingsBar)"
 				/>
 				<i
-					class="fa fa-ticket pointer"
+					class="fa fa-ticket mt-button"
 					@click="openModal(QuickTimers)"
 				/>
 				<i
-					class="fa fa-question-circle pointer"
+					class="fa fa-question-circle mt-button"
 					@click="openModal(Help)"
 				/>
 				<i
-					class="fa fa-moon pointer"
+					class="fa fa-moon mt-button"
 					@click="toggleDarkMode"
 				/>
 			</div>
 		</div>
 	</nav>
 </template>
+<style>
+	.mt-button {
+		padding: 0.5rem;
+		cursor: pointer;
+		border-radius: 2px;
+	}
+
+	.mt-button:hover {
+		background-color: rgba(0.0, 0.0, 0.0, 0.2);
+	}
+</style>
