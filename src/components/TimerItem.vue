@@ -20,6 +20,7 @@ const timerContainer = ref<Element>();
 const timerGrid = ref<Element>();
 const title = ref<Element>();
 const time = ref<Element>();
+const favoriteStar = ref<Element>();
 
 const billableSelect = ref<HTMLSelectElement>();
 const activitySelect = ref<HTMLSelectElement>();
@@ -50,8 +51,6 @@ const updateTime = () => {
 const favorite = () => {
 	try {
 		TimerSystem.createFavoriteFromId(props.timerId);
-	}
-	catch {
 		anime({
 			targets: '.fa-ticket',
 			keyframes: [
@@ -64,6 +63,26 @@ const favorite = () => {
 			duration: 1000,
 			easing: 'easeInOutSine'
 		});
+		anime({
+			targets: favoriteStar.value,
+			rotate: '1turn',
+			duration: 1000,
+			easing: 'easeOutElastic'
+		});
+	}
+	catch {
+		anime({
+			targets: favoriteStar.value,
+			keyframes: [
+				{ value: 30, translate: '0.3rem' },
+				{ value: 60, translate: '-0.2rem' },
+				{ value: 90, translate: '0.1rem' },
+				{ value: 100, translate: '0.0rem'}
+			],
+			duration: 250,
+			easing: 'linear'
+		});
+		return;
 	}
 };
 const toggleControls = () => {
@@ -170,6 +189,7 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 				/>
 				<i
 					class="fa fa-star timer-button"
+					ref="favoriteStar"
 					@click="favorite"
 				/>
 				<i
