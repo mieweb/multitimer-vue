@@ -186,6 +186,18 @@ const actions: Action[] = [
 				type="checkbox"
 			>
 		</div>
+		<div class="mb-3 form-check">
+			<label
+				class="form-check-label"
+				for="start-on-timer-click"
+			>Start on clicking the timer</label>
+			<input
+				id="start-on-timer-click"
+				v-model="formData.startOnTimerClick"
+				class="form-check-input"
+				type="checkbox"
+			>
+		</div>
 		<h5>Meetings</h5>
 		<hr>
 		<div class="mb-3">

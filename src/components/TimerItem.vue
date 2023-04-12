@@ -15,6 +15,12 @@ const props = defineProps<{
     timerData: TimerData,
     isActive: boolean,
 }>();
+
+const timerContainer = ref<Element>();
+const timerGrid = ref<Element>();
+const title = ref<Element>();
+const time = ref<Element>();
+
 const billableSelect = ref<HTMLSelectElement>();
 const activitySelect = ref<HTMLSelectElement>();
 const commentField = ref<HTMLInputElement>();
@@ -85,22 +91,44 @@ const updateActivity = () => {
 const toggleDropdown = () => {
 	activitySelected.value = !activitySelected.value;
 };
+const interactTimer = (event: Event) => {
+	const validTargets = [
+		timerGrid.value,
+		timerContainer.value,
+		title.value,
+		time.value
+	] as Element[];
+	if (!Settings.startOnTimerClick) return;
+	if (!event.target) return;
+	if (!validTargets.includes(event.target as Element)) return;
+
+
+	if (props.isActive)
+		TimerSystem.pauseActiveTimer();
+	else 
+		TimerSystem.startTimer(props.timerId);
+
+};
 
 const showOnHover = computed(() => Settings.hideOptions ? 'hover-hide' : '');
 const hideLog = computed(() => !props.timerData.issue ? 'hide' : '');
 const chevron = computed(() => props.timerData.controlsHidden ? 'fa-chevron-down' : 'fa-chevron-up');
 const showExtraControls = computed(() => props.timerData.controlsHidden ? 'd-none' : '');
 const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-default');
-
 const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData.issue}`);
 
 </script>
 <template>
 	<div
-		class="timer py-3 px-4"
+		ref="timerContainer"
+		class="timer py-2 px-3"
 		:class="isActive ? 'bg-active' : 'bg-default'"
+		@click="interactTimer"
 	>
-		<div class="timer-grid">
+		<div
+			ref="timerGrid"
+			class="timer-grid"
+		>
 			<i
 				:class="`fa fa-save save-button timer-button ${showOnHover} ${hideLog}`"
 				@click="log"
@@ -114,13 +142,17 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 				{{ timerData.issue }}
 			</a>
 			<p
+				ref="title"
 				class="title m-0"
 				data-bs-toggle="tooltip"
 				data-bs-title=""
 			>
 				{{ timerData.title }}
 			</p>
-			<p class="time m-0">
+			<p
+				ref="time"
+				class="time m-0"
+			>
 				{{ timerData.time }}
 			</p>
 			<div :class="`timer-options d-flex ${showOnHover}`">
