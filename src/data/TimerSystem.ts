@@ -200,6 +200,7 @@ class _TimerSystem {
 	public updateTime(id: TimerId, hms: HMS) {
 		const timer = this.getTimerById(id);
 		timer.time?.updateTime(hms);
+		timer.lastUsed = Date.now();
 	}
 
 	public createFavoriteFromId(id: TimerId) {
