@@ -25,7 +25,8 @@ class _TimerSystem {
 	private timerList: { id: TimerId, timer: TimerData }[] = [];
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
-	public activeTimerId = NaN;
+	public lastTimerUsed = NaN;
+	public timerRunning = false;
 	private favoriteTimers: FavoriteTimer[] = [];
 	private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
 	private timerFilter: TimerFilter = {
@@ -43,11 +44,11 @@ class _TimerSystem {
 
 	public splitTimer(timerData: TimerData): boolean {
 		if (this.issueExistsInTimerList(timerData.issue)) return false;
-		if (!this.activeTimerId) {
+		if (!this.lastTimerUsed) {
 			return this.addTimer(timerData);
 		}
 
-		const splitFromTimer = this.getTimerById(this.activeTimerId);
+		const splitFromTimer = this.getTimerById(this.lastTimerUsed);
 		const removeTime = new HMS(
 			-timerData.time.hours,
 			-timerData.time.minutes,
@@ -146,7 +147,8 @@ class _TimerSystem {
 
 		timer.lastUsed = startDate;
 		this.pauseActiveTimer();
-		this.activeTimerId = id;
+		this.lastTimerUsed = id;
+		this.timerRunning = true;
 
 		let expected = startDate + interval;
 		const timeStep = () => {
@@ -160,15 +162,20 @@ class _TimerSystem {
 
 	public pauseActiveTimer() {
 		clearTimeout(this.setTimeoutId);
-		this.activeTimerId = NaN;
 		this.setTimeoutId = NaN;
+		this.timerRunning = false;
 	}
 
 	public removeTimer(id: TimerId) {
 		for (let i = 0; i < this.timerList.length; ++i) {
 			if (this.timerList[i].id === id) {
 				this.timerList.splice(i, 1);
+				break;
 			}
+		}
+
+		if (!this.timerList.length) {
+			this.lastTimerUsed = NaN;
 		}
 	}
 
@@ -189,7 +196,7 @@ class _TimerSystem {
 	}
 
 	public timerIsActive(id: TimerId) {
-		return this.activeTimerId === id;
+		return this.lastTimerUsed === id && this.timerRunning;
 	}
     
 	public resetTimer(id: TimerId) {
@@ -257,6 +264,7 @@ class _TimerSystem {
 
 	public removeAllTimers() {
 		this.timerList.splice(0, this.timerList.length);
+		this.lastTimerUsed = NaN;
 	}
 
 	public logAllTimers() {

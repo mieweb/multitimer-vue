@@ -9,7 +9,7 @@ const beginImport = async () => {
 
 </script>
 <template>
-	<div class="d-flex flex-column align-items-center pt-4 text-secondary">
+	<div class="d-flex flex-column align-items-center pt-4 pb-4 text-secondary">
 		<button 
 			class="btn btn-primary"
 			@click="beginImport"
