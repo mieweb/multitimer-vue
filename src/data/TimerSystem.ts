@@ -225,11 +225,15 @@ class _TimerSystem {
 
 	public addFavoriteToTimerList(timer: FavoriteTimer): boolean {
 		return this.addTimer({
-			...timer,
 			time: new HMS(),
 			comment: '',
 			controlsHidden: Settings.hideControls,
-			lastUsed: Date.now()
+			lastUsed: Date.now(),
+			issue: timer.issue,
+			title: timer.title,
+			link: timer.link,
+			billStatus: timer.billStatus,
+			activity: timer.activity
 		});
 	}
 
