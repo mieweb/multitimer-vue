@@ -80,6 +80,7 @@ class _TimerSystem {
 			const existingTimer = this.issueExistsInTimerList(meeting.issue);
 			if (existingTimer) {
 				existingTimer.time = HMS.fromObject(meeting.time);
+				existingTimer.lastUsed = Date.now();
 			} else {
 				this.timerList.push({ id: this.newId(), timer: reactive(meeting) });
 			}
