@@ -101,6 +101,12 @@ const versionNumber = MULTITIMER_VERSION;
 				open the join link in a new link in the browser (which would take you to the meeting).
 			</li>
 		</ul>
+		<h5>Global Toggle</h5>
+		<p>
+			When you activate a timer, a button in the bottom right appears that mimics the current state of the active timer.
+			This button can be used as a quick toggle for starting and stopped the last used timer, as opposed to looking for the timer
+			in the search bar or through the list by scrolling.
+		</p>
 		<hr>
 		<h4>Top Controls</h4>
 		Above the timer list, are the top controls, which are mostly self-explantory. The features include:
