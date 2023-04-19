@@ -52,7 +52,7 @@ const randomReaction = () => {
 <template>
 	<ModalTemplate
 		:actions="actions"
-		title="Import Modals from Outlook"
+		title="Import Meetings from Outlook"
 	>
 		<div v-if="formDataCollection.length === 0">
 			<p>No meeting timers could be found {{ randomReaction() }}</p>
