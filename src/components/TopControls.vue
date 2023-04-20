@@ -4,6 +4,7 @@ import { openModal } from '../data/ModalHandler';
 import ResetAllTimers from '../modals/ResetAllTimers.vue';
 import RemoveAllTimers from '../modals/RemoveAllTimers.vue';
 import { parse } from 'date-fns';
+import { reactive } from 'vue';
 
 const updateLogDate = (event: Event) => {
 	const dateString = (event.target as HTMLInputElement).value;
@@ -11,12 +12,16 @@ const updateLogDate = (event: Event) => {
 	TimerSystem.setLogDate(date);
 };
 
-const filter: TimerFilter = {
+const filter: TimerFilter = reactive({
 	search: '',
 	withTime: false
-};
+});
 
 const updateFilter = () => TimerSystem.updateFilter(filter);
+const withTimeOnClick = () => {
+	filter.withTime = !filter.withTime;
+	TimerSystem.updateFilter(filter);
+};
 </script>
 <template>
 	<div
@@ -69,13 +74,16 @@ const updateFilter = () => TimerSystem.updateFilter(filter);
 					type="text"
 					@input="updateFilter"
 				>
-				<div class="input-group-text">
+				<div
+					id="withTime"
+					class="input-group-text"
+					@click="withTimeOnClick"
+				>
 					<input
 						v-model="filter.withTime"
 						class="form-check-input"
 						name="has-time-check"
 						type="checkbox"
-						@change="updateFilter"
 					>
 					<label
 						class="form-check-label"
@@ -87,3 +95,9 @@ const updateFilter = () => TimerSystem.updateFilter(filter);
 	</div>
 </template>
 <script lang="ts">export default {};</script>
+<style>
+	#withTime, #withTime > * {
+		user-select: none;
+		cursor: pointer;
+	}
+</style>
