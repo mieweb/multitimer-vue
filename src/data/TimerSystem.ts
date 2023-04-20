@@ -26,7 +26,7 @@ class _TimerSystem {
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
 	public lastTimerUsed = NaN;
-	public timerRunning = false;
+	public hasTimerRunning = false;
 	private favoriteTimers: FavoriteTimer[] = [];
 	private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
 	private timerFilter: TimerFilter = {
@@ -149,7 +149,7 @@ class _TimerSystem {
 		timer.lastUsed = startDate;
 		this.pauseActiveTimer();
 		this.lastTimerUsed = id;
-		this.timerRunning = true;
+		this.hasTimerRunning = true;
 
 		let expected = startDate + interval;
 		const timeStep = () => {
@@ -164,7 +164,7 @@ class _TimerSystem {
 	public pauseActiveTimer() {
 		clearTimeout(this.setTimeoutId);
 		this.setTimeoutId = NaN;
-		this.timerRunning = false;
+		this.hasTimerRunning = false;
 	}
 
 	public removeTimer(id: TimerId) {
@@ -197,7 +197,7 @@ class _TimerSystem {
 	}
 
 	public timerIsActive(id: TimerId) {
-		return this.lastTimerUsed === id && this.timerRunning;
+		return this.lastTimerUsed === id && this.hasTimerRunning;
 	}
     
 	public resetTimer(id: TimerId) {

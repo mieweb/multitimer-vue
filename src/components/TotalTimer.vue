@@ -6,7 +6,10 @@ import PageTitle from './PageTitle.vue';
 const totalTime = computed(() => TimerSystem.totalTime());
 </script>
 <template>
-	<PageTitle :time="totalTime" />
+	<PageTitle
+		:time="totalTime"
+		:is-running="TimerSystem.hasTimerRunning"
+	/>
 	<div
 		id="total-time"
 		class="d-flex flex-column align-items-center pt-4 text-secondary"
