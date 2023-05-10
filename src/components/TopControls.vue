@@ -69,6 +69,7 @@ const withTimeOnClick = () => {
 					Search timers:
 				</div>
 				<input
+					id="timer-search-box"
 					v-model="filter.search"
 					class="form-control"
 					type="text"
