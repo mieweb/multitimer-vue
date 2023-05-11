@@ -12,6 +12,7 @@ export function init() {
 			openModal(AddTimerVue);
 			break;
 		case 's':
+			if (document.activeElement instanceof HTMLInputElement) break;
 			searchBox = document.querySelector('#timer-search-box') as HTMLInputElement;
 			if (!searchBox) break;
 			searchBox.focus();
