@@ -4,11 +4,22 @@ import { openModal } from './ModalHandler';
 // type HotkeyFunctionMap = { [index: string]: () => void };
 
 export function init() {
-	document.addEventListener('keypress', (e: KeyboardEvent) => {
+	document.addEventListener('keyup', (e: KeyboardEvent) => {
+		let searchBox = null;
 		switch (e.key) {
 		case '+':
 			if (document.activeElement instanceof HTMLInputElement) break;
 			openModal(AddTimerVue);
+			break;
+		case 's':
+			searchBox = document.querySelector('#timer-search-box') as HTMLInputElement;
+			if (!searchBox) break;
+			searchBox.focus();
+			break;
+		case 'Escape':
+			if (!(document.activeElement instanceof HTMLInputElement)) break;
+			console.debug(document.activeElement);
+			(document.activeElement as HTMLInputElement).blur();
 			break;
 		}
 	});
