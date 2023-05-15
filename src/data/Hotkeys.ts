@@ -19,7 +19,6 @@ export function init() {
 			break;
 		case 'Escape':
 			if (!(document.activeElement instanceof HTMLInputElement)) break;
-			console.debug(document.activeElement);
 			(document.activeElement as HTMLInputElement).blur();
 			break;
 		}

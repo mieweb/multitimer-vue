@@ -7,6 +7,14 @@ const versionNumber = MULTITIMER_VERSION;
 	<ModalTemplate
 		:title="'Help'"
 	>
+		<h5>Hotkeys</h5>
+		The multitimer comes with a small list of hotkeys:
+		<ul>
+			<li>s - Focus on the search bar if no input is focused.</li>
+			<li>Esc - Minor keybinding, unfocus an input</li>
+			<li>+ - Open the add timer modal.</li>
+		</ul>
+		<hr>
 		<h4>Creating a Timer</h4>
 		Create a timer by clicking the
 		<i class="fa fa-plus" /> button on the top-left corner of
