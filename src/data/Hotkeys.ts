@@ -16,6 +16,7 @@ export function init() {
 			searchBox = document.querySelector('#timer-search-box') as HTMLInputElement;
 			if (!searchBox) break;
 			searchBox.focus();
+			searchBox.select();
 			break;
 		case 'Escape':
 			if (!(document.activeElement instanceof HTMLInputElement)) break;
