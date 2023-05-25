@@ -349,7 +349,7 @@ class _TimerSystem {
 	}
 
 	public deletedTimersFromRaw(rawDeleted: RawTimerData[]) {
-		for (let i = 0; i < 10 || i < rawDeleted.length; i++) {
+		for (let i = 0; i < 10 && i < rawDeleted.length; i++) {
 			this.deletedTimers.unshift(rawToTimerData(rawDeleted[i]));
 		}
 	}
