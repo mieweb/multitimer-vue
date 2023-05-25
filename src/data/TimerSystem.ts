@@ -13,6 +13,7 @@ export interface TimerFilter {
 export type TimerSystemData = {
 	timers: RawTimerData[],
 	favoriteTimers: FavoriteTimer[]
+	deletedTimers: RawTimerData[]
 };
 
 function checkBillStatus(billString: string): BillStatus {
@@ -23,6 +24,7 @@ class _TimerSystem {
 	static lastId = -1;
 	// private map: Map<number, TimerInterface> = new Map();
 	private timerList: { id: TimerId, timer: TimerData }[] = [];
+	private deletedTimers: TimerData[] = [];
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
 	public lastTimerUsed = NaN;
@@ -170,6 +172,7 @@ class _TimerSystem {
 	public removeTimer(id: TimerId) {
 		for (let i = 0; i < this.timerList.length; ++i) {
 			if (this.timerList[i].id === id) {
+				this.pushToDeletedTimers(this.timerList[i].timer);
 				this.timerList.splice(i, 1);
 				break;
 			}
@@ -178,6 +181,13 @@ class _TimerSystem {
 		if (!this.timerList.length) {
 			this.lastTimerUsed = NaN;
 		}
+	}
+
+	public pushToDeletedTimers(timer: TimerData) {
+		while (this.deletedTimers.length >= 10) {
+			this.deletedTimers.pop();
+		}
+		this.deletedTimers.unshift(timer);
 	}
 
 	public editTimer(id: TimerId, changes: Partial<TimerData>) {
@@ -261,6 +271,10 @@ class _TimerSystem {
 		return this.favoriteTimers;
 	}
 
+	public getDeletedTimers(): TimerData[] {
+		return this.deletedTimers;
+	}
+
 	public resetAllTimers() {
 		for (const { id } of this.timerList) {
 			TimerSystem.resetTimer(id);
@@ -307,8 +321,9 @@ class _TimerSystem {
 
 	public toTimerSystemData(): TimerSystemData {
 		return {
-			timers: Array.from(this.timerList.map(te => timerDataToRaw(te.timer))),
-			favoriteTimers: Array.from(this.favoriteTimers)
+			timers: this.timerList.map(te => timerDataToRaw(te.timer)),
+			favoriteTimers: this.favoriteTimers,
+			deletedTimers: this.deletedTimers.map(timerDataToRaw)
 		} as TimerSystemData;
 	}
 
@@ -321,7 +336,7 @@ class _TimerSystem {
 		}
 	}
 
-	public favoriteTimersFromRaw(rawFavorites: FavoriteTimer[]) {
+	public favoriteTimersFromRaw(rawFavorites: RawTimerData[]) {
 		for (const rawTimer of rawFavorites) {
 			this.createFavoriteFromInterface({
 				issue: rawTimer.issue ?? '',
@@ -330,6 +345,12 @@ class _TimerSystem {
 				billStatus: checkBillStatus(rawTimer.billStatus),
 				activity: rawTimer.activity ?? Settings.defaultActivity
 			});
+		}
+	}
+
+	public deletedTimersFromRaw(rawDeleted: RawTimerData[]) {
+		for (let i = 0; i < 10 || i < rawDeleted.length; i++) {
+			this.deletedTimers.unshift(rawToTimerData(rawDeleted[i]));
 		}
 	}
 

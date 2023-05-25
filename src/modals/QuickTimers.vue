@@ -45,7 +45,7 @@ const commonTimers: FavoriteTimer[] = [
 		>
 			<button
 				class="plain-btn"
-				@click="e => addTimer(e, timer)"
+				@click="(e: MouseEvent) => addTimer(e, timer)"
 			>
 				{{ timer.issue }} {{ timer.title }}
 			</button>
@@ -59,18 +59,39 @@ const commonTimers: FavoriteTimer[] = [
 			>
 				<button
 					class="plain-btn"
-					@click="e => addTimer(e, timer)"
+					@click="(e: MouseEvent) => addTimer(e, timer)"
 				>
 					{{ timer.issue }} {{ timer.title }}
 				</button>
 				<button
-					class="plain-btn"
+					class="plain-btn quick-timer-delete"
 					@click="TimerSystem.removeFavorite(timer.issue)"
 				>
 					<i class="fa fa-trash-alt" />
 				</button>
 			</div>
 		</div>
+		<hr>
+		<h5>Recently Deleted Timers</h5>
+		<div>
+			<div
+				v-for="timer, index in TimerSystem.getDeletedTimers()"
+				:key="index"
+			>
+				<button
+					class="plain-btn"
+					@click="(e: MouseEvent) => addTimer(e, timer)"
+				>
+					{{ timer.issue }} {{ timer.title }}
+				</button>
+			</div>
+		</div>
 	</ModalTemplate>
 </template>
 <script lang="ts">export default {};</script>
+
+<style>
+	.quick-timer-delete {
+		filter: hue-rotate(90deg);
+	}
+</style>

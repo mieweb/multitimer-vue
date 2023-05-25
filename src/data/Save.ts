@@ -30,17 +30,20 @@ class LocalStorage implements Save {
 
 		const {
 			timers,
-			favoriteTimers
+			favoriteTimers,
+			deletedTimers
 		} = TimerSystem.toTimerSystemData();
 
 		localStorage.setItem('timers', JSON.stringify(timers));
 		localStorage.setItem('settings', JSON.stringify(settings));
 		localStorage.setItem('favoriteTimers', JSON.stringify(favoriteTimers));
+		localStorage.setItem('deletedTimers', JSON.stringify(deletedTimers));
 	}
 
 	public load() {
 		TimerSystem.timersFromRaw(loadTimers());
 		TimerSystem.favoriteTimersFromRaw(loadFavoriteTimers());
+		TimerSystem.deletedTimersFromRaw(loadDeletedTimers());
 		Settings.updateSettings(loadSettings());
 
 		function loadTimers(): RawTimerData[] {
@@ -58,6 +61,13 @@ class LocalStorage implements Save {
 			if (!favoritesJSONString) return [];
 			
 			return JSON.parse(favoritesJSONString);
+		}
+
+		function loadDeletedTimers(): RawTimerData[] {
+			const deletedTimersJSONString = localStorage.getItem('deletedTimers');
+			if (!deletedTimersJSONString) return [];
+
+			return JSON.parse(deletedTimersJSONString);
 		}
 	}
 }
