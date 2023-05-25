@@ -42,7 +42,7 @@ class LocalStorage implements Save {
 
 	public load() {
 		TimerSystem.timersFromRaw(loadTimers());
-		TimerSystem.favoriteTimersFromRaw(loadFavoriteTimers());
+		TimerSystem.favoriteTimersFromList(loadFavoriteTimers());
 		TimerSystem.deletedTimersFromRaw(loadDeletedTimers());
 		Settings.updateSettings(loadSettings());
 

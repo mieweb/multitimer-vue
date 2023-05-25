@@ -43,7 +43,7 @@ const importData = () => {
 	file.text().then(jsonText => {
 		const timerData = JSON.parse(jsonText) as TimerSystemData;
 		TimerSystem.timersFromRaw(timerData.timers);
-		TimerSystem.favoriteTimersFromRaw(timerData.favoriteTimers);
+		TimerSystem.favoriteTimersFromList(timerData.favoriteTimers);
 	});
 };
 
@@ -53,7 +53,7 @@ const recoverData = () => {
 	const rawTimers = localStorageTimers ? JSON.parse(localStorageTimers) : [];
 	const rawFavorites = localStorageFavorites ? JSON.parse(localStorageFavorites) : [];
 	TimerSystem.timersFromRaw(rawTimers);
-	TimerSystem.favoriteTimersFromRaw(rawFavorites);
+	TimerSystem.favoriteTimersFromList(rawFavorites);
 };
 
 const exportData = () => {

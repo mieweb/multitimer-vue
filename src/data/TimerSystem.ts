@@ -336,7 +336,7 @@ class _TimerSystem {
 		}
 	}
 
-	public favoriteTimersFromRaw(rawFavorites: RawTimerData[]) {
+	public favoriteTimersFromList(rawFavorites: FavoriteTimer[]) {
 		for (const rawTimer of rawFavorites) {
 			this.createFavoriteFromInterface({
 				issue: rawTimer.issue ?? '',
@@ -360,7 +360,7 @@ class _TimerSystem {
 	 */
 	public importTimerSystemData(timerSystemData: TimerSystemData) {
 		this.timersFromRaw(timerSystemData.timers as RawTimerData[] ?? []);
-		this.favoriteTimersFromRaw(timerSystemData.favoriteTimers as RawTimerData[] ?? []);
+		this.favoriteTimersFromList(timerSystemData.favoriteTimers as RawTimerData[] ?? []);
 	}
 
 	private newId() {
