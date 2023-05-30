@@ -1,12 +1,28 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
-import { TimerSystem } from '../data/TimerSystem';
+import { TimerSystem, TimerEntry } from '../data/TimerSystem';
 import { FavoriteTimer } from '../data/TimerData';
 //@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
 import anime from 'animejs/lib/anime.es';
 
 const addTimer = (event: MouseEvent, timer: FavoriteTimer) => {
 	if (!TimerSystem.addFavoriteToTimerList(timer)) {
+		const animatedElement = (event.target as Element).parentElement;
+		anime({
+			targets: animatedElement,
+			keyframes: [
+				{ value: 30, translate: '0.3rem' },
+				{ value: 60, translate: '-0.2rem' },
+				{ value: 90, translate: '0.1rem' },
+				{ value: 100, translate: '0.0rem'}
+			],
+			duration: 250,
+			easing: 'linear'
+		});
+	}
+};
+const addDeletedTimer = (event: MouseEvent, timer: TimerEntry) => {
+	if (!TimerSystem.addDeletedToTimerList(timer)) {
 		const animatedElement = (event.target as Element).parentElement;
 		anime({
 			targets: animatedElement,
@@ -75,14 +91,14 @@ const commonTimers: FavoriteTimer[] = [
 		<h5>Recently Deleted Timers</h5>
 		<div>
 			<div
-				v-for="timer, index in TimerSystem.getDeletedTimers()"
+				v-for="deletedTimerEntry, index in TimerSystem.getDeletedTimers()"
 				:key="index"
 			>
 				<button
 					class="plain-btn"
-					@click="(e: MouseEvent) => addTimer(e, timer)"
+					@click="(e: MouseEvent) => addDeletedTimer(e, deletedTimerEntry)"
 				>
-					{{ timer.issue }} {{ timer.title }}
+					{{ deletedTimerEntry.timer.issue }} {{ deletedTimerEntry.timer.title }}
 				</button>
 			</div>
 		</div>

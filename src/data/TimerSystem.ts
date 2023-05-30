@@ -16,6 +16,8 @@ export type TimerSystemData = {
 	deletedTimers: RawTimerData[]
 };
 
+export type TimerEntry = { id: TimerId, timer: TimerData };
+
 function checkBillStatus(billString: string): BillStatus {
 	return isBillStatus(billString) ? billString : 'Non-Billable';
 }
@@ -23,8 +25,8 @@ function checkBillStatus(billString: string): BillStatus {
 class _TimerSystem {
 	static lastId = -1;
 	// private map: Map<number, TimerInterface> = new Map();
-	private timerList: { id: TimerId, timer: TimerData }[] = [];
-	private deletedTimers: TimerData[] = [];
+	private timerList: TimerEntry[] = [];
+	private deletedTimers: TimerEntry[] = [];
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
 	public lastTimerUsed = NaN;
@@ -187,7 +189,7 @@ class _TimerSystem {
 		while (this.deletedTimers.length >= 10) {
 			this.deletedTimers.pop();
 		}
-		this.deletedTimers.unshift(timer);
+		this.deletedTimers.unshift({ id: this.newId(), timer });
 	}
 
 	public editTimer(id: TimerId, changes: Partial<TimerData>) {
@@ -247,6 +249,20 @@ class _TimerSystem {
 		});
 	}
 
+	public addDeletedToTimerList(timer: TimerEntry): boolean {
+		const ret = this.addTimer(timer.timer);
+		if (!ret) return false;
+
+		for (let i = 0; i < this.deletedTimers.length; ++i) {
+			if (timer.id == this.deletedTimers[i].id) {
+				this.deletedTimers.splice(i, 1);
+				break;
+			}
+		}
+
+		return true;
+	}
+
 	public createFavoriteFromInterface(timerData: FavoriteTimer) {
 		for (const timer of this.favoriteTimers) {
 			if (timer.issue === timerData.issue) {
@@ -271,7 +287,7 @@ class _TimerSystem {
 		return this.favoriteTimers;
 	}
 
-	public getDeletedTimers(): TimerData[] {
+	public getDeletedTimers(): TimerEntry[] {
 		return this.deletedTimers;
 	}
 
@@ -323,7 +339,7 @@ class _TimerSystem {
 		return {
 			timers: this.timerList.map(te => timerDataToRaw(te.timer)),
 			favoriteTimers: this.favoriteTimers,
-			deletedTimers: this.deletedTimers.map(timerDataToRaw)
+			deletedTimers: this.deletedTimers.map(({ timer }) => timerDataToRaw(timer))
 		} as TimerSystemData;
 	}
 
@@ -350,7 +366,7 @@ class _TimerSystem {
 
 	public deletedTimersFromRaw(rawDeleted: RawTimerData[]) {
 		for (let i = 0; i < 10 && i < rawDeleted.length; i++) {
-			this.deletedTimers.unshift(rawToTimerData(rawDeleted[i]));
+			this.deletedTimers.unshift({ id: this.newId(), timer: rawToTimerData(rawDeleted[i]) });
 		}
 	}
 
