@@ -365,8 +365,13 @@ class _TimerSystem {
 	}
 
 	public deletedTimersFromRaw(rawDeleted: RawTimerData[]) {
+		const addedIds: string[] = [];
 		for (let i = 0; i < 10 && i < rawDeleted.length; i++) {
-			this.deletedTimers.unshift({ id: this.newId(), timer: rawToTimerData(rawDeleted[i]) });
+			const rawTimer = rawDeleted[i];
+			if (!addedIds.includes(rawTimer.issue)) {
+				this.deletedTimers.unshift({ id: this.newId(), timer: rawToTimerData(rawTimer) });
+				addedIds.push(rawTimer.issue);
+			}
 		}
 	}
 
