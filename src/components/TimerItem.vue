@@ -46,7 +46,7 @@ const reset = () => {
 	openModal(ResetTimer, { timerId: props.timerId });
 };
 const updateTime = () => {
-	openModal(UpdateTime, { timerId: props.timerId });
+	openModal(UpdateTime, { timerId: props.timerId, timerData: { time: props.timerData.time }});
 };
 const favorite = () => {
 	try {
