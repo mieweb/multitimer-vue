@@ -399,8 +399,9 @@ class _TimerSystem {
 			Settings.lastUsedForLogging ? new Date(timer.lastUsed) : this.logDate,
 			'dd/MM/yyyy'
 		);
+		const comment = encodeURIComponent(timer.comment);
 		const url = 
-			`https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${timer.comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}&time_entry[activity_id]=${getActivityValue(timer.activity)}`;
+			`https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}&time_entry[activity_id]=${getActivityValue(timer.activity)}`;
 		window.open(url);
 	}
 

@@ -4,6 +4,7 @@ import { TimerSystem } from '../data/TimerSystem';
 import Action from '../data/Action';
 import HMS from '../data/HMS';
 import type { ModalData } from '../data/ModalHandler';
+import { Settings } from '../data/Settings';
 
 const props = defineProps<{
 	modalData: ModalData
@@ -16,6 +17,23 @@ const formData = {
 };
 
 const actions: Action[] = [
+	{
+		title: 'Round Down Timer',
+		action: () => {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const oldTime = HMS.fromObject(props.modalData.timerData.time!);
+			const newTime = new HMS();
+
+			for (oldTime.minutes; oldTime.minutes % Settings.roundToMinutes != 0; oldTime.minutes -= 1) {
+				newTime.minutes -= 1;
+			}
+			newTime.seconds = -oldTime.seconds;
+
+			TimerSystem.updateTime(props.modalData.timerId, newTime);
+		},
+		closeModal: true,
+		classes: 'btn-outline-primary',
+	},
 	{
 		title: 'Update Timer',
 		action: () => {
@@ -35,7 +53,6 @@ const actions: Action[] = [
 		hotkey: 'Enter'
 	}
 ];
-
 </script>
 <template>
 	<ModalTemplate

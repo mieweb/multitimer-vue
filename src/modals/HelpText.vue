@@ -52,7 +52,7 @@ const versionNumber = MULTITIMER_VERSION;
 			</li>
 			<li>
 				The <i class="fa fa-plus" /> update time button
-				prompts you to add or subtract time from the timer.
+				prompts you to add or subtract time from the timer, as well as round the timer down to the nearest set interval.
 			</li>
 			<li>
 				The <i class="fa fa-star" /> favorite button save the timer
