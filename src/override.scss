@@ -44,31 +44,7 @@
     color: var(--foreground-alt)
 }
 
-// .modal input, *.input-group input {
-//     background-color: var(--background);
-//     border-color: var(--background-alt);
-//     color: var(--foreground);
-// }
-
-// .modal input:not([type="radio"]):not([type="checkbox"]):focus {
-//     background-color: var(--background);
-// }
-
-// .modal select {
-//     background-color: var(--background);
-//     border-color: var(--background-alt);
-// }
-
-// *.input-group-text {
-//     background-color: var(--background-alt);
-//     border-color: var(--background-alt);
-//     color: var(--foreground)
-// }
-
-// input[type="date"] {
-//     border-color: var(--background-alt);
-//     background-color: var(--background);
-//     color: var(--foreground);
-//     border-radius: 3px;
-//     border: 1px solid;
-// }
+// Removes background color from floating label
+.form-floating > .form-control:focus ~ label::after, .form-floating > .form-control:not(:placeholder-shown) ~ label::after, .form-floating > .form-control-plaintext ~ label::after, .form-floating > .form-select ~ label::after {
+    background-color: inherit;
+}
