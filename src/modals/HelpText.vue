@@ -10,9 +10,9 @@ const versionNumber = MULTITIMER_VERSION;
 		<h5>Hotkeys</h5>
 		The multitimer comes with a small list of hotkeys:
 		<ul>
-			<li>s - Focus on the search bar if no input is focused.</li>
-			<li>Esc - Minor keybinding, unfocus an input</li>
-			<li>+ - Open the add timer modal.</li>
+			<li><kbd>s</kbd> - Focus on the search bar if no input is focused.</li>
+			<li><kbd>Esc</kbd> - Minor keybinding, unfocus an input</li>
+			<li><kbd>+</kbd> - Open the add timer modal.</li>
 		</ul>
 		<hr>
 		<h4>Creating a Timer</h4>

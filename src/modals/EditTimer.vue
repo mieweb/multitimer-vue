@@ -16,11 +16,6 @@ const formData: Pick<RawTimerData, 'issue' | 'title' | 'link'> = {
 	title: props.modalData.timerData.title || '',
 	link: props.modalData.timerData.link || ''
 };
-// const clearFormData = () => {
-// 	formData.issue = '';
-// 	formData.title = '';
-// 	formData.link = '';
-// };
 const actions: Action[] = [
 	{
 		title: 'Update Timer',
