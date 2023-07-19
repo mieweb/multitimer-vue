@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ModalTemplate from '../components/ModalTemplate.vue';
-import Action from '../data/Action';
+import type { Action } from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import { RawTimerData } from '../data/TimerData';
 import type { ModalData } from '../data/ModalHandler';
@@ -73,4 +73,4 @@ const actions: Action[] = [
 		</form>
 	</ModalTemplate>
 </template>
-<script lang="ts">export default {};</script>
+<script lang="ts">export default {};</script>import Action from "../data/Action.1";

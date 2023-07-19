@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
-import Action from '../data/Action';
+import type { Action } from '../components/ModalTemplate.vue';
 const actions: Action[] = [
 	{
 		title: 'Reset All Timers',
@@ -25,4 +25,4 @@ const actions: Action[] = [
 		</div>
 	</ModalTemplate>
 </template>
-<script lang="ts">export default {};</script>
+<script lang="ts">export default {};</script>import Action from "../data/Action.1";

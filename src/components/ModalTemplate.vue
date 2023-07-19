@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import Action from '../data/Action';
 import { closeModal } from '../data/ModalHandler';
+
+export type Action = {
+    title: string,
+    action: () => void,
+    classes?: string,
+    closeModal?: boolean,
+    hotkey?: string,
+    disabled?: boolean,
+    faIconClass?: string,
+}
 
 defineProps<{
     actions?: Action[],
@@ -64,9 +73,15 @@ const handleHotkey = (event: KeyboardEvent, actions: Action[] | undefined) => {
 				@click="handleAction(a)"
 			>
 				{{ a.title }}
+				<i
+					v-if="a.faIconClass"
+					class="fa"
+					:class="a.faIconClass"
+					style="color:inherit;"
+				/>
 			</button>
 		</div>
 	</div>
 </template>
 
-<script lang="ts">export default {};</script>
+<script lang="ts">export default {};</script>import Action from "../data/Action.1";
