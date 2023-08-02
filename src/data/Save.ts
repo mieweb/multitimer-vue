@@ -56,18 +56,11 @@ class LocalStorage implements Save {
 			return settings ? JSON.parse(settings) : {};
 		}
 
-		function loadFavoriteTimers(): RawTimerData[] {
-			const favoritesJSONString = localStorage.getItem('favoriteTimers');
-			if (!favoritesJSONString) return [];
-			
-			return JSON.parse(favoritesJSONString);
+		function loadLocalStorageValue<T>(key: string, callback: (parsedJSON: T) => void) {
+			const jsonString = localStorage.getItem(key);
+			if (jsonString) {
+				callback(JSON.parse(jsonString));
 		}
-
-		function loadDeletedTimers(): RawTimerData[] {
-			const deletedTimersJSONString = localStorage.getItem('deletedTimers');
-			if (!deletedTimersJSONString) return [];
-
-			return JSON.parse(deletedTimersJSONString);
 		}
 	}
 }
