@@ -1,5 +1,5 @@
 import { Settings, SettingsInterface } from './Settings';
-import { RawTimerData } from './TimerData';
+import { FavoriteTimer, RawTimerData } from './TimerData';
 import { TimerSystem } from './TimerSystem';
 
 interface Save {
@@ -41,33 +41,17 @@ class LocalStorage implements Save {
 	}
 
 	public load() {
-		TimerSystem.timersFromRaw(loadTimers());
-		TimerSystem.favoriteTimersFromList(loadFavoriteTimers());
-		TimerSystem.deletedTimersFromRaw(loadDeletedTimers());
-		Settings.updateSettings(loadSettings());
+		loadLocalStorageValue('timers', (j: RawTimerData[]) => TimerSystem.timersFromRaw(j));
+		loadLocalStorageValue('favoriteTimers', (j: FavoriteTimer[]) => TimerSystem.favoriteTimersFromList(j));
+		loadLocalStorageValue('settings', (j: Partial<SettingsInterface>) => Settings.updateSettings(j));
+		loadLocalStorageValue('deletedTimers', (j: RawTimerData[]) => TimerSystem.deletedTimersFromRaw(j));
 
-		function loadTimers(): RawTimerData[] {
-			const timers = localStorage.getItem('timers');
-			return timers ? JSON.parse(timers) : [];
-		}
-
-		function loadSettings(): Partial<SettingsInterface> {
-			const settings = localStorage.getItem('settings');
-			return settings ? JSON.parse(settings) : {};
-		}
-
-		function loadFavoriteTimers(): RawTimerData[] {
-			const favoritesJSONString = localStorage.getItem('favoriteTimers');
-			if (!favoritesJSONString) return [];
-			
-			return JSON.parse(favoritesJSONString);
-		}
-
-		function loadDeletedTimers(): RawTimerData[] {
-			const deletedTimersJSONString = localStorage.getItem('deletedTimers');
-			if (!deletedTimersJSONString) return [];
-
-			return JSON.parse(deletedTimersJSONString);
+		function loadLocalStorageValue<T>(key: string, callback: (parsedJSON: T) => void) {
+			debugger;
+			const jsonString = localStorage.getItem(key);
+			if (jsonString) {
+				callback(JSON.parse(jsonString));
+			}
 		}
 	}
 }

@@ -187,8 +187,8 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 					@click="updateTime"
 				/>
 				<i
-					class="fa fa-star timer-button"
 					ref="favoriteStar"
+					class="fa fa-star timer-button"
 					@click="favorite"
 				/>
 				<i

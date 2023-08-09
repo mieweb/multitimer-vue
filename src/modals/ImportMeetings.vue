@@ -17,7 +17,9 @@ const formDataCollection = props.modalData.importMeetingData?.map(meeting => {
 		issue: meeting.issue,
 		title: meeting.title,
 		time: {
-			...time
+			hours: time.getHours(),
+			minutes: time.getMinutes(),
+			seconds: time.getSeconds()
 		},
 		billStatus: 'Non-Billable' as BillStatus,
 		comment: '',

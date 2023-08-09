@@ -1,27 +1,47 @@
 import { Settings } from './Settings';
-class HMS { 
-	public hours = 0;
-	public minutes = 0;
-	public seconds = 0;
 
-	constructor(hours?: number, minutes?: number, seconds?: number) {
-		this.hours = hours || 0;
-		this.minutes = minutes || 0;
-		this.seconds = seconds || 0;
+const HOURS_MILLIS = 3600000;
+const MINUTES_MILLIS = 60000;
+const SECONDS_MILLIS = 1000;
+
+class HMS { 
+	public time = 0;
+
+	constructor(millis = 0) {
+		this.time = millis;
 	}
 
-	static fromObject(obj: { hours?: number, minutes?: number, seconds?: number }) {
-		const hours = obj.hours || 0;
-		const minutes = obj.minutes || 0;
-		const seconds = obj.seconds || 0;
+	static fromHumanReadable(hours = 0, minutes = 0, seconds = 0) {
+		let millis = (hours * HOURS_MILLIS) + (minutes * MINUTES_MILLIS) + (seconds * SECONDS_MILLIS);
 
-		return new HMS(hours, minutes, seconds);
+		if (isNaN(millis)) {
+			millis = 0;
+		}
+
+		return new HMS(millis);
+	}
+
+	static clone(hms: HMS) {
+		return new HMS(hms.getMilliseconds());
+	}
+
+
+	public getHours(): number {
+		return Math.floor(this.time / HOURS_MILLIS);
+	}
+
+	public getMinutes(): number {
+		return Math.floor((this.time - (Math.floor(this.time / HOURS_MILLIS) * HOURS_MILLIS)) / MINUTES_MILLIS);
+	}
+
+	public getSeconds(): number {
+		return Math.floor((this.time - (Math.floor(this.time / MINUTES_MILLIS) * MINUTES_MILLIS)) / SECONDS_MILLIS);
 	}
 
 	public toString() {
-		const hours = toTwoDigit(this.hours);
-		const minutes = toTwoDigit(this.minutes);
-		const seconds = toTwoDigit(this.seconds);
+		const hours = toTwoDigit(this.getHours());
+		const minutes = toTwoDigit(this.getMinutes());
+		const seconds = toTwoDigit(this.getSeconds());
 
 		return `${hours}:${minutes}:${seconds}`;
 
@@ -46,40 +66,40 @@ class HMS {
 			seconds -= 60;
 		}
 
-		return new HMS(hours, minutes, seconds);
+		return HMS.fromHumanReadable(hours, minutes, seconds);
+	}
+
+	public getMilliseconds() {
+		return this.time;
 	}
 
 	public updateTime(time: HMS) {
-		const diff = this.toSeconds() + time.toSeconds();
-		const newTime = HMS.fromSeconds(diff);
-		this.hours = newTime.hours;
-		this.minutes = newTime.minutes;
-		this.seconds = newTime.seconds;
+		this.time += time.getMilliseconds();
 	}
 
-	public toSeconds() {
-		return this.seconds + this.minutes * 60 + this.hours * 3600;
+	public updateTimeByMilliseconds(millis: number) {
+		this.time += millis;
 	}
 
 	public reset() {
-		this.hours = 0;
-		this.minutes = 0;
-		this.seconds = 0;
+		this.time = 0;
 	}
 
 	public hasTime(): boolean {
-		return !!(this.hours || this.minutes || this.seconds);
+		return this.time != 0;
 	}
 
 	public roundedTime() {
-		let min = this.minutes;
+		const hours = this.getHours();
+		const seconds = this.getSeconds();
+		let minutes = this.getMinutes();
 
-		if (this.seconds > 0) ++min;
-		min += this.hours * 60;
-		if (min === 0) return 0;
+		if (seconds > 0) ++minutes;
+		minutes += hours * 60;
+		if (minutes === 0) return 0;
 
 		// Experimental rounding
-		return minToRound(min, Settings.roundToMinutes);
+		return minToRound(minutes, Settings.roundToMinutes);
 
 		function minToRound(m: number, r: number): number {
 			return (Math.ceil(m / r) * r) / 60;
