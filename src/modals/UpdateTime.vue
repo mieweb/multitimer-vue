@@ -21,15 +21,16 @@ const actions: Action[] = [
 		title: 'Round Down Timer',
 		action: () => {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const oldTime = HMS.fromObject(props.modalData.timerData.time!);
-			const newTime = new HMS();
+			const oldTime = HMS.clone(props.modalData.timerData.time!);
+			let minutes = oldTime.getMinutes();
+			let seconds = oldTime.getSeconds();
 
-			for (oldTime.minutes; oldTime.minutes % Settings.roundToMinutes != 0; oldTime.minutes -= 1) {
-				newTime.minutes -= 1;
+			for (minutes; minutes % Settings.roundToMinutes != 0; minutes -= 1) {
+				minutes -= 1;
 			}
-			newTime.seconds = -oldTime.seconds;
+			seconds = -oldTime.getSeconds();
 
-			TimerSystem.updateTime(props.modalData.timerId, newTime);
+			TimerSystem.updateTime(props.modalData.timerId, HMS.fromHumanReadable(0, minutes, seconds));
 		},
 		closeModal: true,
 		classes: 'btn-outline-primary',
@@ -37,15 +38,16 @@ const actions: Action[] = [
 	{
 		title: 'Update Timer',
 		action: () => {
-			let signFactor = 1;
-			if (formData.toSubtract) {
-				signFactor = -1;
-			}
-			const hms = new HMS(
-				formData.hoursRef * signFactor,
-				formData.minutesRef * signFactor,
-				formData.secondsRef * signFactor,
+			const signFactor = formData.toSubtract ? -1 : 1;
+			const hours = isNaN(formData.hoursRef) ? 0 : formData.hoursRef;
+			const minutes = isNaN(formData.minutesRef) ? 0 : formData.minutesRef;
+			const seconds = isNaN(formData.secondsRef) ? 0 : formData.secondsRef;
+			const hms = HMS.fromHumanReadable(
+				hours * signFactor,
+				minutes * signFactor,
+				seconds * signFactor,
 			);
+
 			TimerSystem.updateTime(props.modalData.timerId, hms);
 		},
 		closeModal: true,

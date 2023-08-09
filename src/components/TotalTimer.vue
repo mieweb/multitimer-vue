@@ -8,7 +8,7 @@ const totalTime = computed(() => TimerSystem.totalTime());
 <template>
 	<PageTitle
 		:time="totalTime"
-		:is-running="TimerSystem.hasTimerRunning"
+		:is-running="TimerSystem.activeTimer"
 	/>
 	<div
 		id="total-time"

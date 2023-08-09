@@ -30,7 +30,8 @@ class _TimerSystem {
 	private setTimeoutId = NaN;
 	public timerToConfirm = NaN;
 	public lastTimerUsed = NaN;
-	public hasTimerRunning = false;
+	public activeTimer = NaN;
+	public lastTimeStep = NaN;
 	private favoriteTimers: FavoriteTimer[] = [];
 	private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
 	private timerFilter: TimerFilter = {
@@ -48,16 +49,12 @@ class _TimerSystem {
 
 	public splitTimer(timerData: TimerData): boolean {
 		if (this.issueExistsInTimerList(timerData.issue)) return false;
-		if (!this.lastTimerUsed) {
+		if (!this.activeTimer) {
 			return this.addTimer(timerData);
 		}
 
-		const splitFromTimer = this.getTimerById(this.lastTimerUsed);
-		const removeTime = new HMS(
-			-timerData.time.hours,
-			-timerData.time.minutes,
-			-timerData.time.seconds
-		);
+		const splitFromTimer = this.getTimerById(this.activeTimer);
+		const removeTime = new HMS(-timerData.time.getMilliseconds());
 		splitFromTimer.time.updateTime(removeTime);
 		const id = this.newId();
 		this.timerList.unshift({ id, timer: reactive(timerData) });
@@ -84,7 +81,7 @@ class _TimerSystem {
 		for (const meeting of meetings) {
 			const existingTimer = this.issueExistsInTimerList(meeting.issue);
 			if (existingTimer) {
-				existingTimer.time = HMS.fromObject(meeting.time);
+				existingTimer.time = HMS.clone(meeting.time);
 				existingTimer.lastUsed = Date.now();
 			} else {
 				this.timerList.push({ id: this.newId(), timer: reactive(meeting) });
@@ -147,28 +144,27 @@ class _TimerSystem {
 
 	public startTimer(id: TimerId) {
 		const timer = this.getTimerById(id);
-		const interval = 1000;
 		const startDate = Date.now();
 
 		timer.lastUsed = startDate;
+		this.lastTimeStep = startDate;
 		this.pauseActiveTimer();
-		this.lastTimerUsed = id;
-		this.hasTimerRunning = true;
+		this.activeTimer = id;
 
-		let expected = startDate + interval;
 		const timeStep = () => {
-			const drift = Date.now() - expected;
-			timer.time?.updateTime(new HMS(0, 0, 1));
-			expected += interval;
-			this.setTimeoutId = window.setTimeout(timeStep, interval - drift);
+			const now = Date.now();
+			const delta = (now - this.lastTimeStep);
+			this.lastTimeStep = now;
+			timer.time.updateTimeByMilliseconds(delta);
 		};
-		this.setTimeoutId = window.setTimeout(timeStep, interval);
+		timeStep();
+		this.setTimeoutId = window.setInterval(timeStep, 1000);
 	}
 
 	public pauseActiveTimer() {
 		clearTimeout(this.setTimeoutId);
 		this.setTimeoutId = NaN;
-		this.hasTimerRunning = false;
+		this.activeTimer = NaN;
 	}
 
 	public removeTimer(id: TimerId) {
@@ -181,7 +177,7 @@ class _TimerSystem {
 		}
 
 		if (!this.timerList.length) {
-			this.lastTimerUsed = NaN;
+			this.activeTimer = NaN;
 		}
 	}
 
@@ -209,7 +205,7 @@ class _TimerSystem {
 	}
 
 	public timerIsActive(id: TimerId) {
-		return this.lastTimerUsed === id && this.hasTimerRunning;
+		return this.activeTimer === id;
 	}
     
 	public resetTimer(id: TimerId) {
@@ -299,7 +295,7 @@ class _TimerSystem {
 
 	public removeAllTimers() {
 		this.timerList.splice(0, this.timerList.length);
-		this.lastTimerUsed = NaN;
+		this.activeTimer = NaN;
 	}
 
 	public logAllTimers() {
@@ -324,11 +320,7 @@ class _TimerSystem {
 	public totalTime() {
 		const totalTime = new HMS();
 		for (const { timer } of this.timerList) {
-			const hms = new HMS(
-				timer.time.hours,
-				timer.time.minutes,
-				timer.time.seconds
-			);
+			const hms = HMS.clone(timer.time);
 			totalTime.updateTime(hms);
 		}
 

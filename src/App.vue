@@ -10,15 +10,15 @@ import { computed } from 'vue';
 
 const modalData = componentReference();
 const globalToggle = () => {
-	if (TimerSystem.hasTimerRunning) {
+	if (TimerSystem.activeTimer) {
 		console.debug('Stop global');
 		TimerSystem.pauseActiveTimer();
 	} else {
 		console.debug('Start global');
-		TimerSystem.startTimer(TimerSystem.lastTimerUsed);
+		TimerSystem.startTimer(TimerSystem.activeTimer);
 	}
 };
-const globalToggleClasses = computed(() => TimerSystem.hasTimerRunning ? 'fa-pause active' : 'fa-play inactive');
+const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause active' : 'fa-play inactive');
 </script>
 
 <template>
