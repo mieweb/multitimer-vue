@@ -121,7 +121,6 @@ const interactTimer = (event: Event) => {
 	if (!event.target) return;
 	if (!validTargets.includes(event.target as Element)) return;
 
-
 	if (props.isActive)
 		TimerSystem.pauseActiveTimer();
 	else 
@@ -265,7 +264,7 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 <script lang="ts">
 export default {};
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
     .timer {
         border-radius: 0.2rem;
         width: 100%;

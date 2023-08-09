@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import TimerItem from './TimerItem.vue';
+import MobileTimerItem from './MobileTimerItem.vue';
 import { TimerSystem } from '../data/TimerSystem';
 import { Settings } from '../data/Settings';
 import { Sortable } from 'sortablejs-vue3';
 import SortableJS from 'sortablejs';
+import { computed } from 'vue';
+import mobile from 'is-mobile';
 
 const dragOptions = {
 	animation: 150,
@@ -17,6 +20,10 @@ const mutateList = (event: SortableJS.SortableEvent) => {
 	const item = timerList.splice(oldIndex, 1)[0];
 	timerList.splice(newIndex, 0, item);
 };
+
+const TimerComponent = computed(() => {
+	return mobile() ? MobileTimerItem : TimerItem;
+});
 
 </script>
 <template>
@@ -34,7 +41,7 @@ const mutateList = (event: SortableJS.SortableEvent) => {
 				appear
 				name="timer-wrapper"
 			>
-				<TimerItem
+				<TimerComponent
 					v-if="TimerSystem.isFiltered(element.id)"
 					:key="element.id"
 					:timer-id="element.id"

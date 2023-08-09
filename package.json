@@ -17,6 +17,7 @@
     "animejs": "^3.2.1",
     "bootstrap": "^5.2.3",
     "date-fns": "^2.29.3",
+    "is-mobile": "^4.0.0",
     "sortablejs": "^1.15.0",
     "sortablejs-vue3": "^1.2.5",
     "vue": "^3.2.41"

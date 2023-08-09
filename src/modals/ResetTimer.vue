@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem } from '../data/TimerSystem';
-import Action from '../data/Action';
+import type { Action } from '../components/ModalTemplate.vue';
 import type { ModalData } from '../data/ModalHandler';
 
 const props = defineProps<{
@@ -28,4 +28,4 @@ const actions: Action[] = [
 		<label class="form-label">Are you sure you want to reset this timer?</label>
 	</ModalTemplate>
 </template>
-<script lang="ts">export default {};</script>
+<script lang="ts">export default {};</script>import Action from "../data/Action.1";
