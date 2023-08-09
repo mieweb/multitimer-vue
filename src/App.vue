@@ -7,6 +7,7 @@ import BottomControls from './components/BottomControls.vue';
 import { componentReference } from './data/ModalHandler';
 import { TimerSystem } from './data/TimerSystem';
 import { computed } from 'vue';
+import { isMobile } from 'is-mobile';
 
 const modalData = componentReference();
 const globalToggle = () => {
@@ -29,7 +30,10 @@ const globalToggleClasses = computed(() => TimerSystem.hasTimerRunning ? 'fa-pau
 		aria-labelledby="atm-label"
 		aria-hidden="true"
 	>
-		<div class="modal-dialog">
+		<div
+			class="modal-dialog"
+			:class="isMobile() ? 'modal-dialog-centered' : ''"
+		>
 			<component
 				:is="modalData.component.value"
 				:modal-data="modalData.props"

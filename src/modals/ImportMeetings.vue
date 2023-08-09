@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ModalTemplate from '../components/ModalTemplate.vue';
-import Action from '../data/Action';
+import type { Action } from '../components/ModalTemplate.vue';
 import HMS from '../data/HMS';
 import { BillStatus, RawTimerData, rawToTimerData } from '../data/TimerData';
 import { TimerSystem } from '../data/TimerSystem';
@@ -179,3 +179,4 @@ const randomReaction = () => {
 	display: none;
 }
 </style>
+import Action from "../data/Action.1";
