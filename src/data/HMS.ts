@@ -12,13 +12,17 @@ class HMS {
 	}
 
 	static fromHumanReadable(hours = 0, minutes = 0, seconds = 0) {
-		let millis = (hours * HOURS_MILLIS) + (minutes * MINUTES_MILLIS) + (seconds * SECONDS_MILLIS);
-
-		if (isNaN(millis)) {
-			millis = 0;
+		if (isNaN(hours)) {
+			hours = 0;
+		}
+		if (isNaN(minutes)) {
+			minutes = 0;
+		}
+		if (isNaN(seconds)) {
+			seconds = 0;
 		}
 
-		return new HMS(millis);
+		return new HMS((hours * HOURS_MILLIS) + (minutes * MINUTES_MILLIS) + (seconds * SECONDS_MILLIS));
 	}
 
 	static clone(hms: HMS) {

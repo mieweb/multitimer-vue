@@ -70,7 +70,6 @@ const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-
 				class="float-end options btn dropdown-toggle"
 				:class="`${activeBgColor}`"
 				type="button"
-				data-bs-auto-close="inside"
 				data-bs-toggle="dropdown"
 				aria-expanded="false"
 				@click.stop=""
@@ -104,6 +103,9 @@ const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-
 					<a
 						class="dropdown-item"
 						:href="issueLink"
+						target="_blank"
+						rel="noreferrer noopener"
+						@click.stop
 					>
 						Open Issue <i class=" fa fa-arrow-up-right-from-square" />
 					</a>

@@ -47,7 +47,6 @@ class LocalStorage implements Save {
 		loadLocalStorageValue('deletedTimers', (j: RawTimerData[]) => TimerSystem.deletedTimersFromRaw(j));
 
 		function loadLocalStorageValue<T>(key: string, callback: (parsedJSON: T) => void) {
-			debugger;
 			const jsonString = localStorage.getItem(key);
 			if (jsonString) {
 				callback(JSON.parse(jsonString));

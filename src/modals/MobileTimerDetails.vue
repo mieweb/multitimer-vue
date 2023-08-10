@@ -5,6 +5,7 @@ import { TimerSystem } from '../data/TimerSystem';
 import type { Action } from '../components/ModalTemplate.vue';
 import type { ModalData } from '../data/ModalHandler';
 import { computed } from 'vue';
+import HMS from '../data/HMS';
 
 const props = defineProps<{
 	modalData: ModalData
@@ -14,7 +15,7 @@ const formData = {
 		issue: props.modalData.timerData.issue,
 		title: props.modalData.timerData.title,
 		comment: props.modalData.timerData.comment,
-		link: props.modalData.timerData.billStatus,
+		link: props.modalData.timerData.link,
 		activity: props.modalData.timerData.activity,
 		billStatus: props.modalData.timerData.billStatus,
 	},
@@ -39,6 +40,13 @@ const actions: Action[] = [
 	{
 		action: () => {
 			TimerSystem.editTimer(props.modalData.timerId, formData.timerData);
+			let { hoursRef, minutesRef, secondsRef } = formData;
+			if (formData.toSubtract) {
+				hoursRef = -hoursRef;
+				minutesRef = -minutesRef;
+				secondsRef = -secondsRef;
+			}
+			TimerSystem.updateTime(props.modalData.timerId, HMS.fromHumanReadable(hoursRef, minutesRef, secondsRef));
 		},
 		title: 'Update Timer',
 		closeModal: true,
