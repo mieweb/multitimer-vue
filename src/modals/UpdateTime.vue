@@ -23,14 +23,16 @@ const actions: Action[] = [
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const oldTime = HMS.clone(props.modalData.timerData.time!);
 			let minutes = oldTime.getMinutes();
-			let seconds = oldTime.getSeconds();
+			let secondsDelta = -oldTime.getSeconds();
+			let minutesDelta = 0;
+			let targetMinutes = 0;
 
-			for (minutes; minutes % Settings.roundToMinutes != 0; minutes -= 1) {
-				minutes -= 1;
+			while (targetMinutes <= minutes - Settings.roundToMinutes) {
+				targetMinutes += Settings.roundToMinutes;
 			}
-			seconds = -oldTime.getSeconds();
+			minutesDelta = targetMinutes - minutes;
 
-			TimerSystem.updateTime(props.modalData.timerId, HMS.fromHumanReadable(0, minutes, seconds));
+			TimerSystem.updateTime(props.modalData.timerId, HMS.fromHumanReadable(0, minutesDelta, secondsDelta));
 		},
 		closeModal: true,
 		classes: 'btn-outline-primary',
@@ -39,9 +41,9 @@ const actions: Action[] = [
 		title: 'Update Timer',
 		action: () => {
 			const signFactor = formData.toSubtract ? -1 : 1;
-			const hours = isNaN(formData.hoursRef) ? 0 : formData.hoursRef;
-			const minutes = isNaN(formData.minutesRef) ? 0 : formData.minutesRef;
-			const seconds = isNaN(formData.secondsRef) ? 0 : formData.secondsRef;
+			const hours = validateNumber(formData.hoursRef);
+			const minutes = validateNumber(formData.minutesRef);
+			const seconds = validateNumber(formData.secondsRef);
 			const hms = HMS.fromHumanReadable(
 				hours * signFactor,
 				minutes * signFactor,
@@ -49,6 +51,10 @@ const actions: Action[] = [
 			);
 
 			TimerSystem.updateTime(props.modalData.timerId, hms);
+
+			function validateNumber(number: number) {
+				return number < 0 ? 0 : number;
+			}
 		},
 		closeModal: true,
 		classes: 'btn-primary',

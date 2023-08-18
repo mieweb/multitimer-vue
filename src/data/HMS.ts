@@ -12,17 +12,15 @@ class HMS {
 	}
 
 	static fromHumanReadable(hours = 0, minutes = 0, seconds = 0) {
-		if (isNaN(hours)) {
-			hours = 0;
-		}
-		if (isNaN(minutes)) {
-			minutes = 0;
-		}
-		if (isNaN(seconds)) {
-			seconds = 0;
-		}
+		hours = validateNumber(hours);
+		minutes = validateNumber(minutes);
+		seconds = validateNumber(seconds);
 
 		return new HMS((hours * HOURS_MILLIS) + (minutes * MINUTES_MILLIS) + (seconds * SECONDS_MILLIS));
+
+		function validateNumber(number: number) {
+			return isNaN(number) ? 0 : number;
+		}
 	}
 
 	static clone(hms: HMS) {
@@ -79,6 +77,9 @@ class HMS {
 
 	public updateTime(time: HMS) {
 		this.time += time.getMilliseconds();
+		if (this.time < 0) {
+			this.time = 0;
+		}
 	}
 
 	public updateTimeByMilliseconds(millis: number) {
