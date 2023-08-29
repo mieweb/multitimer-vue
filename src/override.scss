@@ -49,6 +49,10 @@
     background-color: inherit;
 }
 
+.form-control::placeholder {
+    color: var(--background-alt);
+}
+
 kbd {
     background-color: var(--background-alt);
 }

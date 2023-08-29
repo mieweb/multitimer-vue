@@ -50,7 +50,7 @@ const favorite = () => {
 	}
 };
 const remove = () => openModal(RemoveTimer, { timerId: props.timerId });
-const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-default');
+const activeTimerBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-default');
 </script>
 
 <template>
@@ -59,67 +59,71 @@ const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-
 		:class="isActive ? 'bg-active' : 'bg-default'"
 		@click="isActive ? TimerSystem.pauseActiveTimer() : TimerSystem.startTimer(timerId)"
 	>
-		<span class="preview-data">
-			<div class="title">{{ timerData.title }}</div>
-			<div>{{ timerData.time.toString() }}</div>
-		</span>
-		<span
-			class="dropdown"
-		>
-			<button
-				class="float-end options btn dropdown-toggle"
-				:class="`${activeBgColor}`"
-				type="button"
-				data-bs-toggle="dropdown"
-				aria-expanded="false"
-				@click.stop=""
+		<div class="timer-grid">
+			<span class="preview-data">
+				<div class="title">{{ timerData.title }}</div>
+				<div>{{ timerData.time.toString() }}</div>
+			</span>
+			<span
+				class="dropdown"
 			>
-				Options
-			</button>
-			<ul class="dropdown-menu">
-				<li>
-					<button
-						class="dropdown-item"
-						@click.stop="edit"
-					>
-						Edit
-					</button>
-				</li>
-				<li>
-					<button
-						class="dropdown-item"
-						@click.stop="TimerSystem.logTimer(timerId)"
-					>Log Timer</button>
-				</li>
-				<li>
-					<button
-						class="dropdown-item"
-						@click.stop="favorite"
-					>
-						Favorite Timer
-					</button>
-				</li>
-				<li>
-					<a
-						class="dropdown-item"
-						:href="issueLink"
-						target="_blank"
-						rel="noreferrer noopener"
-						@click.stop
-					>
-						Open Issue <i class=" fa fa-arrow-up-right-from-square" />
-					</a>
-				</li>
-				<li>
-					<button
-						class="dropdown-item"
-						@click.stop="remove"
-					>
-						Remove
-					</button>
-				</li>
-			</ul>
-		</span>
+				<button
+					class="float-end options btn dropdown-toggle"
+					:class="`${activeTimerBgColor}`"
+					type="button"
+					data-bs-toggle="dropdown"
+					aria-expanded="false"
+					@click.stop=""
+				>
+					Options
+				</button>
+				<ul
+					class="dropdown-menu mobile-dropdown"
+				>
+					<li>
+						<button
+							class="dropdown-item"
+							@click.stop="edit"
+						>
+							Edit
+						</button>
+					</li>
+					<li>
+						<button
+							class="dropdown-item"
+							@click.stop="TimerSystem.logTimer(timerId)"
+						>Log Timer</button>
+					</li>
+					<li>
+						<button
+							class="dropdown-item"
+							@click.stop="favorite"
+						>
+							Favorite Timer
+						</button>
+					</li>
+					<li>
+						<a
+							class="dropdown-item"
+							:href="issueLink"
+							target="_blank"
+							rel="noreferrer noopener"
+							@click.stop
+						>
+							Open Issue <i class=" fa fa-arrow-up-right-from-square" />
+						</a>
+					</li>
+					<li>
+						<button
+							class="dropdown-item"
+							@click.stop="remove"
+						>
+							Remove
+						</button>
+					</li>
+				</ul>
+			</span>
+		</div>
 	</div>
 </template>
 <script lang="ts">
@@ -145,14 +149,17 @@ export default {};
 		grid-column: 1 2;
 	}
 
-    .timer {
-        border-radius: 0.2rem;
-        width: 100%;
+	.timer-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) 1fr;
         align-items: center;
         column-gap: 1rem;
         row-gap: 0.5rem;
+	}
+
+    .timer {
+        border-radius: 0.2rem;
+        width: 100%;
     }
 
     .timer * {
@@ -253,5 +260,9 @@ export default {};
 
 	.timer-button:hover {
 		background-color: rgba(0.0, 0.0, 0.0, 0.2);
+	}
+
+	.mobile-dropdown {
+		background: var(--background);
 	}
 </style>
