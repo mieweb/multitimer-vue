@@ -4,10 +4,12 @@ import HeaderBar from './components/HeaderBar.vue';
 import TopControls from './components/TopControls.vue';
 import TotalTimer from './components/TotalTimer.vue';
 import BottomControls from './components/BottomControls.vue';
+import ToastSingleton from './components/ToastSingleton.vue';
 import { componentReference } from './data/ModalHandler';
 import { TimerSystem } from './data/TimerSystem';
 import { computed } from 'vue';
 import { isMobile } from 'is-mobile';
+import { ToastType, showToast } from './data/Toast';
 
 const modalData = componentReference();
 const globalToggle = () => {
@@ -53,6 +55,7 @@ const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause a
 			@click="globalToggle"
 		/>
 	</Transition>
+	<ToastSingleton />
 </template>
 
 <style>
