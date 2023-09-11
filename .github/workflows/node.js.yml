@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
-
+  
 on:
   push:
     branches: [ "master" ]
@@ -14,13 +14,12 @@ jobs:
 
     runs-on: [ self-hosted ]
 
-
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '16.x'
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
