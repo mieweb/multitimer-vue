@@ -266,13 +266,13 @@ const versionNumber = MULTITIMER_VERSION;
 		</ul>
 		<hr>
 		<h4>About The MultiTimer ⏱️</h4>
-		<h6 class="text-muted">
+		<h6 class="faded-text">
 			Version: {{ versionNumber }}
 		</h6>
-		<h6 class="text-muted">
+		<h6 class="faded-text">
 			Author: Thomas Baugher
 		</h6>
-		<h6 class="text-muted">
+		<h6 class="faded-text">
 			<a
 				class="link-secondary"
 				href="https://github.mieweb.com/tbaugher/multitimer-vue"
@@ -289,3 +289,8 @@ const versionNumber = MULTITIMER_VERSION;
 		</h6>
 	</ModalTemplate>
 </template>
+<style>
+	.faded-text {
+		color: var(--foreground-alt) !important;
+	}
+</style>

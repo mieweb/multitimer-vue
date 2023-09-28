@@ -40,9 +40,9 @@ $timer-secondary-active: #28b363;
 
 :root {
     // --white: #FAFAFA;
-    --white: #FFFFFF;
+    --white: #e7e7e7;
     --black: #202020;
-    --light-grey: #dfdfdf;
+    --light-grey: #9f9f9f;
     --dark-grey: #383838;
 
     --foreground: var(--black);
@@ -56,7 +56,7 @@ $timer-secondary-active: #28b363;
 }
 
 .dark {
-    --foreground: var(--light-grey);
+    --foreground: var(--white);
     --background: var(--black);
     --foreground-alt: var(--light-grey);
     --background-alt: var(--dark-grey);
