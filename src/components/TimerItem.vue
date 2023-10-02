@@ -347,6 +347,10 @@ export default {};
         border-color: rgba(0, 0, 0, 0);
     }
 
+	.comment::placeholder {
+		color: var(--foreground-alt);
+	}
+
     .link {
         grid-row-start: 2;
         grid-column-start: 5;

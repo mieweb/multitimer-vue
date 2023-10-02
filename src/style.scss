@@ -29,26 +29,19 @@ $enable-cssgrid: true;
 @import "./node_modules/bootstrap/scss/utilities/api";
 
 
-$white: white;
-$timer-primary: #596f86;
-$timer-active: #2ecc71;
-// $timer-secondary: #435365;
-$timer-secondary: #4e6175;
-$timer-secondary-active: #28b363;
-
 @import "./override.scss";
 
 :root {
-    // --white: #FAFAFA;
-    --white: #e7e7e7;
+    --white: #ffffff;
     --black: #202020;
-    --light-grey: #9f9f9f;
+    --light-grey: #e0e0e0;
     --dark-grey: #383838;
 
     --foreground: var(--black);
     --background: var(--white);
     --foreground-alt: var(--dark-grey);
     --background-alt: var(--light-grey);
+    --placeholder: #21252925;
     --timer-primary: #596f86;
     --timer-secondary: #4e6175;
     --timer-active: #2ecc71;
@@ -60,6 +53,7 @@ $timer-secondary-active: #28b363;
     --background: var(--black);
     --foreground-alt: var(--light-grey);
     --background-alt: var(--dark-grey);
+    --placeholder: #a3b9cf25;
     --timer-primary: #384554;
     --timer-secondary: #445566;
     --timer-active: #114d2a;
