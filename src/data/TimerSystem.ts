@@ -298,13 +298,16 @@ class _TimerSystem {
 		this.activeTimer = NaN;
 	}
 
+	public isLoggable(timer: TimerData) {
+		const { time, issue } = timer;
+		return time.hasTime() && issue.length;
+	}
+
 	public logAllTimers() {
-		const timersWithTime = this.timerList.filter(timerEntry => {
-			const { time, issue } = timerEntry.timer;
-			return time.hasTime() && issue.length;
-		});
-		for (const { timer } of timersWithTime) {
-			this.logFromData(timer);
+		for (const { timer } of this.timerList) {
+			if (this.isLoggable(timer)) {
+				this.logFromData(timer);
+			}
 		}
 	}
     

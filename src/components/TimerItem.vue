@@ -129,7 +129,7 @@ const interactTimer = (event: Event) => {
 };
 
 const showOnHover = computed(() => Settings.hideOptions ? 'hover-hide' : '');
-const hideLog = computed(() => !props.timerData.issue ? 'hide' : '');
+const hideLog = computed(() => TimerSystem.isLoggable(props.timerData) ? '' : 'hide');
 const chevron = computed(() => props.timerData.controlsHidden ? 'fa-chevron-down' : 'fa-chevron-up');
 const showExtraControls = computed(() => props.timerData.controlsHidden ? 'd-none' : '');
 const activeBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg-alt-default');
