@@ -15,6 +15,7 @@ const props = defineProps<{
 }>();
 
 const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData.issue}`);
+const hideLog = computed(() => TimerSystem.isLoggable(props.timerData) ? '' : 'd-none');
 
 const edit = () => {
 	openModal(MobileTimerDetails, {
@@ -91,6 +92,7 @@ const activeTimerBgColor = computed(() => props.isActive ? 'bg-alt-active' : 'bg
 					<li>
 						<button
 							class="dropdown-item"
+							:class="hideLog"
 							@click.stop="TimerSystem.logTimer(timerId)"
 						>Log Timer</button>
 					</li>
