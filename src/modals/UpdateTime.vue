@@ -19,21 +19,7 @@ const formData = {
 const actions: Action[] = [
 	{
 		title: 'Round Down Timer',
-		action: () => {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const oldTime = HMS.clone(props.modalData.timerData.time!);
-			let minutes = oldTime.getMinutes();
-			let secondsDelta = -oldTime.getSeconds();
-			let minutesDelta = 0;
-			let targetMinutes = 0;
-
-			while (targetMinutes <= minutes - Settings.roundToMinutes) {
-				targetMinutes += Settings.roundToMinutes;
-			}
-			minutesDelta = targetMinutes - minutes;
-
-			TimerSystem.updateTime(props.modalData.timerId, HMS.fromHumanReadable(0, minutesDelta, secondsDelta));
-		},
+		action: () => TimerSystem.roundDownTimer(props.modalData.timerId),
 		closeModal: true,
 		classes: 'btn-outline-primary',
 	},
