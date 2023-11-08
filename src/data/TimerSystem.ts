@@ -219,6 +219,22 @@ class _TimerSystem {
 		timer.lastUsed = Date.now();
 	}
 
+	public roundDownTimer(id: TimerId) {
+		const timerData = this.getTimerById(id);
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const oldTime = HMS.clone(timerData.time!);
+		const minutes = oldTime.getMinutes();
+		const secondsDelta = -oldTime.getSeconds();
+		let targetMinutes = 0;
+
+		while (targetMinutes <= minutes - Settings.roundToMinutes) {
+			targetMinutes += Settings.roundToMinutes;
+		}
+
+		const minutesDelta = targetMinutes - minutes;
+		timerData.time?.updateTime(HMS.fromHumanReadable(0, minutesDelta, secondsDelta));
+	}
+
 	public createFavoriteFromId(id: TimerId) {
 		const timerRef = this.getTimerById(id);
 		const timerData: FavoriteTimer = {
