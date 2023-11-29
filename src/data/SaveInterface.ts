@@ -2,13 +2,13 @@ import { Settings, SettingsInterface } from './Settings';
 import { FavoriteTimer, RawTimerData } from './TimerData';
 import { TimerSystem } from './TimerSystem';
 
-interface Save {
+interface SaveInterface {
 	setAutosaveInterval(interval: number): void;
     save(): void;
     load(): void;
 }
 
-class LocalStorage implements Save {
+class LocalStorage implements SaveInterface {
 	private intervalId = NaN;
 
 	public setAutosaveInterval(seconds: number) {
