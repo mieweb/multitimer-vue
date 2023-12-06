@@ -5,6 +5,7 @@ import TopControls from './components/TopControls.vue';
 import TotalTimer from './components/TotalTimer.vue';
 import BottomControls from './components/BottomControls.vue';
 import ToastSingleton from './components/ToastSingleton.vue';
+import SaveNotifier from './components/SaveNotifier.vue';
 import { componentReference } from './data/ModalHandler';
 import { TimerSystem } from './data/TimerSystem';
 import { computed } from 'vue';
@@ -56,6 +57,7 @@ const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause a
 		/>
 	</Transition>
 	<ToastSingleton />
+	<SaveNotifier />
 </template>
 
 <style>
