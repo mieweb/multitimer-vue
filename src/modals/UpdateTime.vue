@@ -4,7 +4,6 @@ import { TimerSystem } from '../data/TimerSystem';
 import type { Action } from '../components/ModalTemplate.vue';
 import HMS from '../data/HMS';
 import type { ModalData } from '../data/ModalHandler';
-import { Settings } from '../data/Settings';
 
 const props = defineProps<{
 	modalData: ModalData

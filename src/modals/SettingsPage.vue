@@ -198,6 +198,18 @@ const actions: Action[] = [
 				type="checkbox"
 			>
 		</div>
+		<div class="mb-3 form-check">
+			<label
+				class="form-check-label"
+				for="move-timer-to-top"
+			>Move timer to top on start</label>
+			<input
+				id="move-timer-to-top"
+				v-model="formData.moveTimerToTop"
+				class="form-check-input"
+				type="checkbox"
+			>
+		</div>
 		<h5>Meetings</h5>
 		<hr>
 		<div class="mb-3">

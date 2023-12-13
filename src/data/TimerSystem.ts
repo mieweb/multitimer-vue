@@ -142,7 +142,21 @@ class _TimerSystem {
 		this.logFromData(timer);
 	}
 
+	private moveTimerUp(id: TimerId) {
+		for (let i = 0; i < this.timerList.length; ++i) {
+			if (this.timerList[i].id === id) {
+				const tmp = this.timerList[0];
+				this.timerList[0] = this.timerList[i];
+				this.timerList[i] = tmp;
+			}
+		}
+	}
+
 	public startTimer(id: TimerId) {
+		if (Settings.moveTimerToTop) {
+			this.moveTimerUp(id);
+		}
+
 		const timer = this.getTimerById(id);
 		const startDate = Date.now();
 
