@@ -1,6 +1,5 @@
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { reactive } from 'vue';
-import { getStorage } from './SaveInterface';
 import { Activity } from './TimerData';
 import { getSaveNotifier } from './SaveSystem';
 
@@ -24,7 +23,8 @@ export interface SettingsInterface {
 	onlyImportIssuedMeetings: boolean,
 	defaultActivity: Activity,
 	lastUsedForLogging: boolean
-	startOnTimerClick: boolean
+	startOnTimerClick: boolean,
+	moveTimerToTop: boolean
 }
 
 class _Settings implements SettingsInterface {
@@ -41,6 +41,7 @@ class _Settings implements SettingsInterface {
 	public defaultActivity: Activity = 'Development';
 	public lastUsedForLogging = false;
 	public startOnTimerClick = false;
+	public moveTimerToTop = false;
 	
 	// "External" settings
 	public darkMode = false;

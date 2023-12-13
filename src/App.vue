@@ -10,7 +10,6 @@ import { componentReference } from './data/ModalHandler';
 import { TimerSystem } from './data/TimerSystem';
 import { computed } from 'vue';
 import { isMobile } from 'is-mobile';
-import { ToastType, showToast } from './data/Toast';
 
 const modalData = componentReference();
 const globalToggle = () => {

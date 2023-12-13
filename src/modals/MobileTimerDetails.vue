@@ -4,7 +4,6 @@ import { activities, billStatuses } from '../data/TimerData';
 import { TimerSystem } from '../data/TimerSystem';
 import type { Action } from '../components/ModalTemplate.vue';
 import type { ModalData } from '../data/ModalHandler';
-import { computed } from 'vue';
 import HMS from '../data/HMS';
 
 const props = defineProps<{
