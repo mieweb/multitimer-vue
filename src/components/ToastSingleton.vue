@@ -15,7 +15,6 @@ onMounted(() => {
 });
 
 document.addEventListener('showToast', (e: Event) => {
-	console.log('Show!');
 	const ce = e as CustomEvent;
 	const { title, content, headerClass: header, bodyClass: body, icon } = ce.detail;
 
