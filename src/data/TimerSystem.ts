@@ -142,19 +142,20 @@ class _TimerSystem {
 		this.logFromData(timer);
 	}
 
-	private moveTimerUp(id: TimerId) {
-		for (let i = 0; i < this.timerList.length; ++i) {
+	private moveTimerToTop(id: TimerId) {
+		for (let i = 1; i < this.timerList.length; ++i) {
 			if (this.timerList[i].id === id) {
-				const tmp = this.timerList[0];
-				this.timerList[0] = this.timerList[i];
-				this.timerList[i] = tmp;
+				const timer = this.timerList[i];
+				this.timerList.splice(i, 1);
+				this.timerList.unshift(timer);
+				break;
 			}
 		}
 	}
 
 	public startTimer(id: TimerId) {
 		if (Settings.moveTimerToTop) {
-			this.moveTimerUp(id);
+			this.moveTimerToTop(id);
 		}
 
 		const timer = this.getTimerById(id);
