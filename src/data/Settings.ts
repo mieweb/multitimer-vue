@@ -1,7 +1,7 @@
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { reactive } from 'vue';
 import { Activity } from './TimerData';
-import { getSaveNotifier } from './SaveSystem';
+import { SaveSystem, getSaveSystem } from './SaveSystem';
 
 type MeetingPreset = 'D' | 'W' | 'M' | 'R';
 type StartEndDate = {
@@ -54,7 +54,7 @@ class _Settings implements SettingsInterface {
 
 		// Post function calls
 		if (obj.autosaveInterval !== undefined) {
-			getSaveNotifier().setAutosaveInterval(this.autosaveInterval);
+			getSaveSystem().setAutosaveInterval(this.autosaveInterval);
 		}
 	}
 

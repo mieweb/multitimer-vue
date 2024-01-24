@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host localhost",
+	"dev2": "vite --host",
     "build": "vue-tsc && vite build --base=./",
     "check": "vue-tsc --noEmit",
     "preview": "vite preview"
@@ -17,6 +18,7 @@
     "animejs": "^3.2.1",
     "bootstrap": "^5.2.3",
     "date-fns": "^2.29.3",
+    "firebase": "^10.7.1",
     "is-mobile": "^4.0.0",
     "sortablejs": "^1.15.0",
     "sortablejs-vue3": "^1.2.5",
