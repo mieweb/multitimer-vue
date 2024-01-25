@@ -6,10 +6,12 @@ import TotalTimer from './components/TotalTimer.vue';
 import BottomControls from './components/BottomControls.vue';
 import ToastSingleton from './components/ToastSingleton.vue';
 import SaveNotifier from './components/SaveNotifier.vue';
+import SignIn from './components/SignIn.vue';
 import { componentReference } from './data/ModalHandler';
 import { TimerSystem } from './data/TimerSystem';
 import { computed } from 'vue';
 import { isMobile } from 'is-mobile';
+import { getSaveSystem } from './data/SaveSystem';
 
 const modalData = componentReference();
 const globalToggle = () => {
@@ -22,6 +24,11 @@ const globalToggle = () => {
 	}
 };
 const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause active' : 'fa-play inactive');
+const saveSystem = getSaveSystem();
+const signedIn = saveSystem.signInRef();
+const signOut = async () => {
+	await saveSystem.signOut();
+};
 </script>
 
 <template>
@@ -42,24 +49,37 @@ const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause a
 			/>
 		</div>
 	</div>
-	<HeaderBar />
-	<TopControls />
-	<TotalTimer />
-	<TimerList />
-	<BottomControls />
-	<Transition>
-		<div
-			v-if="TimerSystem.lastTimerUsed"
-			id="global-pause-button"
-			:class="`p-3 fa ${globalToggleClasses}`"
-			@click="globalToggle"
-		/>
-	</Transition>
-	<ToastSingleton />
-	<SaveNotifier />
+		<div v-if="signedIn">
+			<HeaderBar />
+			<TopControls />
+			<TotalTimer />
+			<TimerList />
+			<BottomControls />
+			<Transition>
+				<div
+					v-if="TimerSystem.lastTimerUsed"
+					id="global-pause-button"
+					:class="`p-3 fa ${globalToggleClasses}`"
+					@click="globalToggle"
+				/>
+			</Transition>
+			<ToastSingleton />
+			<SaveNotifier />
+			<div @click="signOut" id="sign-out" class="plain-btn pointer">
+				<span class="text-secondary"><i class="text-secondary fa-solid fa-door-open" /> Log Out</span>
+			</div>
+		</div>
+		<div v-else>
+			<SignIn />
+		</div>
 </template>
 
 <style>
+	#sign-out {
+		position: fixed;	
+		bottom: 1rem;
+		left: 1rem;
+	}
 	#global-pause-button {
 		border-radius: 20%;
 		position: fixed;

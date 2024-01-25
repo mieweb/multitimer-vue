@@ -54,7 +54,10 @@ class _Settings implements SettingsInterface {
 
 		// Post function calls
 		if (obj.autosaveInterval !== undefined) {
-			getSaveSystem().setAutosaveInterval(this.autosaveInterval);
+			const saveSystem = getSaveSystem();
+			if (saveSystem) {
+				saveSystem.setAutosaveInterval(this.autosaveInterval);
+			}
 		}
 	}
 

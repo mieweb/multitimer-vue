@@ -110,7 +110,7 @@ const firebaseConfig: FirebaseOptions = {
 
 const collectionName = 'save-data';
 
-class FirebaseStorage implements SaveInterface {
+export class FirebaseStorage implements SaveInterface {
 	public app: FirebaseApp;
 	public db: Firestore;
 	public auth: Auth;
@@ -147,8 +147,15 @@ class FirebaseStorage implements SaveInterface {
 	}
 }
 
-export async function getEasiestSystem(): Promise<SaveInterface> {
+export async function initFirestore() {
 	const app = initializeApp(firebaseConfig);
+	const auth = getAuth(app);
+
+	await auth.setPersistence(browserLocalPersistence);
+}
+
+export async function getEasiestSystem(): Promise<SaveInterface> {
+	const app = getApp();
 	const auth = getAuth(app);
 
 	await auth.setPersistence(browserLocalPersistence);
