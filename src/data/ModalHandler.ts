@@ -2,6 +2,7 @@ import { Modal } from 'bootstrap';
 import { Component, shallowRef } from 'vue';
 import { TimerId, TimerData } from './TimerData';
 import { MeetingData } from '../data/ImportMeetings';
+import { SaveSystemInfo } from './SaveSystem';
 
 let modal: Modal;
 const modalData = {
@@ -28,10 +29,10 @@ export function show() {
 	modal.show();
 }
 
-export interface ModalData {
+export type ModalData = {
 	timerId: TimerId,
 	timerData: Partial<TimerData>,
-	importMeetingData: MeetingData[]
+	importMeetingData: MeetingData[],
 }
 
 export function openModal(newModalComponent: Component, incomingProps?: Partial<ModalData>) {

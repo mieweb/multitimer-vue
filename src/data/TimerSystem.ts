@@ -40,7 +40,10 @@ class _TimerSystem {
 	};
 	
 	public addTimer(timerData: TimerData): boolean {
-		if (this.issueExistsInTimerList(timerData.issue)) return false;
+		if (this.issueExistsInTimerList(timerData.issue)) {
+			return false;
+		}
+
 		const id = this.newId();
 		this.timerList.unshift({ id, timer: reactive(timerData) });
 		this.startTimer(id);
@@ -67,8 +70,10 @@ class _TimerSystem {
 	 * nor does it start any timers.
 	 * @param timerList A list of timers
 	 */
-	public loadTimerList(timerList: TimerData[]) {
-		for (const timerData of timerList.filter(timer => !this.issueExistsInTimerList(timer.issue))) {
+	public loadTimerList(incomingTimerList: TimerData[]) {
+		const timerList = incomingTimerList.filter(timer => !this.issueExistsInTimerList(timer.issue));
+
+		for (const timerData of timerList) {
 			this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
 		}
 	}
@@ -369,15 +374,6 @@ class _TimerSystem {
 		} as TimerSystemData;
 	}
 
-	public timersFromRaw(rawTimers: RawTimerData[]) {
-		for (const rawTimer of rawTimers) {
-			this.timerList.push({ 
-				id: this.newId(),
-				timer: reactive(rawToTimerData(rawTimer))
-			});
-		}
-	}
-
 	public favoriteTimersFromList(rawFavorites: FavoriteTimer[]) {
 		for (const rawTimer of rawFavorites) {
 			this.createFavoriteFromInterface({
@@ -406,7 +402,7 @@ class _TimerSystem {
 	 * @param saveData Savedata to load
 	 */
 	public importTimerSystemData(timerSystemData: TimerSystemData) {
-		this.timersFromRaw(timerSystemData.timers as RawTimerData[] ?? []);
+		this.loadTimerList(timerSystemData.timers.map(rawToTimerData));
 		this.favoriteTimersFromList(timerSystemData.favoriteTimers as RawTimerData[] ?? []);
 	}
 
