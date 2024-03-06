@@ -56,7 +56,6 @@ const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause a
 		/>
 	</Transition>
 	<ToastSingleton />
-	<SaveNotifier />
 </template>
 
 <style>

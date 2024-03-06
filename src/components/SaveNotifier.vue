@@ -1,38 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref, Ref } from 'vue';
-const saveInfoCompleteE = ref<HTMLDivElement>();
-const saveInfoFailedE = ref<HTMLDivElement>();
-const saveInfoProgressE = ref<HTMLDivElement>();
-const hideAllSaveInfo = () => {
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	saveInfoProgressE.value!.hidden = true;
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	saveInfoFailedE.value!.hidden = true;
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	saveInfoCompleteE.value!.hidden = true;
-};
+import { ref } from 'vue';
+import { getSaveSystem, SaveNotifierState } from '../data/SaveSystem';
+const saveSystem = getSaveSystem();
+const saveState = ref(SaveNotifierState.Complete);
 
-const showElement = (e: Ref<HTMLDivElement | undefined>) => {
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	e.value!.hidden = false;
-};
-
-document.addEventListener('save:start', () => {
-	hideAllSaveInfo();
-	showElement(saveInfoProgressE);
-});
-
-document.addEventListener('save:complete', () => {
-	hideAllSaveInfo();
-	showElement(saveInfoCompleteE);
-});
-
-onMounted(() => {
-	showElement(saveInfoCompleteE);
-});
-
-const manualSave = () => {
-	document.dispatchEvent(new Event('save:request'));
+const manualSave = async () => {
+	saveState.value = SaveNotifierState.InProgress; // Hastily made, need to change since some variants aren't used.
+	await saveSystem.startSaving();
+	saveState.value = SaveNotifierState.Complete;
 };
 </script>
 <template>
@@ -42,24 +17,22 @@ const manualSave = () => {
 		@click="manualSave"
 	>
 		<div
+			v-if="saveState === SaveNotifierState.Complete"
 			id="saving-info-complete"
-			ref="saveInfoCompleteE"
-			hidden
 		>
 			<i class="fa-solid fa-check text-success pe-1" />
 			<span class="text-secondary">Save complete.</span>
 		</div>
 		<div
+			v-else-if="saveState === SaveNotifierState.Failed"
 			id="saving-info-failed"
-			ref="saveInfoFailedE"
-			hidden
 		>
 			<i class="fa-solid fa-xmark text-danger pe-1" />
 			<span class="text-secondary">Save incomplete.</span>
 		</div>
 		<div
+			v-else-if="saveState === SaveNotifierState.InProgress"
 			id="saving-info-progress"
-			ref="saveInfoProgressE"
 			hidden
 		>
 			<span class="pe-1">
