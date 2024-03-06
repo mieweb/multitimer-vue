@@ -1,34 +1,43 @@
-import { getStorage } from './SaveInterface';
+import { Ref, ref } from 'vue';
+import { MultitimerData, SaveInterface, getEasiestSystem, } from './SaveInterface';
 import { Settings } from './Settings';
+import { TimerSystem } from './TimerSystem';
 
-let saveNotifier: SaveNotifier | null = null;
+let saveSystem: SaveSystem | null = null;
 
-export function getSaveNotifier(): SaveNotifier {
-	if (!saveNotifier) {
-		saveNotifier = new SaveNotifier(Settings.autosaveInterval);
+class SaveSystem {
+	private currentSystem: Ref<SaveInterface>;
+	private intervalId = NaN;
+
+	public constructor(si: SaveInterface, autosaveInterval: number) {
+		this.currentSystem = ref(si);
+		this._setAutosaveInterval(autosaveInterval);
+		this.currentSystem.value.load().then(data => this.startLoading(data));
+
+		window.onbeforeunload = async () => {
+			await this.startSaving();
+		};
 	}
 
-	return saveNotifier;
-}
+	public getCurrentSystemRef() {
+		return this.currentSystem;
+	}
 
-class SaveNotifier {
-	private saveSystem = getStorage();
-	private intervalId;
+	public async setCurrentSystem(i: SaveInterface) {
+		if (i.name() === this.currentSystem.value.name()) {
+			return;
+		}
+		
+		const previousSystem = this.currentSystem.value;
+		const previousSave = await previousSystem.load();
 
-	public constructor(seconds: number) {
-		this.intervalId = this._setAutosaveInterval(seconds);
+		this.currentSystem.value = i;
 
-		window.onbeforeunload = () => {
-			for (let i = 0; i < 100000000; i++) { 
-				i;
-			}
-			this.saveSystem.save();
-		};
-		window.onload = this.saveSystem.load;
+		const currentSave = await this.currentSystem.value.load();
 
-		document.addEventListener('save:request', () => {
-			this.startSaving();
-		});
+		if (previousSave.timestamp < currentSave.timestamp) {
+			this.startLoading(currentSave);
+		}
 	}
 
 	public setAutosaveInterval(seconds: number): number {
@@ -43,15 +52,34 @@ class SaveNotifier {
 		}, interval);
 	}
 
-	private startSaving() {
-		document.dispatchEvent(new Event('save:start'));
-		this.saveSystem.save();
-		document.dispatchEvent(new Event('save:complete'));
+	public async startSaving() {
+		const data: MultitimerData = {
+			timestamp: Date.now(),
+			timerSystemData: TimerSystem.toTimerSystemData(),
+			settings: Settings.dataCopy()
+		};
+		await this.currentSystem.value.save(data);
 		console.log(
-			'[%c%s%c] Autosaved all multitimer data into localstorage', 
+			`[%c%s%c] Autosaved multitimer data using the ${this.currentSystem.value.name()} saving system`, 
 			'color: blue',
 			Date().slice(0, 24),
 			'color: initial',
 		);
 	}
+
+	public async startLoading(data: MultitimerData) {
+		TimerSystem.importTimerSystemData(data.timerSystemData);
+		Settings.updateSettings(data.settings ?? {});
+	}
 }
+
+export async function initSaveSystem(): Promise<SaveSystem> {
+	saveSystem = new SaveSystem(await getEasiestSystem(), Settings.autosaveInterval);
+
+	return saveSystem;
+}
+
+export function getSaveSystem(): SaveSystem {
+	return saveSystem as SaveSystem; // This should always be available
+}
+
