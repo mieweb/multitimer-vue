@@ -9,5 +9,13 @@ export default defineConfig({
 	},
 	define: {
 		MULTITIMER_VERSION: JSON.stringify(process.env.npm_package_version)
+	},
+	server: {
+		proxy: {
+			'/save': {
+				target: 'http://localhost:3000',
+				changeOrigin: true,
+			}
+		}
 	}
 });

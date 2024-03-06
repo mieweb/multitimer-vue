@@ -69,6 +69,92 @@ export class LocalStorage implements SaveInterface {
 	}
 }
 
+class MongoStorage implements SaveInterface {
+	private token: string; 
+
+	public constructor(token: string) {
+		this.token = token;
+	}
+
+	public name(): string {
+		return 'Mongo Storage';
+	}
+
+	public icon(): string {
+		return 'fa-leaf';
+	}
+
+	public async save(multitimerData: MultitimerData): Promise<void> {
+		const body = { 
+			multitimerData,
+			headers: {
+				token: this.token
+			}
+		};
+
+		await fetch('/save/mongo-post', {
+			method: 'POST',
+			body: JSON.stringify(body), 
+			headers: { 'Content-Type': 'application/json', token: this.token }
+		});
+
+		return;
+	}
+
+	public async load(): Promise<MultitimerData> {
+		const options = {
+			headers: {
+				token: this.token
+			}
+		};
+		const res = await fetch('/save/mongo-get', options);
+		const json = await res.json()
+			.then(data => {
+				delete data.userId;
+
+				return data as MultitimerData;
+			})
+			.catch(() => { 
+				return {
+					timestamp: Date.now(),
+					timerSystemData: {
+						timers: [],
+						favoriteTimers: [],
+						deletedTimers: [] 
+					},
+				} as MultitimerData;
+			});
+
+		return json;
+	}
+}
+
+async function getMongoSystem(username: string, password: string): Promise<MongoStorage | null> {
+	const options = {
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		method: 'POST',
+		body: JSON.stringify({
+			username,
+			password
+		})
+	};
+	const res = await fetch('/save/mongo-login', options);
+
+	if (res.status != 200) {
+		return null;
+	}
+
+	return new MongoStorage(await res.text());
+}
+
 export async function getEasiestSystem(): Promise<SaveInterface> {
+	const mongoSystem = await getMongoSystem('tbaugher', 'mememe');
+
+	if (mongoSystem) {
+		return mongoSystem;
+	}
+
 	return new LocalStorage();
 }
