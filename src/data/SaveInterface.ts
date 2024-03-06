@@ -1,64 +1,74 @@
-import { Settings, SettingsInterface } from './Settings';
-import { FavoriteTimer, RawTimerData } from './TimerData';
-import { TimerSystem } from './TimerSystem';
+import { SettingsInterface } from './Settings';
+import { TimerSystemData } from './TimerSystem';
+export type MultitimerData = {
+	timestamp: number,
+	timerSystemData: TimerSystemData,
+	settings?: SettingsInterface
+};
 
-interface SaveInterface {
-	setAutosaveInterval(interval: number): void;
-    save(): void;
-    load(): void;
+export interface SaveInterface {
+	name(): string;
+    save(multitimerData: MultitimerData): Promise<void>;
+    load(): Promise<MultitimerData>;
+	icon(): string;
 }
 
-class LocalStorage implements SaveInterface {
-	private intervalId = NaN;
-
-	public setAutosaveInterval(seconds: number) {
-		const interval = seconds * 60000;
-		window.clearInterval(this.intervalId);
-		this.intervalId = window.setInterval(() => {
-			this.save();
-			console.log(
-				'[%c%s%c] Autosaved all multitimer data into localstorage', 
-				'color: blue',
-				Date().slice(0, 24),
-				'color: initial',
-			);
-		}, interval);
+export class LocalStorage implements SaveInterface {
+	public name(): string {
+		return 'Local Storage';
 	}
 
-	public save() {
-		const settings = { ...Settings };
-
-		const {
-			timers,
-			favoriteTimers,
-			deletedTimers
-		} = TimerSystem.toTimerSystemData();
-
-		localStorage.setItem('timers', JSON.stringify(timers));
-		localStorage.setItem('settings', JSON.stringify(settings));
-		localStorage.setItem('favoriteTimers', JSON.stringify(favoriteTimers));
-		localStorage.setItem('deletedTimers', JSON.stringify(deletedTimers));
+	public icon(): string {
+		return 'fa-computer';
 	}
 
-	public load() {
-		loadLocalStorageValue('timers', (j: RawTimerData[]) => TimerSystem.timersFromRaw(j));
-		loadLocalStorageValue('favoriteTimers', (j: FavoriteTimer[]) => TimerSystem.favoriteTimersFromList(j));
-		loadLocalStorageValue('settings', (j: Partial<SettingsInterface>) => Settings.updateSettings(j));
-		loadLocalStorageValue('deletedTimers', (j: RawTimerData[]) => TimerSystem.deletedTimersFromRaw(j));
+	public save(multitimerData: MultitimerData): Promise<void> {
+		return new Promise(resolve => {
+			const {
+				settings,
+				timerSystemData
+			} = multitimerData;
+			const {
+				timers,
+				favoriteTimers,
+				deletedTimers
+			} = timerSystemData;
+			const timestamp = Date.now();
 
-		function loadLocalStorageValue<T>(key: string, callback: (parsedJSON: T) => void) {
+			localStorage.setItem('timestamp', JSON.stringify(timestamp));
+			localStorage.setItem('timers', JSON.stringify(timers));
+			localStorage.setItem('settings', JSON.stringify(settings));
+			localStorage.setItem('favoriteTimers', JSON.stringify(favoriteTimers));
+			localStorage.setItem('deletedTimers', JSON.stringify(deletedTimers));
+
+			resolve();
+		});
+	}
+
+	public load(): Promise<MultitimerData> {
+		return new Promise(resolve => {
+			const data: MultitimerData = {
+				timestamp: loadLocalStorageValue('timestamp') || 0,
+				timerSystemData: {
+					timers: loadLocalStorageValue('timers') || [],
+					favoriteTimers: loadLocalStorageValue('favoriteTimers') || [],
+					deletedTimers: loadLocalStorageValue('deletedTimers') || []
+				},
+				settings: loadLocalStorageValue('settings')
+			};
+
+			resolve(data);
+		});
+
+		function loadLocalStorageValue<T>(key: string): T | undefined {
 			const jsonString = localStorage.getItem(key);
 			if (jsonString) {
-				callback(JSON.parse(jsonString));
+				return JSON.parse(jsonString);
 			}
 		}
 	}
 }
 
-// class ServerStorage implements Save {
-
-// }
-
-export function getStorage() {
+export async function getEasiestSystem(): Promise<SaveInterface> {
 	return new LocalStorage();
 }
