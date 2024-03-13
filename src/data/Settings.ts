@@ -1,7 +1,7 @@
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { reactive } from 'vue';
 import { Activity } from './TimerData';
-import { SaveSystem, getSaveSystem } from './SaveSystem';
+import { getSaveSystem } from './SaveSystem';
 
 type MeetingPreset = 'D' | 'W' | 'M' | 'R';
 type StartEndDate = {

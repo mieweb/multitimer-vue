@@ -42,18 +42,23 @@ const importData = () => {
 	if (!file) return;
 	file.text().then(jsonText => {
 		const timerData = JSON.parse(jsonText) as TimerSystemData;
-		TimerSystem.timersFromRaw(timerData.timers);
-		TimerSystem.favoriteTimersFromList(timerData.favoriteTimers);
+
+		TimerSystem.importTimerSystemData(timerData);
 	});
 };
 
 const recoverData = () => {
 	const localStorageTimers = localStorage.getItem('timers');
 	const localStorageFavorites = localStorage.getItem('favoriteTimers');
-	const rawTimers = localStorageTimers ? JSON.parse(localStorageTimers) : [];
-	const rawFavorites = localStorageFavorites ? JSON.parse(localStorageFavorites) : [];
-	TimerSystem.timersFromRaw(rawTimers);
-	TimerSystem.favoriteTimersFromList(rawFavorites);
+	const timers = localStorageTimers ? JSON.parse(localStorageTimers) : [];
+	const favoriteTimers = localStorageFavorites ? JSON.parse(localStorageFavorites) : [];
+	const timerData = {
+		timers,
+		favoriteTimers,
+		deletedTimers: []
+	};
+
+	TimerSystem.importTimerSystemData(timerData);
 };
 
 const exportData = () => {
