@@ -69,6 +69,6 @@ export class LocalStorage implements SaveInterface {
 	}
 }
 
-export async function getEasiestSystem(): Promise<SaveInterface> {
+export async function getEasiestSystem(username: string, password: string): Promise<SaveInterface> {
 	return new LocalStorage();
 }

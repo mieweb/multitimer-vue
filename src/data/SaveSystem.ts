@@ -1,43 +1,32 @@
-import { Ref, ref } from 'vue';
+import { Ref, computed, ref } from 'vue';
 import { MultitimerData, SaveInterface, getEasiestSystem, } from './SaveInterface';
 import { Settings } from './Settings';
 import { TimerSystem } from './TimerSystem';
 
-let saveSystem: SaveSystem | null = null;
+const saveSystem: Ref<SaveSystem | null> = ref(null);
 
-class SaveSystem {
+export function isLoggedIn() {
+	return computed(() => saveSystem.value != null);
+}
+
+export class SaveSystem {
 	private currentSystem: Ref<SaveInterface>;
 	private intervalId = NaN;
 
-	public constructor(si: SaveInterface, autosaveInterval: number) {
-		this.currentSystem = ref(si);
+	public constructor(saveInterface: SaveInterface, autosaveInterval: number) {
+		console.log('set');
 		this._setAutosaveInterval(autosaveInterval);
-		this.currentSystem.value.load().then(data => this.startLoading(data));
+		saveInterface.load().then(data => this.startLoading(data));
 
 		window.onbeforeunload = async () => {
 			await this.startSaving();
 		};
+
+		this.currentSystem = ref(saveInterface);
 	}
 
 	public getCurrentSystemRef() {
 		return this.currentSystem;
-	}
-
-	public async setCurrentSystem(i: SaveInterface) {
-		if (i.name() === this.currentSystem.value.name()) {
-			return;
-		}
-		
-		const previousSystem = this.currentSystem.value;
-		const previousSave = await previousSystem.load();
-
-		this.currentSystem.value = i;
-
-		const currentSave = await this.currentSystem.value.load();
-
-		if (previousSave.timestamp < currentSave.timestamp) {
-			this.startLoading(currentSave);
-		}
 	}
 
 	public setAutosaveInterval(seconds: number): number {
@@ -73,13 +62,12 @@ class SaveSystem {
 	}
 }
 
-export async function initSaveSystem(): Promise<SaveSystem> {
-	saveSystem = new SaveSystem(await getEasiestSystem(), Settings.autosaveInterval);
-
-	return saveSystem;
+export async function initSaveSystem(): Promise<void> {
+	//saveSystem.value = new SaveSystem(await getEasiestSystem(), Settings.autosaveInterval);
+	return;
 }
 
-export function getSaveSystem(): SaveSystem {
-	return saveSystem as SaveSystem; // This should always be available
+export function getSaveSystem(): Ref<SaveSystem> {
+	return saveSystem as Ref<SaveSystem>; // This should always be available
 }
 

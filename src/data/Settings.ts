@@ -47,14 +47,16 @@ class _Settings implements SettingsInterface {
 	public darkMode = false;
 
 	public updateSettings(obj: Partial<SettingsInterface>) {
+		const saveSystem = getSaveSystem();
+
 		for (const k of Object.keys(this)) {
 			if (obj[k] !== undefined)
 				this[k] = obj[k];
 		}
 
 		// Post function calls
-		if (obj.autosaveInterval !== undefined) {
-			getSaveSystem().setAutosaveInterval(this.autosaveInterval);
+		if (saveSystem.value && obj.autosaveInterval !== undefined) {
+			saveSystem.value.setAutosaveInterval(this.autosaveInterval);
 		}
 	}
 

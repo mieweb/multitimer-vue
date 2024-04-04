@@ -5,11 +5,13 @@ import TopControls from './components/TopControls.vue';
 import TotalTimer from './components/TotalTimer.vue';
 import BottomControls from './components/BottomControls.vue';
 import ToastSingleton from './components/ToastSingleton.vue';
-import SaveNotifier from './components/SaveNotifier.vue';
 import { componentReference } from './data/ModalHandler';
 import { TimerSystem } from './data/TimerSystem';
-import { computed } from 'vue';
 import { isMobile } from 'is-mobile';
+import SignIn from './components/SignIn.vue';
+import { computed } from 'vue';
+import { isLoggedIn } from './data/SaveSystem';
+
 
 const modalData = componentReference();
 const globalToggle = () => {
@@ -22,6 +24,8 @@ const globalToggle = () => {
 	}
 };
 const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause active' : 'fa-play inactive');
+const loggedIn = isLoggedIn();
+console.log(loggedIn.value);
 </script>
 
 <template>
@@ -42,23 +46,34 @@ const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause a
 			/>
 		</div>
 	</div>
-	<HeaderBar />
-	<TopControls />
-	<TotalTimer />
-	<TimerList />
-	<BottomControls />
-	<Transition>
-		<div
-			v-if="TimerSystem.lastTimerUsed"
-			id="global-pause-button"
-			:class="`p-3 fa ${globalToggleClasses}`"
-			@click="globalToggle"
-		/>
-	</Transition>
-	<ToastSingleton />
+	<div v-if="loggedIn">
+		<HeaderBar />
+		<TopControls />
+		<TotalTimer />
+		<TimerList />
+		<BottomControls />
+		<Transition>
+			<div
+				v-if="TimerSystem.lastTimerUsed"
+				id="global-pause-button"
+				:class="`p-3 fa ${globalToggleClasses}`"
+				@click="globalToggle"
+			/>
+		</Transition>
+		<ToastSingleton />
+	</div>
+	<div v-else>
+		<h1>{{ loggedIn }}</h1>
+		<SignIn />
+	</div>
 </template>
-
 <style>
+	#sign-out {
+		position: fixed;	
+		bottom: 1rem;
+		left: 1rem;
+	}
+
 	#global-pause-button {
 		border-radius: 20%;
 		position: fixed;
