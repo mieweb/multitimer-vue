@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import { Ref, ref } from 'vue';
+import { registerMongoSystem, signInMongoSystem } from '../data/SaveInterface';
+import { getSaveSystem, SaveSystem } from '../data/SaveSystem';
+import { Settings } from '../data/Settings';
 
 const error: Ref<string | null> = ref(null);
 const signInForm = ref<HTMLFormElement>();
+const saveSystem = getSaveSystem();
 
 const attemptRegister = async (event: Event) => {
 	const formData = new FormData(signInForm.value);
 	const username = (formData.get('username') ?? '') as string;
 	const password = (formData.get('password') ?? '') as string;
 
-	// register code here...
+	try {
+		const saveInterface = await registerMongoSystem(username, password);
+
+		saveSystem.value = new SaveSystem(saveInterface, Settings.autosaveInterval);
+	} catch (e) {
+		error.value = (<Error>e).message;
+	}
 };
 
 const attemptSignIn = async (event: Event) => {
@@ -17,7 +27,13 @@ const attemptSignIn = async (event: Event) => {
 	const username = (formData.get('username') ?? '') as string;
 	const password = (formData.get('password') ?? '') as string;
 
-	// sign in code here...
+	try {
+		const saveInterface = await signInMongoSystem(username, password);
+
+		saveSystem.value = new SaveSystem(saveInterface, Settings.autosaveInterval);
+	} catch (e) {
+		error.value = (<Error>e).message;
+	}
 };
 </script>
 <template>
@@ -34,14 +50,14 @@ const attemptSignIn = async (event: Event) => {
 		>
 			<div class="mb-3">
 				<label 
-					for="email" 
+					for="username" 
 					class="form-label"
 				>
-					Email:
+					Username:
 				</label>
 				<input
-					name="email"
-					type="email"
+					name="username"
+					type="text"
 					class="form-control"
 				>
 			</div>

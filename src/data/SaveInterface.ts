@@ -108,28 +108,45 @@ class MongoStorage implements SaveInterface {
 			}
 		};
 		const res = await fetch('/save/mongo-get', options);
-		const json = await res.json()
-			.then(data => {
-				delete data.userId;
+		const json = await res.json();
 
-				return data as MultitimerData;
-			})
-			.catch(() => { 
-				return {
-					timestamp: Date.now(),
-					timerSystemData: {
-						timers: [],
-						favoriteTimers: [],
-						deletedTimers: [] 
-					},
-				} as MultitimerData;
-			});
+		if (Object.keys(json).length === 0) {
+			return {
+				timestamp: Date.now(),
+				timerSystemData: {
+					timers: [],
+					favoriteTimers: [],
+					deletedTimers: [] 
+				},
+			} as MultitimerData;
+		}
 
-		return json;
+		return json as MultitimerData;
 	}
 }
 
-async function getMongoSystem(username: string, password: string): Promise<MongoStorage | null> {
+export async function registerMongoSystem(username: string, password: string): Promise<MongoStorage> {
+	const options = {
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		method: 'POST',
+		body: JSON.stringify({
+			username,
+			password
+		})
+	};
+
+	const res = await fetch('/save/mongo-register', options);
+
+	if (res.status !== 201) {
+		throw new Error(await res.text());
+	}
+
+	return new MongoStorage(await res.text());
+}
+
+export async function signInMongoSystem(username: string, password: string): Promise<MongoStorage> {
 	const options = {
 		headers: {
 			'Content-Type': 'application/json'
@@ -142,19 +159,19 @@ async function getMongoSystem(username: string, password: string): Promise<Mongo
 	};
 	const res = await fetch('/save/mongo-login', options);
 
-	if (res.status != 200) {
-		return null;
+	if (res.status !== 200) {
+		throw new Error(await res.text());
 	}
 
 	return new MongoStorage(await res.text());
 }
 
-export async function getEasiestSystem(username: string, password: string): Promise<SaveInterface> {
-	const mongoSystem = await getMongoSystem(username, password);
+export async function getEasiestSystem(username: string, password: string): Promise<SaveInterface | null> {
+	const mongoSystem = await signInMongoSystem(username, password);
 
 	if (mongoSystem) {
 		return mongoSystem;
 	}
 
-	return new LocalStorage();
+	return null;
 }

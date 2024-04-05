@@ -1,5 +1,5 @@
-import { Ref, computed, ref } from 'vue';
-import { MultitimerData, SaveInterface, getEasiestSystem, } from './SaveInterface';
+import { Ref, computed, reactive, ref } from 'vue';
+import { MultitimerData, SaveInterface, } from './SaveInterface';
 import { Settings } from './Settings';
 import { TimerSystem } from './TimerSystem';
 
@@ -10,7 +10,7 @@ export function isLoggedIn() {
 }
 
 export class SaveSystem {
-	private currentSystem: Ref<SaveInterface>;
+	private currentSystem: SaveInterface;
 	private intervalId = NaN;
 
 	public constructor(saveInterface: SaveInterface, autosaveInterval: number) {
@@ -22,7 +22,7 @@ export class SaveSystem {
 			await this.startSaving();
 		};
 
-		this.currentSystem = ref(saveInterface);
+		this.currentSystem = reactive(saveInterface);
 	}
 
 	public getCurrentSystemRef() {
@@ -47,9 +47,9 @@ export class SaveSystem {
 			timerSystemData: TimerSystem.toTimerSystemData(),
 			settings: Settings.dataCopy()
 		};
-		await this.currentSystem.value.save(data);
+		await this.currentSystem.save(data);
 		console.log(
-			`[%c%s%c] Autosaved multitimer data using the ${this.currentSystem.value.name()} saving system`, 
+			`[%c%s%c] Autosaved multitimer data using the ${this.currentSystem.name()} saving system`, 
 			'color: blue',
 			Date().slice(0, 24),
 			'color: initial',

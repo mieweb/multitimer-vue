@@ -63,7 +63,6 @@ console.log(loggedIn.value);
 		<ToastSingleton />
 	</div>
 	<div v-else>
-		<h1>{{ loggedIn }}</h1>
 		<SignIn />
 	</div>
 </template>
