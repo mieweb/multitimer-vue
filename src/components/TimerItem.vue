@@ -7,7 +7,7 @@ import EditTimer from '../modals/EditTimer.vue';
 import ResetTimer from '../modals/ResetTimer.vue';
 import UpdateTime from '../modals/UpdateTime.vue';
 import { Settings } from '../data/Settings';
-//@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
+//@ts-expect-error: No typing on this, @types/animejs doesn't work (?);
 import anime from 'animejs/lib/anime.es';
 import { computed, ref } from 'vue';
 const props = defineProps<{
@@ -137,250 +137,126 @@ const issueLink = computed(() => `https://pm.mieweb.com/issues/${props.timerData
 
 </script>
 <template>
-	<div
-		ref="timerContainer"
-		class="timer py-2 px-3"
-		:class="isActive ? 'bg-active' : 'bg-default'"
-		@click="interactTimer"
-	>
-		<div
-			ref="timerGrid"
-			class="timer-grid"
-		>
-			<i
-				:class="`fa fa-save save-button timer-button ${showOnHover} ${hideLog}`"
-				@click="log"
-			/>
-			<a 
-				:href="issueLink"
-				target="_blank"
-				rel="noreferrer noopener"
-				class="issue m-0 pointer simple-link"
-			>
-				{{ timerData.issue }}
-			</a>
-			<p
-				ref="title"
-				class="title m-0"
-				data-bs-toggle="tooltip"
-				data-bs-title=""
-			>
-				{{ timerData.title }}
-			</p>
-			<p
-				ref="time"
-				class="time m-0"
-			>
-				{{ timerData.time }}
-			</p>
-			<div :class="`timer-options d-flex ${showOnHover}`">
-				<i
-					class="fa fa-edit timer-button"
-					@click="edit"
-				/>
-				<i
-					class="fa fa-undo timer-button"
-					@click="reset"
-				/>
-				<i
-					class="fa fa-plus timer-button"
-					@click="updateTime"
-				/>
-				<i
-					ref="favoriteStar"
-					class="fa fa-star timer-button"
-					@click="favorite"
-				/>
-				<i
-					class="fa fa-trash-alt timer-button"
-					@click="remove"
-				/>
-			</div>
+    <div class="timer container row d-flex m-0" :class="isActive ? 'bg-active' : 'bg-default'" @click="interactTimer">
+        <div class="col-1 d-flex justify-content-center pt-3">
 			<i
 				class="fa timer-button" 
 				:class="isActive ? 'fa-pause' : 'fa-play'"
 				@click="isActive ? pause() : start()"
 			/>
-			<i 
-				:class="`fa control-toggle timer-button ${chevron}`"
-				@click="toggleControls"
-			/>
-			<i
-				id="toggle-dropdown"
-				:class="`fa fa-retweet timer-button ${showExtraControls}`"
-				@click="toggleDropdown"
-			/>
-			<select
-				v-if="activitySelected"
-				ref="activitySelect"
-				:class="`form-select form-select-sm activity ${activeBgColor} ${showExtraControls}`"
-				:value="timerData.activity"
-				@change="updateActivity"
-			>
-				<option
-					v-for="entry of activities"
-					:key="entry.activity"
-				> 
-					{{ entry.activity }}
-				</option>
-			</select>
-			<select 
-				v-else
-				ref="billableSelect"
-				:class="`form-select form-select-sm billable ${activeBgColor} ${showExtraControls}`"
-				:value="timerData.billStatus"
-				@change="updateBillStatus"
-			>
-				<option
-					v-for="status in billStatuses"
-					:key="status"
-					:value="status"
-				>
-					{{ status }}
-				</option>
-			</select>
-			<input
-				ref="commentField"
-				type="text"
-				:class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
-				placeholder="Comment..."
-				:value="timerData.comment"
-				@input="updateComment"
-			>
-			<a 
-				target="_blank" 
-				rel="noopener noreferrer" 
-				:href="timerData.link" 
-				:class="`link btn btn-sm ${activeBgColor} ${showExtraControls}`"
-			>
-				Meeting Link
-			</a>
-			<i 
-				class="fa fa-grip-vertical handle"
-			/>
-		</div>
-	</div>
+        </div>
+        <div class="col w-100">
+            <div class="d-flex row">
+                <div class="col-8">
+                    <div class="row">
+                        <h6 class="title m-0">{{ timerData.title }}</h6>
+                        <span class="issue-number">Issue # <span class="issue m-0 pointer">{{ timerData.issue }}</span></span>
+                    </div>
+                </div>
+                <div class="d-flex col-4 justify-content-end">
+                    <div class="d-flex row">
+                        <div class="col">
+                            <div class="timer-options">
+                                <i
+                                :class="`fa fa-save save-button timer-button ${showOnHover} ${hideLog}`"
+                                @click="log"
+                                />
+                                <i
+                                    :class="`fa fa-edit timer-button ${showOnHover}`"
+                                    @click="edit"
+                                />
+                                <i
+                                    :class="`fa fa-undo timer-button ${showOnHover}`"
+                                    @click="reset"
+                                />
+                                <i
+                                    :class="`fa fa-plus timer-button ${showOnHover}`"
+                                    @click="updateTime"
+                                />
+                                <i
+                                    ref="favoriteStar"
+                                    :class="`fa fa-star timer-button ${showOnHover}`"
+                                    @click="favorite"
+                                />
+                                <i
+                                    :class="`fa fa-trash-alt timer-button ${showOnHover}`"
+                                    @click="remove"
+                                />
+                            </div>
+                        </div>
+                        <div class="col d-flex">
+                            <span class="time m-0 me-2 mt-1">{{ timerData.time }}</span>
+                            <i 
+                                :class="`fa control-toggle timer-button ${chevron}`"
+                                @click="toggleControls"
+                            />  
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex mt-2 mb-1 gap-2">
+                    <div class="d-flex col-3">
+                        <i
+                            id="toggle-dropdown"
+                            :class="`fa fa-retweet timer-button ${showExtraControls}`"
+                            @click="toggleDropdown"
+                        />
+                        <select
+                            v-if="activitySelected"
+                            ref="activitySelect"
+                            :class="`form-select form-select-sm activity ${activeBgColor} ${showExtraControls}`"
+                            :value="timerData.activity"
+                            @change="updateActivity"
+                        >
+                            <option
+                                v-for="entry of activities"
+                                :key="entry.activity"
+                            > 
+                                {{ entry.activity }}
+                            </option>
+                        </select>
+                        <select 
+                            v-else
+                            ref="billableSelect"
+                            :class="`form-select form-select-sm billable ${activeBgColor} ${showExtraControls}`"
+                            :value="timerData.billStatus"
+                            @change="updateBillStatus"
+                        >
+                            <option
+                                v-for="status in billStatuses"
+                                :key="status"
+                                :value="status"
+                            >
+                                {{ status }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-7">
+                        <input
+                            ref="commentField"
+                            type="text"
+                            :class="`form-control form-control-sm comment ${activeBgColor} ${showExtraControls}`"
+                            placeholder="Comment..."
+                            :value="timerData.comment"
+                            @input="updateComment"
+                        >
+                    </div>
+                    <div class="col-2">
+                        <a 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            :href="timerData.link" 
+                            :class="`link btn btn-sm ${activeBgColor} ${showExtraControls}`"
+                        >
+                            Meeting Link
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <script lang="ts">
 export default {};
 </script>
-<style lang="scss" scoped>
-    .timer {
-        border-radius: 0.2rem;
-        width: 100%;
-    }
-
-    .timer * {
-        color: var(--foreground);
-    }
-
-    .timer input:focus {
-        background-color: var(--background-alt);
-        color: var(--foreground);
-        border-color: var(--background-alt);
-    }
-
-    .timer:hover .hover-hide {
-        visibility: visible;
-    }
-
-    .timer-grid {
-        display: grid;
-        grid-template-columns: min-content 90px 1fr 62px min-content min-content min-content;
-        align-items: center;
-        column-gap: 2rem;
-        row-gap: 0.5rem;
-        overflow-y: hidden; 
-    }
-
-    .save-button {
-        grid-column-start: 1;
-		text-align: center;
-    }
-
-    .issue {
-        grid-column-start: 2;
-		padding: 0.25rem;
-		text-align: center;
-    }
-
-    .title {
-        grid-column-start: 3;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-    .time {
-        grid-column-start: 4;
-    }
-
-    .timer-options {
-        grid-column-start: 5;
-        gap: 0.4rem;
-    }
-
-    .time-control {
-        grid-column-start: 6;
-    }
-
-    .billable,.activity {
-        border-color: rgba(0, 0, 0, 0);
-    }
-
-	.activity {
-		grid-row-start: 2;
-		grid-column-start: 2;
-		grid-column-end: 3;
-	}
-
-	.billable {
-		grid-row-start: 2;
-		grid-column-start: 2;
-		grid-column-end: 3;
-	}
-
-    .comment {
-        grid-row-start: 2;
-        grid-column-start: 3;
-        grid-column-end: 5;
-        border-color: rgba(0, 0, 0, 0);
-    }
-
-	.comment::placeholder {
-		color: var(--foreground-alt);
-	}
-
-    .link {
-        grid-row-start: 2;
-        grid-column-start: 5;
-        grid-column-end: 8;
-        transition: none !important;
-    }
-
-    .control-toggle {
-        grid-row-start: 1;
-        grid-column-start: 7;
-    }
-
-	.handle {
-		grid-column-start: 8;
-		cursor: grab;
-	}
-
-	#toggle-dropdown {
-		grid-row-start: 2;
-		grid-column-start: 1;
-		grid-column-end: 2;
-	}
-
-	.timer-button {
-		padding: 0.25rem;
-		cursor: pointer;
-		border-radius: 2px;
-	}
-
-	.timer-button:hover {
-		background-color: rgba(0.0, 0.0, 0.0, 0.2);
-	}
-</style>

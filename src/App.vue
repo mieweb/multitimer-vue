@@ -42,11 +42,11 @@ const globalToggleClasses = computed(() => TimerSystem.activeTimer ? 'fa-pause a
 			/>
 		</div>
 	</div>
-	<HeaderBar />
-	<TopControls />
+	<!-- <HeaderBar /> -->
 	<TotalTimer />
+	<TopControls />
 	<TimerList />
-	<BottomControls />
+	<!-- <BottomControls /> -->
 	<Transition>
 		<div
 			v-if="TimerSystem.lastTimerUsed"

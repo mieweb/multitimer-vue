@@ -10,14 +10,8 @@ const totalTime = computed(() => TimerSystem.totalTime());
 		:time="totalTime"
 		:is-running="TimerSystem.activeTimer"
 	/>
-	<div
-		id="total-time"
-		class="d-flex flex-column align-items-center pt-4 text-secondary"
-	>
-		<h5>Total Time:</h5>
-		<h4>
-			{{ totalTime }}
-		</h4>
+	<div id="total-time" class="d-flex flex-column align-items-center pt-4 text-secondary">
+		<h1 id="total-time">{{ totalTime }}</h1>
 	</div>
 </template>
 <script lang="ts">export default {};</script>

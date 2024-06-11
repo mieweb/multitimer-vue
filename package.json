@@ -7,7 +7,25 @@
     "dev": "vite --host localhost",
     "build": "vue-tsc && vite build --base=./",
     "check": "vue-tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prebuild:default:bootstrap": "node ./scripts/set-css-lib.mjs bootstrap default",
+    "prebuild:default:tailwind": "node ./scripts/set-css-lib.mjs tailwind default",
+    "prebuild:default:default": "node ./scripts/set-css-lib.mjs default default",
+    "prebuild:pink:bootstrap": "node ./scripts/set-css-lib.mjs bootstrap pink",
+    "prebuild:pink:tailwind": "node ./scripts/set-css-lib.mjs tailwind pink",
+    "prebuild:pink:default": "node ./scripts/set-css-lib.mjs default pink",
+    "prebuild:green:bootstrap": "node ./scripts/set-css-lib.mjs bootstrap green",
+    "prebuild:green:tailwind": "node ./scripts/set-css-lib.mjs tailwind green",
+    "prebuild:green:default": "node ./scripts/set-css-lib.mjs default green",
+    "build:default:bootstrap": "npm run prebuild:default:bootstrap && vite build",
+    "build:default:tailwind": "npm run prebuild:default:tailwind && vite build",
+    "build:default:default": "npm run prebuild:default:default && vite build",
+    "build:pink:bootstrap": "npm run prebuild:pink:bootstrap && vite build",
+    "build:pink:tailwind": "npm run prebuild:pink:tailwind && vite build",
+    "build:pink:default": "npm run prebuild:pink:default && vite build",
+    "build:green:bootstrap": "npm run prebuild:green:bootstrap && vite build",
+    "build:green:tailwind": "npm run prebuild:green:tailwind && vite build",
+    "build:green:default": "npm run prebuild:green:default && vite build"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.32.1",
@@ -15,7 +33,7 @@
     "@popperjs/core": "^2.11.6",
     "@types/bootstrap": "^5.2.6",
     "animejs": "^3.2.1",
-    "bootstrap": "^5.2.3",
+    "bootstrap": "^5.3.3",
     "date-fns": "^2.29.3",
     "is-mobile": "^4.0.0",
     "sortablejs": "^1.15.0",
@@ -23,6 +41,7 @@
     "vue": "^3.2.41"
   },
   "devDependencies": {
+    "@types/animejs": "^3.1.12",
     "@types/date-fns": "^2.6.0",
     "@types/node": "^20.3.0",
     "@types/sortablejs": "^1.15.0",

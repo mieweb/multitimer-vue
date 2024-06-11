@@ -32,8 +32,7 @@ const TimerComponent = computed(() => {
 		:list="timerList"
 		item-key="id"
 		:options="dragOptions"
-		class="d-flex flex-column align-items-stretch py-4 gap-2 m-auto"
-		:style="`width: ${Settings.timerWidth}%`"
+		class="container mt-5 d-flex flex-column gap-2 p-0"
 		@end="mutateList"
 	>
 		<template #item="{ element }">
