@@ -16,25 +16,28 @@ button{
         background-color: #fff;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         white-space: nowrap;
-    }
-    
-    .menu ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-    }
-    
-    .menu li {
-        padding: 10px 20px;
-    }
-    
-    .menu li a {
-        text-decoration: none;
-        color: #333;
-    }
-    
-    .menu li a:hover {
-        background-color: #f0f0f0;
-    }
-    
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+                padding: 10px 20px;
+
+                a {
+                    text-decoration: none;
+                    color: #333;
+
+                    &:hover {
+                        background-color: #f0f0f0;
+                    }
+                }
+
+                i{
+                    color: var(--accent-medium);
+                }
+            }
+        }
+    }    
 }

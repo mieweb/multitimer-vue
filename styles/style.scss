@@ -2,7 +2,7 @@ $enable-grid-classes: false;
 $enable-cssgrid: true;
 
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-@import './Design-System/MIE-Design-System';
+@import "../node_modules/mie-design-system/main.scss";
 @import 'overflow-menu';
 
 $white: white;

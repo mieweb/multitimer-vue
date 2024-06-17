@@ -113,7 +113,7 @@ const beginImport = async () => {
                     <button id="overflow-button" class="secondary" @click="toggleMenu">
                         <i class="header-control fa fa-bars p-0 pointer"></i>
                     </button>
-                    <div v-if="isMenuOpen" id="menu" class="menu" @mouseleave="closeMenu">
+                    <div v-if="isMenuOpen" id="menu" class="menu">
                         <ul>
                             <li @click="() => openSpecificModal(QuickTimers)">
                                 <i class="fa fa-clock pointer"></i> Quick Timers
@@ -136,7 +136,7 @@ const beginImport = async () => {
                                 <i class="fa fa-question-circle pointer"></i> Help
                             </li>
                             <li @click="beginImport">
-                                <i class="fa fa-windows pointer"></i> Get Meetings from Outlook
+                                <i class="fa fa-calendar pointer"></i> Get Meetings from Outlook
                             </li>
                             <li>
                                 <a class="simple-link" href="https://github.mieweb.com/tbaugher/multitimer/issues" target="_blank" rel="noopener noreferrer">

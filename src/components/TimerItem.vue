@@ -7,7 +7,7 @@ import EditTimer from '../modals/EditTimer.vue';
 import ResetTimer from '../modals/ResetTimer.vue';
 import UpdateTime from '../modals/UpdateTime.vue';
 import { Settings } from '../data/Settings';
-//@ts-expect-error: No typing on this, @types/animejs doesn't work (?);
+// @ts-ignore
 import anime from 'animejs/lib/anime.es';
 import { computed, ref } from 'vue';
 const props = defineProps<{
