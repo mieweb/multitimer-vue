@@ -2,8 +2,10 @@ $enable-grid-classes: false;
 $enable-cssgrid: true;
 
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-@import "../node_modules/mie-design-system/main.scss";
+
+@import '../node_modules/mie-ds-core/styles/styles.scss';
 @import 'overflow-menu';
+@import "./timer";
 
 $white: white;
 $timer-primary: #596f86;
@@ -12,7 +14,7 @@ $timer-active: #2ecc71;
 $timer-secondary: #4e6175;
 $timer-secondary-active: #28b363;
 
-@import "./timer";
+
 // @import "./override.scss";
 
 :root {
