@@ -1,18 +1,25 @@
 import HMS from './HMS';
 import { Settings } from './Settings';
 
-export type BillStatus = 'Non-Billable' | 'Billable Time' | 'SOW Line Item' | 'MIE Goodwill (non-billable)';
-export const billStatuses = ['Non-Billable', 'Billable Time', 'SOW Line Item', 'MIE Goodwill (non-billable)'];
+export type BillStatus =
+	'Non-Billable'
+	| 'Billable Time'
+	| 'SOW Line Item'
+	| 'MIE Goodwill (non-billable)'
+	| 'Internal Project'
+	| 'PTO'
+	| 'Holiday'
+export const billStatuses = [
+	'Non-Billable',
+	'Billable Time',
+	'SOW Line Item',
+	'MIE Goodwill (non-billable)',
+	'Internal Project',
+	'PTO',
+	'Holiday',
+];
 export function isBillStatus(bsString: string): bsString is BillStatus {
-	switch (bsString) {
-	case 'Non-Billable':
-	case 'Billable Time': 
-	case 'SOW Line Item':
-	case 'MIE Goodwill (non-billable)':
-		return true;
-	default:
-		return false;
-	}
+	return billStatuses.includes(bsString);
 }
 
 export type Activity = 'Acct Management'
@@ -55,9 +62,9 @@ export type RawTimerData = Omit<TimerData, 'time'>
 
 /**
  * General interface for working with form data across modals.
- * `issue`, `title`, and `link` are mandatory, since they show up in any form, and 
+ * `issue`, `title`, and `link` are mandatory, since they show up in any form, and
  * any member is subject to change in accordance to this fact.
- * 
+ *
  * Note: The linter has a problem involving optional fields (like `time` or `chosen`) and `v-model`,
  * and will notify you about a potential undefined value despite it being defined. To rectify this in the linter,
  * supply an intersection where you form data lives. For example:
