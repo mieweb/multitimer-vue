@@ -23,23 +23,24 @@ export function isBillStatus(bsString: string): bsString is BillStatus {
 }
 
 export type Activity = 'Acct Management'
-	| 'Administrative'
-	| 'DB Administration'
-	| 'Design'
-	| 'Development'
-	| 'Documentation'
-	| 'Forms'
-	| 'Implementation'
-	| 'Layouts'
-	| 'Meeting'
-	| 'Project Management'
-	| 'Research'
-	| 'Sales'
-	| 'System Administration'
-	| 'Training'
-	| 'Testing'
-	| 'Other'
-	| 'Helpdesk Support';
+    | 'Administrative'
+    | 'DB Administration'
+    | 'Design'
+    | 'Development'
+    | 'Documentation'
+    | 'Forms'
+    | 'Implementation'
+    | 'Layouts'
+    | 'Meeting'
+    | 'Project Management'
+    | 'Research'
+    | 'Sales'
+    | 'System Administration'
+    | 'Training'
+    | 'Testing'
+    | 'Other'
+    | 'Helpdesk Support'
+    | 'Holiday'
 
 export type TimerId = number;
 
@@ -134,7 +135,8 @@ export const activities = [
 	{ activity: 'Training', value: 18 },
 	{ activity: 'Testing', value: 33 },
 	{ activity: 'Other', value: 19 },
-	{ activity: 'Helpdesk Support', value: 87 }
+	{ activity: 'Helpdesk Support', value: 87 },
+	{ activity: 'Holiday', value: 2483 }
 ];
 
 export function getActivityValue(activity: string): number {
