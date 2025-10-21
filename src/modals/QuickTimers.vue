@@ -2,7 +2,7 @@
 import ModalTemplate from '../components/ModalTemplate.vue';
 import { TimerSystem, TimerEntry } from '../data/TimerSystem';
 import { FavoriteTimer } from '../data/TimerData';
-//@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
+// @ts-ignore
 import anime from 'animejs/lib/anime.es';
 
 const addTimer = (event: MouseEvent, timer: FavoriteTimer) => {
@@ -39,14 +39,14 @@ const addDeletedTimer = (event: MouseEvent, timer: TimerEntry) => {
 };
 
 const commonTimers: FavoriteTimer[] = [
-	{ issue: '34603', title: 'Cleanup call', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
-	{ issue: '34511', title: 'Hotfix review', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
-	{ issue: '35270', title: 'Senior dev', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
-	{ issue: '36587', title: 'Zeus-web downtime', link: '', billStatus: 'Non-Billable', activity: 'Other' },
-	{ issue: '36209', title: 'Company-wide meeting', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
-	{ issue: '49022', title: 'EH Master Build Call', link: '', billStatus: 'Non-Billable', activity: 'Meeting' },
-	{ issue: '80204', title: 'Encounter UI', link: '', billStatus: 'Non-Billable', activity: 'Other' },
-	{ issue: '95143', title: 'Dev PTO 2021', link: '', billStatus: 'Non-Billable', activity: 'Other'},
+	{ issue: '34603', title: 'Cleanup call', link: '', billStatus: 'Internal Meeting', activity: 'Meeting' },
+	{ issue: '34511', title: 'Hotfix review', link: '', billStatus: 'Internal Meeting', activity: 'Meeting' },
+	{ issue: '35270', title: 'Senior dev', link: '', billStatus: 'Internal Meeting', activity: 'Meeting' },
+	{ issue: '36587', title: 'Zeus-web downtime', link: '', billStatus: 'Non-Billable Admin/Other(mgr approved only)', activity: 'Other' },
+	{ issue: '36209', title: 'Company-wide meeting', link: '', billStatus: 'Internal Meeting', activity: 'Meeting' },
+	{ issue: '49022', title: 'EH Master Build Call', link: '', billStatus: 'Internal Meeting', activity: 'Meeting' },
+	{ issue: '80204', title: 'Encounter UI', link: '', billStatus: 'Internal Meeting', activity: 'Other' },
+	{ issue: '95143', title: 'Dev PTO 2021', link: '', billStatus: 'PTO', activity: 'Other'},
 ];
 </script>
 <template>
