@@ -19,7 +19,7 @@ export type TimerSystemData = {
 export type TimerEntry = { id: TimerId, timer: TimerData };
 
 function checkBillStatus(billString: string): BillStatus {
-	return isBillStatus(billString) ? billString : 'Non-Billable';
+	return isBillStatus(billString) ? billString : 'Non-Billable Admin/Other(mgr approved only)';
 }
 
 class _TimerSystem {

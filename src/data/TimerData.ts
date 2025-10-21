@@ -1,22 +1,33 @@
 import HMS from './HMS';
 import { Settings } from './Settings';
 
+
 export type BillStatus =
-	'Non-Billable'
-	| 'Billable Time'
-	| 'SOW Line Item'
-	| 'MIE Goodwill (non-billable)'
-	| 'Internal Project'
-	| 'PTO'
-	| 'Holiday'
+      "Billable Time"
+    | "Feature"
+    | "Goodwill-Leadership Approved"
+    | "Goodwill-Rep"
+    | "Holiday"
+    | "Internal Meeting"
+    | "Non-Billable Admin/Other(mgr approved only)"
+    | "Non-Billable-Bug/Defect"
+    | "Non-Billable-Training/Education"
+    | "Non-Billable-Research/Helpdesk"
+    | "PTO"
+    | "SOW Line Item"
 export const billStatuses = [
-	'Non-Billable',
-	'Billable Time',
-	'SOW Line Item',
-	'MIE Goodwill (non-billable)',
-	'Internal Project',
-	'PTO',
-	'Holiday',
+    "Non-Billable Admin/Other(mgr approved only)",
+    "Non-Billable-Bug/Defect",
+    "Non-Billable-Training/Education",
+    "Non-Billable-Research/Helpdesk",
+    "Billable Time",
+    "Feature",
+    "Goodwill-Leadership Approved",
+    "Goodwill-Rep",
+    "Holiday",
+    "Internal Meeting",
+    "PTO",
+    "SOW Line Item",
 ];
 export function isBillStatus(bsString: string): bsString is BillStatus {
 	return billStatuses.includes(bsString);
@@ -118,25 +129,26 @@ export function partialToTimerData(partial: Partial<TimerData>): TimerData {
 }
 
 export const activities = [
-	{ activity: 'Acct Management', value: 36 },
-	{ activity: 'Administrative', value: 31 },
-	{ activity: 'DB Administration', value: 14 },
-	{ activity: 'Design', value: 8 },
-	{ activity: 'Development', value: 9 },
-	{ activity: 'Documentation', value: 12 },
-	{ activity: 'Forms', value: 34 },
-	{ activity: 'Implementation', value: 16 },
-	{ activity: 'Layouts', value: 30 },
-	{ activity: 'Meeting', value: 10 },
-	{ activity: 'Project Management', value: 17 },
-	{ activity: 'Research', value: 11 },
-	{ activity: 'Sales', value: 35 },
-	{ activity: 'System Administration', value: 13 },
-	{ activity: 'Training', value: 18 },
-	{ activity: 'Testing', value: 33 },
-	{ activity: 'Other', value: 19 },
-	{ activity: 'Helpdesk Support', value: 87 },
-	{ activity: 'Holiday', value: 2483 }
+    { value: 36, activity: "Acct Management" },
+    { value: 9, activity: "Development" },
+    { value: 16, activity: "Implementation/Support" },
+    { value: 17, activity: "Project Management" },
+    { value: 33, activity: "Testing" },
+    { value: 2483, activity: "Holiday" },
+    { value: 31, activity: "Administrative" },
+    { value: 14, activity: "DB Administration" },
+    { value: 8, activity: "Design" },
+    { value: 12, activity: "Documentation" },
+    { value: 34, activity: "Forms" },
+    { value: 30, activity: "Layouts" },
+    { value: 10, activity: "Meeting" },
+    { value: 11, activity: "Research" },
+    { value: 35, activity: "Sales" },
+    { value: 13, activity: "System Administration" },
+    { value: 18, activity: "Training" },
+    { value: 19, activity: "Other" },
+    { value: 87, activity: "Helpdesk Support" },
+    { value: 2916, activity: "General Support/Admin" },
 ];
 
 export function getActivityValue(activity: string): number {

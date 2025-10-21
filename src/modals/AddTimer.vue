@@ -16,8 +16,8 @@ const formData: Omit<RawTimerData, 'controlsHidden' | 'lastUsed'> = reactive({
 		minutes: NaN,
 		seconds: NaN
 	},
-	billStatus: 'Non-Billable',
-	comment: '',
+	billStatus: 'Non-Billable Admin/Other(mgr approved only)',
+    comment: '',
 	link: '',
 	activity: Settings.defaultActivity,
 });

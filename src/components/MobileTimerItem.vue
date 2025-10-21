@@ -5,7 +5,7 @@ import { openModal } from '../data/ModalHandler';
 import RemoveTimer from '../modals/RemoveTimer.vue';
 import MobileTimerDetails from '../modals/MobileTimerDetails.vue';
 import { computed } from 'vue';
-//@ts-expect-error: No typing on this, @types/animejs doesn't work (?)
+// @ts-ignore
 import anime from 'animejs/lib/anime.es';
 
 const props = defineProps<{
