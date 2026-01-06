@@ -170,3 +170,10 @@ export function getActivityValue(activity: string): number {
 
   throw new Error(`Activity with name '${activity}' does not exist`);
 }
+
+export function findActivityValue(activity: string): number | null {
+  for (const entry of activities) {
+    if (entry.activity === activity) return entry.value;
+  }
+  return null;
+}
