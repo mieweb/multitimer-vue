@@ -28,11 +28,11 @@ const formDataCollection =
         minutes: time.getMinutes(),
         seconds: time.getSeconds(),
       },
-      billStatus: "Non-Billable Admin/Other(mgr approved only)" as BillStatus,
+      billStatus: "" as unknown as string,
       comment: "",
       link: meeting.link,
-      activity: "Meeting",
-    };
+      activity: "" as unknown as string,
+    } as unknown as Omit<RawTimerData, "controlsHidden" | "lastUsed">;
 
     return { timerData: timerForm, chosen: false };
   }) || [];
@@ -121,6 +121,7 @@ const randomReaction = () => {
           v-model="formData.timerData.billStatus"
           class="form-select"
         >
+          <option value="">-- Please Select --</option>
           <option v-for="status in billStatuses" :key="status" :value="status">
             {{ status }}
           </option>

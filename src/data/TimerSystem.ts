@@ -1,456 +1,488 @@
-import { getActivityValue, TimerData, TimerId, timerDataToRaw, FavoriteTimer, BillStatus, RawTimerData, rawToTimerData } from './TimerData';
-import { reactive } from 'vue';
-import format from 'date-fns/format';
-import HMS from './HMS';
-import { Settings } from './Settings';
-import { isBillStatus } from './TimerData';
+import {
+  getActivityValue,
+  findActivityValue,
+  TimerData,
+  TimerId,
+  timerDataToRaw,
+  FavoriteTimer,
+  BillStatus,
+  RawTimerData,
+  rawToTimerData,
+} from "./TimerData";
+import { reactive } from "vue";
+import format from "date-fns/format";
+import HMS from "./HMS";
+import { Settings } from "./Settings";
+import { isBillStatus } from "./TimerData";
 
 export interface TimerFilter {
-    search: string,
-    withTime: boolean
+  search: string;
+  withTime: boolean;
 }
 
 export type TimerSystemData = {
-	timers: RawTimerData[],
-	favoriteTimers: FavoriteTimer[]
-	deletedTimers: RawTimerData[]
+  timers: RawTimerData[];
+  favoriteTimers: FavoriteTimer[];
+  deletedTimers: RawTimerData[];
 };
 
-export type TimerEntry = { id: TimerId, timer: TimerData };
+export type TimerEntry = { id: TimerId; timer: TimerData };
 
 function checkBillStatus(billString: string): BillStatus {
-	return isBillStatus(billString) ? billString : 'Non-Billable Admin/Other(mgr approved only)';
+  return isBillStatus(billString)
+    ? billString
+    : "Non-Billable Admin/Other(mgr approved only)";
 }
 
 class _TimerSystem {
-	static lastId = -1;
-	// private map: Map<number, TimerInterface> = new Map();
-	private timerList: TimerEntry[] = [];
-	private deletedTimers: TimerEntry[] = [];
-	private setTimeoutId = NaN;
-	public timerToConfirm = NaN;
-	public lastTimerUsed = NaN;
-	public activeTimer = NaN;
-	public lastTimeStep = NaN;
-	private favoriteTimers: FavoriteTimer[] = [];
-	private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
-	private timerFilter: TimerFilter = {
-		search: '',
-		withTime: false
-	};
-	
-	public addTimer(timerData: TimerData): boolean {
-		if (this.issueExistsInTimerList(timerData.issue)) return false;
-		const id = this.newId();
-		this.timerList.unshift({ id, timer: reactive(timerData) });
-		this.startTimer(id);
-		return true;
-	}
+  static lastId = -1;
+  // private map: Map<number, TimerInterface> = new Map();
+  private timerList: TimerEntry[] = [];
+  private deletedTimers: TimerEntry[] = [];
+  private setTimeoutId = NaN;
+  public timerToConfirm = NaN;
+  public lastTimerUsed = NaN;
+  public activeTimer = NaN;
+  public lastTimeStep = NaN;
+  private favoriteTimers: FavoriteTimer[] = [];
+  private logDate: Date = new Date(); // Does not sync with frontend, but should convienently the same
+  private timerFilter: TimerFilter = {
+    search: "",
+    withTime: false,
+  };
 
-	public splitTimer(timerData: TimerData): boolean {
-		if (this.issueExistsInTimerList(timerData.issue)) return false;
-		if (!this.activeTimer) {
-			return this.addTimer(timerData);
-		}
+  public addTimer(timerData: TimerData): boolean {
+    if (this.issueExistsInTimerList(timerData.issue)) return false;
+    const id = this.newId();
+    this.timerList.unshift({ id, timer: reactive(timerData) });
+    this.startTimer(id);
+    return true;
+  }
 
-		const splitFromTimer = this.getTimerById(this.activeTimer);
-		const removeTime = new HMS(-timerData.time.getMilliseconds());
-		splitFromTimer.time.updateTime(removeTime);
-		const id = this.newId();
-		this.timerList.unshift({ id, timer: reactive(timerData) });
-		this.startTimer(id);
-		return true;
-	}
+  public splitTimer(timerData: TimerData): boolean {
+    if (this.issueExistsInTimerList(timerData.issue)) return false;
+    if (!this.activeTimer) {
+      return this.addTimer(timerData);
+    }
 
-	/**
-	 * Loads a list of timers to `timerList`. This does not destroy timers that may currently be in the list,
-	 * nor does it start any timers.
-	 * @param timerList A list of timers
-	 */
-	public loadTimerList(timerList: TimerData[]) {
-		for (const timerData of timerList.filter(timer => !this.issueExistsInTimerList(timer.issue))) {
-			this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
-		}
-	}
+    const splitFromTimer = this.getTimerById(this.activeTimer);
+    const removeTime = new HMS(-timerData.time.getMilliseconds());
+    splitFromTimer.time.updateTime(removeTime);
+    const id = this.newId();
+    this.timerList.unshift({ id, timer: reactive(timerData) });
+    this.startTimer(id);
+    return true;
+  }
 
-	/**
-	 * Special function similar to `loadTimerList`, but updates timers that already exists from the given data
-	 * @param meetings Outlook meetings to import
-	 */
-	public importOutlookMeetings(meetings: TimerData[]) {
-		for (const meeting of meetings) {
-			const existingTimer = this.issueExistsInTimerList(meeting.issue);
-			if (existingTimer) {
-				existingTimer.time = HMS.clone(meeting.time);
-				existingTimer.lastUsed = Date.now();
-			} else {
-				this.timerList.push({ id: this.newId(), timer: reactive(meeting) });
-			}
-		}
-	}
+  /**
+   * Loads a list of timers to `timerList`. This does not destroy timers that may currently be in the list,
+   * nor does it start any timers.
+   * @param timerList A list of timers
+   */
+  public loadTimerList(timerList: TimerData[]) {
+    for (const timerData of timerList.filter(
+      (timer) => !this.issueExistsInTimerList(timer.issue)
+    )) {
+      this.timerList.push({ id: this.newId(), timer: reactive(timerData) });
+    }
+  }
 
-	public getTimerList() {
-		return this.timerList;
-	}
+  /**
+   * Special function similar to `loadTimerList`, but updates timers that already exists from the given data
+   * @param meetings Outlook meetings to import
+   */
+  public importOutlookMeetings(meetings: TimerData[]) {
+    for (const meeting of meetings) {
+      const existingTimer = this.issueExistsInTimerList(meeting.issue);
+      if (existingTimer) {
+        existingTimer.time = HMS.clone(meeting.time);
+        existingTimer.lastUsed = Date.now();
+      } else {
+        this.timerList.push({ id: this.newId(), timer: reactive(meeting) });
+      }
+    }
+  }
 
-	public isFiltered(id: TimerId): boolean {
-		try {
-			const timer = this.getTimerById(id);
-			const filter = this.timerFilter;
-			const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
-			const title = timer.title.toLowerCase();
-			const issue = timer.issue;
+  public getTimerList() {
+    return this.timerList;
+  }
 
-			if (filter.withTime && !timer.time.hasTime()) {
-				return false;
-			}
+  public isFiltered(id: TimerId): boolean {
+    try {
+      const timer = this.getTimerById(id);
+      const filter = this.timerFilter;
+      const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
+      const title = timer.title.toLowerCase();
+      const issue = timer.issue;
 
-			return !!title.match(regex) || !!issue.match(regex);
-		} catch {
-			return false;
-		}
-	}
+      if (filter.withTime && !timer.time.hasTime()) {
+        return false;
+      }
 
-	public* iterator(): IterableIterator<[number, TimerData]> {
-		const filter = this.timerFilter;
-		const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
+      return !!title.match(regex) || !!issue.match(regex);
+    } catch {
+      return false;
+    }
+  }
 
-		for (const { id, timer } of this.timerList) {
-			if (filter.withTime && !timer.time.hasTime()) continue;
-			if (!searchMatches(timer, regex)) continue;
+  public *iterator(): IterableIterator<[number, TimerData]> {
+    const filter = this.timerFilter;
+    const regex = new RegExp(`.*${filter.search.toLowerCase()}.*`);
 
-			yield [id, timer];
-		}
+    for (const { id, timer } of this.timerList) {
+      if (filter.withTime && !timer.time.hasTime()) continue;
+      if (!searchMatches(timer, regex)) continue;
 
-		function searchMatches(timer: TimerData, regex: RegExp): boolean {
-			const title = timer.title.toLowerCase();
-			const issue = timer.issue;
+      yield [id, timer];
+    }
 
-			return !!title.match(regex) || !!issue.match(regex);
-		}
-	}
+    function searchMatches(timer: TimerData, regex: RegExp): boolean {
+      const title = timer.title.toLowerCase();
+      const issue = timer.issue;
 
-	public updateFilter(userFilter: TimerFilter) {
-		this.timerFilter = {
-			...this.timerFilter,
-			...userFilter
-		};
-	}
+      return !!title.match(regex) || !!issue.match(regex);
+    }
+  }
 
-	public logTimer(id: TimerId) {
-		const timer = this.getTimerById(id);
-		this.logFromData(timer);
-	}
+  public updateFilter(userFilter: TimerFilter) {
+    this.timerFilter = {
+      ...this.timerFilter,
+      ...userFilter,
+    };
+  }
 
-	private moveTimerToTop(id: TimerId) {
-		for (let i = 1; i < this.timerList.length; ++i) {
-			if (this.timerList[i].id === id) {
-				const timer = this.timerList[i];
-				this.timerList.splice(i, 1);
-				this.timerList.unshift(timer);
-				break;
-			}
-		}
-	}
+  public logTimer(id: TimerId) {
+    const timer = this.getTimerById(id);
+    this.logFromData(timer);
+  }
 
-	public startTimer(id: TimerId) {
-		if (Settings.moveTimerToTop) {
-			this.moveTimerToTop(id);
-		}
+  private moveTimerToTop(id: TimerId) {
+    for (let i = 1; i < this.timerList.length; ++i) {
+      if (this.timerList[i].id === id) {
+        const timer = this.timerList[i];
+        this.timerList.splice(i, 1);
+        this.timerList.unshift(timer);
+        break;
+      }
+    }
+  }
 
-		const timer = this.getTimerById(id);
-		const startDate = Date.now();
+  public startTimer(id: TimerId) {
+    if (Settings.moveTimerToTop) {
+      this.moveTimerToTop(id);
+    }
 
-		timer.lastUsed = startDate;
-		this.lastTimeStep = startDate;
-		this.pauseActiveTimer();
-		this.activeTimer = id;
+    const timer = this.getTimerById(id);
+    const startDate = Date.now();
 
-		const timeStep = () => {
-			const now = Date.now();
-			const delta = (now - this.lastTimeStep);
-			this.lastTimeStep = now;
-			timer.time.updateTimeByMilliseconds(delta);
-		};
-		timeStep();
-		this.setTimeoutId = window.setInterval(timeStep, 1000);
-	}
+    timer.lastUsed = startDate;
+    this.lastTimeStep = startDate;
+    this.pauseActiveTimer();
+    this.activeTimer = id;
 
-	public pauseActiveTimer() {
-		clearTimeout(this.setTimeoutId);
-		this.setTimeoutId = NaN;
-		this.activeTimer = NaN;
-	}
+    const timeStep = () => {
+      const now = Date.now();
+      const delta = now - this.lastTimeStep;
+      this.lastTimeStep = now;
+      timer.time.updateTimeByMilliseconds(delta);
+    };
+    timeStep();
+    this.setTimeoutId = window.setInterval(timeStep, 1000);
+  }
 
-	public removeTimer(id: TimerId) {
-		for (let i = 0; i < this.timerList.length; ++i) {
-			if (this.timerList[i].id === id) {
-				this.pushToDeletedTimers(this.timerList[i].timer);
-				this.timerList.splice(i, 1);
-				break;
-			}
-		}
+  public pauseActiveTimer() {
+    clearTimeout(this.setTimeoutId);
+    this.setTimeoutId = NaN;
+    this.activeTimer = NaN;
+  }
 
-		if (!this.timerList.length) {
-			this.activeTimer = NaN;
-		}
-	}
+  public removeTimer(id: TimerId) {
+    for (let i = 0; i < this.timerList.length; ++i) {
+      if (this.timerList[i].id === id) {
+        this.pushToDeletedTimers(this.timerList[i].timer);
+        this.timerList.splice(i, 1);
+        break;
+      }
+    }
 
-	public pushToDeletedTimers(timer: TimerData) {
-		while (this.deletedTimers.length >= 10) {
-			this.deletedTimers.pop();
-		}
-		this.deletedTimers.unshift({ id: this.newId(), timer });
-	}
+    if (!this.timerList.length) {
+      this.activeTimer = NaN;
+    }
+  }
 
-	public editTimer(id: TimerId, changes: Partial<TimerData>) {
-		const oldTimerData = this.getTimerById(id);
-		const newTimerData = {
-			...oldTimerData,
-			...changes
-		};
-		if (newTimerData.issue && this.issueExistsInTimerList(newTimerData.issue)) {
-			newTimerData.issue = oldTimerData.issue;
-		}
-		for (let i = 0; i < this.timerList.length; ++i) {
-			if (this.timerList[i].id === id) {
-				this.timerList[i].timer = newTimerData;
-			}
-		}
-	}
+  public pushToDeletedTimers(timer: TimerData) {
+    while (this.deletedTimers.length >= 10) {
+      this.deletedTimers.pop();
+    }
+    this.deletedTimers.unshift({ id: this.newId(), timer });
+  }
 
-	public timerIsActive(id: TimerId) {
-		return this.activeTimer === id;
-	}
-    
-	public resetTimer(id: TimerId) {
-		const timer = this.getTimerById(id);
-		timer.time.reset();
-	}
+  public editTimer(id: TimerId, changes: Partial<TimerData>) {
+    const oldTimerData = this.getTimerById(id);
+    const newTimerData = {
+      ...oldTimerData,
+      ...changes,
+    };
+    if (newTimerData.issue && this.issueExistsInTimerList(newTimerData.issue)) {
+      newTimerData.issue = oldTimerData.issue;
+    }
+    for (let i = 0; i < this.timerList.length; ++i) {
+      if (this.timerList[i].id === id) {
+        this.timerList[i].timer = newTimerData;
+      }
+    }
+  }
 
-	public updateTime(id: TimerId, hms: HMS) {
-		const timer = this.getTimerById(id);
-		timer.time?.updateTime(hms);
-		timer.lastUsed = Date.now();
-	}
+  public timerIsActive(id: TimerId) {
+    return this.activeTimer === id;
+  }
 
-	public roundDownTimer(id: TimerId) {
-		const timerData = this.getTimerById(id);
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const oldTime = HMS.clone(timerData.time!);
-		const minutes = oldTime.getMinutes();
-		const secondsDelta = -oldTime.getSeconds();
-		let targetMinutes = 0;
+  public resetTimer(id: TimerId) {
+    const timer = this.getTimerById(id);
+    timer.time.reset();
+  }
 
-		while (targetMinutes <= minutes - Settings.roundToMinutes) {
-			targetMinutes += Settings.roundToMinutes;
-		}
+  public updateTime(id: TimerId, hms: HMS) {
+    const timer = this.getTimerById(id);
+    timer.time?.updateTime(hms);
+    timer.lastUsed = Date.now();
+  }
 
-		const minutesDelta = targetMinutes - minutes;
-		timerData.time?.updateTime(HMS.fromHumanReadable(0, minutesDelta, secondsDelta));
-	}
+  public roundDownTimer(id: TimerId) {
+    const timerData = this.getTimerById(id);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const oldTime = HMS.clone(timerData.time!);
+    const minutes = oldTime.getMinutes();
+    const secondsDelta = -oldTime.getSeconds();
+    let targetMinutes = 0;
 
-	public createFavoriteFromId(id: TimerId) {
-		const timerRef = this.getTimerById(id);
-		const timerData: FavoriteTimer = {
-			issue: timerRef.issue,
-			title: timerRef.title,
-			link: timerRef.link,
-			billStatus: timerRef.billStatus,
-			activity: timerRef.activity
-		};
-		return this.createFavoriteFromInterface(timerData);
-	}
+    while (targetMinutes <= minutes - Settings.roundToMinutes) {
+      targetMinutes += Settings.roundToMinutes;
+    }
 
-	public addFavoriteToTimerList(timer: FavoriteTimer): boolean {
-		return this.addTimer({
-			time: new HMS(),
-			comment: '',
-			controlsHidden: Settings.hideControls,
-			lastUsed: Date.now(),
-			issue: timer.issue,
-			title: timer.title,
-			link: timer.link,
-			billStatus: timer.billStatus,
-			activity: timer.activity
-		});
-	}
+    const minutesDelta = targetMinutes - minutes;
+    timerData.time?.updateTime(
+      HMS.fromHumanReadable(0, minutesDelta, secondsDelta)
+    );
+  }
 
-	public addDeletedToTimerList(timer: TimerEntry): boolean {
-		const ret = this.addTimer(timer.timer);
-		if (!ret) return false;
+  public createFavoriteFromId(id: TimerId) {
+    const timerRef = this.getTimerById(id);
+    const timerData: FavoriteTimer = {
+      issue: timerRef.issue,
+      title: timerRef.title,
+      link: timerRef.link,
+      billStatus: timerRef.billStatus,
+      activity: timerRef.activity,
+    };
+    return this.createFavoriteFromInterface(timerData);
+  }
 
-		for (let i = 0; i < this.deletedTimers.length; ++i) {
-			if (timer.id == this.deletedTimers[i].id) {
-				this.deletedTimers.splice(i, 1);
-				break;
-			}
-		}
+  public addFavoriteToTimerList(timer: FavoriteTimer): boolean {
+    return this.addTimer({
+      time: new HMS(),
+      comment: "",
+      controlsHidden: Settings.hideControls,
+      lastUsed: Date.now(),
+      issue: timer.issue,
+      title: timer.title,
+      link: timer.link,
+      billStatus: timer.billStatus,
+      activity: timer.activity,
+    });
+  }
 
-		return true;
-	}
+  public addDeletedToTimerList(timer: TimerEntry): boolean {
+    const ret = this.addTimer(timer.timer);
+    if (!ret) return false;
 
-	public createFavoriteFromInterface(timerData: FavoriteTimer) {
-		for (const timer of this.favoriteTimers) {
-			if (timer.issue === timerData.issue) {
-				throw new Error(`A favorite with issue ${timerData.issue} already exists`);
-			}
-		}
-		this.favoriteTimers.push(timerData);
-	}
+    for (let i = 0; i < this.deletedTimers.length; ++i) {
+      if (timer.id == this.deletedTimers[i].id) {
+        this.deletedTimers.splice(i, 1);
+        break;
+      }
+    }
 
-	public removeFavorite(issue: string) {
-		for (let i = 0; i < this.favoriteTimers.length; ++i) {
-			const timer = this.favoriteTimers[i];
-			if (timer.issue === issue) {
-				this.favoriteTimers.splice(i, 1);
-				break;
-			}
-		}
-		this.timerToConfirm = NaN;
-	}
+    return true;
+  }
 
-	public favorites(): FavoriteTimer[] {
-		return this.favoriteTimers;
-	}
+  public createFavoriteFromInterface(timerData: FavoriteTimer) {
+    for (const timer of this.favoriteTimers) {
+      if (timer.issue === timerData.issue) {
+        throw new Error(
+          `A favorite with issue ${timerData.issue} already exists`
+        );
+      }
+    }
+    this.favoriteTimers.push(timerData);
+  }
 
-	public getDeletedTimers(): TimerEntry[] {
-		return this.deletedTimers;
-	}
+  public removeFavorite(issue: string) {
+    for (let i = 0; i < this.favoriteTimers.length; ++i) {
+      const timer = this.favoriteTimers[i];
+      if (timer.issue === issue) {
+        this.favoriteTimers.splice(i, 1);
+        break;
+      }
+    }
+    this.timerToConfirm = NaN;
+  }
 
-	public resetAllTimers() {
-		for (const { id } of this.timerList) {
-			TimerSystem.resetTimer(id);
-		}
-	}
+  public favorites(): FavoriteTimer[] {
+    return this.favoriteTimers;
+  }
 
-	public removeAllTimers() {
-		this.timerList.splice(0, this.timerList.length);
-		this.activeTimer = NaN;
-	}
+  public getDeletedTimers(): TimerEntry[] {
+    return this.deletedTimers;
+  }
 
-	public isLoggable(timer: TimerData) {
-		const { time, issue } = timer;
-		return time.hasTime() && issue.length;
-	}
+  public resetAllTimers() {
+    for (const { id } of this.timerList) {
+      TimerSystem.resetTimer(id);
+    }
+  }
 
-	public logAllTimers() {
-		for (const { timer } of this.timerList) {
-			if (this.isLoggable(timer)) {
-				this.logFromData(timer);
-			}
-		}
-	}
-    
-	public setLogDate(date: Date) {
-		this.logDate = date;
-	}
+  public removeAllTimers() {
+    this.timerList.splice(0, this.timerList.length);
+    this.activeTimer = NaN;
+  }
 
-	public toggleControls(id: TimerId) {
-		const timer = this.getTimerById(id);
-		timer.controlsHidden = !timer.controlsHidden;
-	}
+  public isLoggable(timer: TimerData) {
+    const { time, issue } = timer;
+    return time.hasTime() && issue.length;
+  }
 
-	public totalTime() {
-		const totalTime = new HMS();
-		for (const { timer } of this.timerList) {
-			const hms = HMS.clone(timer.time);
-			totalTime.updateTime(hms);
-		}
+  public logAllTimers() {
+    for (const { timer } of this.timerList) {
+      if (this.isLoggable(timer)) {
+        this.logFromData(timer);
+      }
+    }
+  }
 
-		return totalTime;
-	}
+  public setLogDate(date: Date) {
+    this.logDate = date;
+  }
 
-	public toTimerSystemData(): TimerSystemData {
-		return {
-			timers: this.timerList.map(te => timerDataToRaw(te.timer)),
-			favoriteTimers: this.favoriteTimers,
-			deletedTimers: this.deletedTimers.map(({ timer }) => timerDataToRaw(timer))
-		} as TimerSystemData;
-	}
+  public toggleControls(id: TimerId) {
+    const timer = this.getTimerById(id);
+    timer.controlsHidden = !timer.controlsHidden;
+  }
 
-	public timersFromRaw(rawTimers: RawTimerData[]) {
-		for (const rawTimer of rawTimers) {
-			this.timerList.push({ 
-				id: this.newId(),
-				timer: reactive(rawToTimerData(rawTimer))
-			});
-		}
-	}
+  public totalTime() {
+    const totalTime = new HMS();
+    for (const { timer } of this.timerList) {
+      const hms = HMS.clone(timer.time);
+      totalTime.updateTime(hms);
+    }
 
-	public favoriteTimersFromList(rawFavorites: FavoriteTimer[]) {
-		for (const rawTimer of rawFavorites) {
-			this.createFavoriteFromInterface({
-				issue: rawTimer.issue ?? '',
-				title: rawTimer.title ?? '',
-				link: rawTimer.link ?? '',
-				billStatus: checkBillStatus(rawTimer.billStatus),
-				activity: rawTimer.activity ?? Settings.defaultActivity
-			});
-		}
-	}
+    return totalTime;
+  }
 
-	public deletedTimersFromRaw(rawDeleted: RawTimerData[]) {
-		const addedIds: string[] = [];
-		for (let i = 0; i < 10 && i < rawDeleted.length; i++) {
-			const rawTimer = rawDeleted[i];
-			if (!addedIds.includes(rawTimer.issue)) {
-				this.deletedTimers.unshift({ id: this.newId(), timer: rawToTimerData(rawTimer) });
-				addedIds.push(rawTimer.issue);
-			}
-		}
-	}
+  public toTimerSystemData(): TimerSystemData {
+    return {
+      timers: this.timerList.map((te) => timerDataToRaw(te.timer)),
+      favoriteTimers: this.favoriteTimers,
+      deletedTimers: this.deletedTimers.map(({ timer }) =>
+        timerDataToRaw(timer)
+      ),
+    } as TimerSystemData;
+  }
 
-	/**
-	 * Imports from save data.
-	 * @param saveData Savedata to load
-	 */
-	public importTimerSystemData(timerSystemData: TimerSystemData) {
-		this.timersFromRaw(timerSystemData.timers as RawTimerData[] ?? []);
-		this.favoriteTimersFromList(timerSystemData.favoriteTimers as RawTimerData[] ?? []);
-	}
+  public timersFromRaw(rawTimers: RawTimerData[]) {
+    for (const rawTimer of rawTimers) {
+      this.timerList.push({
+        id: this.newId(),
+        timer: reactive(rawToTimerData(rawTimer)),
+      });
+    }
+  }
 
-	private newId() {
-		let id = new Date().getTime();
-		while (id === _TimerSystem.lastId) {
-			id = new Date().getTime();
-		}
-		_TimerSystem.lastId = id;
-		return id;
-	}
+  public favoriteTimersFromList(rawFavorites: FavoriteTimer[]) {
+    for (const rawTimer of rawFavorites) {
+      this.createFavoriteFromInterface({
+        issue: rawTimer.issue ?? "",
+        title: rawTimer.title ?? "",
+        link: rawTimer.link ?? "",
+        billStatus: checkBillStatus(rawTimer.billStatus),
+        activity: rawTimer.activity ?? Settings.defaultActivity,
+      });
+    }
+  }
 
-	private logFromData(timer: TimerData) {
-		const workedTime = timer.time.roundedTime();
-		const logDate = format(
-			Settings.lastUsedForLogging ? new Date(timer.lastUsed) : this.logDate,
-			'dd/MM/yyyy'
-		);
-		const comment = encodeURIComponent(timer.comment);
-		const url = 
-			`https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${comment}&time_entry[custom_field_values][9]=${timer.billStatus}&time_entry[spent_on]=${logDate}&time_entry[activity_id]=${getActivityValue(timer.activity)}`;
-		window.open(url);
-	}
+  public deletedTimersFromRaw(rawDeleted: RawTimerData[]) {
+    const addedIds: string[] = [];
+    for (let i = 0; i < 10 && i < rawDeleted.length; i++) {
+      const rawTimer = rawDeleted[i];
+      if (!addedIds.includes(rawTimer.issue)) {
+        this.deletedTimers.unshift({
+          id: this.newId(),
+          timer: rawToTimerData(rawTimer),
+        });
+        addedIds.push(rawTimer.issue);
+      }
+    }
+  }
 
-	/**
-	 * Checks to see if issue exists in timer data map.
-	 * Always returns false if `issue` parameter is empty. 
-	 * @param issue Issue string, can be empty.
-	 */
-	private issueExistsInTimerList(issue: string): TimerData | undefined {
-		if (!issue) return;
-		const result = this.timerList.find(({ timer }) => timer.issue === issue);
-		return result ? result.timer : undefined; 
-	}
+  /**
+   * Imports from save data.
+   * @param saveData Savedata to load
+   */
+  public importTimerSystemData(timerSystemData: TimerSystemData) {
+    this.timersFromRaw((timerSystemData.timers as RawTimerData[]) ?? []);
+    this.favoriteTimersFromList(
+      (timerSystemData.favoriteTimers as RawTimerData[]) ?? []
+    );
+  }
 
-	private getTimerById(id: TimerId): TimerData {
-		for (let i = 0; i < this.timerList.length; ++i) {
-			if (this.timerList[i].id === id) {
-				return this.timerList[i].timer;
-			}
-		}
+  private newId() {
+    let id = new Date().getTime();
+    while (id === _TimerSystem.lastId) {
+      id = new Date().getTime();
+    }
+    _TimerSystem.lastId = id;
+    return id;
+  }
 
-		throw `function getTimerById: Timer doesn't exist with id ${this.timerToConfirm}`;
-	}
+  private logFromData(timer: TimerData) {
+    const workedTime = timer.time.roundedTime();
+    const logDate = format(
+      Settings.lastUsedForLogging ? new Date(timer.lastUsed) : this.logDate,
+      "dd/MM/yyyy"
+    );
+    const comment = encodeURIComponent(timer.comment);
+    const billStatusParam = isBillStatus(timer.billStatus)
+      ? `&time_entry[custom_field_values][9]=${encodeURIComponent(
+          timer.billStatus
+        )}`
+      : "";
+    const activityId = findActivityValue(timer.activity);
+    const activityParam =
+      activityId !== null ? `&time_entry[activity_id]=${activityId}` : "";
+    const url = `https://pm.mieweb.com/issues/${timer.issue}/time_entries/new?&time_entry[hours]=${workedTime}&time_entry[comments]=${comment}${billStatusParam}&time_entry[spent_on]=${logDate}${activityParam}`;
+    window.open(url);
+  }
+
+  /**
+   * Checks to see if issue exists in timer data map.
+   * Always returns false if `issue` parameter is empty.
+   * @param issue Issue string, can be empty.
+   */
+  private issueExistsInTimerList(issue: string): TimerData | undefined {
+    if (!issue) return;
+    const result = this.timerList.find(({ timer }) => timer.issue === issue);
+    return result ? result.timer : undefined;
+  }
+
+  private getTimerById(id: TimerId): TimerData {
+    for (let i = 0; i < this.timerList.length; ++i) {
+      if (this.timerList[i].id === id) {
+        return this.timerList[i].timer;
+      }
+    }
+
+    throw `function getTimerById: Timer doesn't exist with id ${this.timerToConfirm}`;
+  }
 }
 
 export const TimerSystem = reactive(new _TimerSystem());
