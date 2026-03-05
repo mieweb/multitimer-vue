@@ -7,7 +7,7 @@ import {
   RawTimerData,
   billStatuses,
 } from "../data/TimerData";
-import { reactive } from "vue";
+import { reactive, ref, computed } from "vue";
 import { TimerSystem } from "../data/TimerSystem";
 import { Settings } from "../data/Settings";
 import { RedmineAPI } from "../data/RedmineAPI";
@@ -28,8 +28,6 @@ const formData: Omit<RawTimerData, "controlsHidden" | "lastUsed"> = reactive({
   activity: "" as unknown as string,
 } as unknown as Omit<RawTimerData, "controlsHidden" | "lastUsed">);
 
-<<<<<<< Updated upstream
-=======
 const showDuplicateWarning = ref(false);
 const showBillStatusError = ref(false);
 const showActivityError = ref(false);
@@ -108,7 +106,15 @@ const onActivityChange = () => {
   showActivityError.value = false;
 };
 
->>>>>>> Stashed changes
+const showDuplicateWarning = ref(false);
+const issueInputClass = computed(() => 
+  showDuplicateWarning.value ? 'form-control modal-focus-input border-warning duplicate-warning-border' : 'form-control modal-focus-input'
+);
+
+const onIssueChange = () => {
+  showDuplicateWarning.value = false;
+};
+
 const clearFormData = () => {
   formData.issue = "";
   formData.title = "";
@@ -116,25 +122,21 @@ const clearFormData = () => {
   formData.time.minutes = NaN;
   formData.time.seconds = NaN;
   formData.comment = "";
-<<<<<<< Updated upstream
-=======
   formData.billStatus = "";
   formData.activity = "";
   showDuplicateWarning.value = false;
   showBillStatusError.value = false;
   showActivityError.value = false;
   showIssueOrTitleError.value = false;
->>>>>>> Stashed changes
+  showDuplicateWarning.value = false;
 };
 
 const actions: Action[] = [
   {
     title: "Split Timer",
     action: () => {
-<<<<<<< Updated upstream
       TimerSystem.splitTimer(rawToTimerData(formData));
       clearFormData();
-=======
       // Check required fields
       if (!isFormValid.value) {
         if (!hasIssueOrTitle.value) showIssueOrTitleError.value = true;
@@ -151,17 +153,14 @@ const actions: Action[] = [
       } else {
         clearFormData();
       }
->>>>>>> Stashed changes
     },
-    closeModal: true,
+    closeModal: false,
   },
   {
     title: "Add Timer",
     action: () => {
-<<<<<<< Updated upstream
       TimerSystem.addTimer(rawToTimerData(formData));
       clearFormData();
-=======
       // Check required fields
       if (!isFormValid.value) {
         if (!hasIssueOrTitle.value) showIssueOrTitleError.value = true;
@@ -178,7 +177,6 @@ const actions: Action[] = [
       } else {
         clearFormData();
       }
->>>>>>> Stashed changes
     },
     classes: "btn-primary",
     hotkey: "Enter",
@@ -189,23 +187,25 @@ const actions: Action[] = [
 <template>
   <ModalTemplate title="Add Timer" :actions="actions">
     <form>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-1">
         <input
           id="atm-issue"
           v-model="formData.issue"
           type="number"
-          class="form-control modal-focus-input"
+          :class="issueInputClass"
           placeholder="issue"
-<<<<<<< Updated upstream
-        />
-        <label for="atm-issue" class="form-label">Issue #</label>
-      </div>
-      <div class="form-floating mb-3">
-=======
+          @input="onIssueChange"
           :disabled="isLoadingFromRedmine"
           @input="onIssueChange"
           @blur="onIssueBlur"
         />
+        <label for="atm-issue" class="form-label">Issue #</label>
+      </div>
+      <div v-if="showDuplicateWarning" class="text-warning small mb-3">
+        Duplicate ticket number, click Add Timer again if you want to add.
+      </div>
+      <div v-else class="mb-2"></div>
+      <div class="form-floating mb-3">
         <label for="atm-issue" class="form-label">Issue #</label>
       </div>
       <div v-if="isLoadingFromRedmine" class="text-info small mb-3">
@@ -216,7 +216,6 @@ const actions: Action[] = [
       </div>
       <div v-else class="mb-2"></div>
       <div class="form-floating mb-1">
->>>>>>> Stashed changes
         <input
           id="atm-title"
           v-model.trim="formData.title"
@@ -316,8 +315,6 @@ const actions: Action[] = [
 <script lang="ts">
 export default {};
 </script>
-<<<<<<< Updated upstream
-=======
 <style scoped>
 .duplicate-warning-border {
   border-width: 3px !important;
@@ -335,5 +332,8 @@ export default {};
   font-size: 0.75rem;
 }
 </style>
->>>>>>> Stashed changes
+.text-warning.small {
+  font-size: 0.75rem;
+}
+</style>
 import Action from "../data/Action.1";

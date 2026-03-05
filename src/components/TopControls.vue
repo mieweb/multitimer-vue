@@ -3,8 +3,9 @@ import { TimerFilter, TimerSystem } from '../data/TimerSystem';
 import { openModal } from '../data/ModalHandler';
 import ResetAllTimers from '../modals/ResetAllTimers.vue';
 import RemoveAllTimers from '../modals/RemoveAllTimers.vue';
+import ClearAllComments from '../modals/ClearAllComments.vue';
 import { parse } from 'date-fns';
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 
 const updateLogDate = (event: Event) => {
 	const dateString = (event.target as HTMLInputElement).value;
@@ -21,6 +22,14 @@ const updateFilter = () => TimerSystem.updateFilter(filter);
 const withTimeOnClick = () => {
 	filter.withTime = !filter.withTime;
 	TimerSystem.updateFilter(filter);
+};
+
+const toggleAllControlsText = computed(() => 
+	TimerSystem.areAllControlsHidden() ? 'Open All Rows' : 'Close All Rows'
+);
+
+const toggleAllControls = () => {
+	TimerSystem.toggleAllControls();
 };
 </script>
 <template>
@@ -60,10 +69,22 @@ const withTimeOnClick = () => {
 					>
 						Remove All Timers
 					</button>
+					<button
+						class="btn btn-outline-warning"
+						@click="openModal(ClearAllComments)"
+					>
+						Clear All Comments
+					</button>
+					<button
+						class="btn btn-outline-info"
+						@click="toggleAllControls"
+					>
+						{{ toggleAllControlsText }}
+					</button>
 				</div>
 			</div>
 		</div>
-		<div class="d-flex-justify-content-center">
+		<div class="d-flex-justify-content-center pt-3">
 			<div class="input-group">
 				<div class="input-group-text">
 					Search timers:

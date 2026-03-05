@@ -22,6 +22,20 @@ const versionNumber = MULTITIMER_VERSION;
 		inputs for an issue ID, a title for the timer, and an
 		initial time the timer will start at. If no time is given,
 		the timer will start from 0.
+		<p>
+			<b>Duplicate Ticket Warning:</b> If you attempt to add a timer with an issue number that already exists 
+			in your timer list, the issue field will show a yellow border and a warning message will appear below it. 
+			This allows you to review the duplicate before confirming. If you still want to add the duplicate timer, 
+			simply click the "Add Timer" button again to proceed.
+		</p>
+		<hr>
+		<h4>Total Time Display</h4>
+		<p>
+			The Total Time display shows the sum of all timer durations. Hovering over the total time will reveal 
+			a tooltip showing the "rounded time" - this is the actual amount of time that would be logged based 
+			on your rounding settings (configured in Settings under "Round To Minutes"). This helps you see the 
+			difference between actual tracked time and billable logged time.
+		</p>
 		<hr>
 		<h4>Interacting with the Timer</h4>
 		The timer features a variety of controls, separated by what I consider
@@ -129,6 +143,14 @@ const versionNumber = MULTITIMER_VERSION;
 			</li>
 			<li>
 				<span class="text-danger">Remove All Timers</span> will remove all timers, clearing your timer list.
+			</li>
+			<li>
+				<span class="text-warning">Clear All Comments</span> will clear all comment fields from all timers after a confirmation prompt. 
+				This is useful when you want to remove comments before logging.
+			</li>
+			<li>
+				<span class="text-info">Open/Close All Rows</span> toggles all timer extra controls (second row) to be either 
+				shown or hidden at once. The button label dynamically changes based on the current state of the first timer in the list.
 			</li>
 			<li>
 				A search bar labeled 
