@@ -1,9 +1,6 @@
 #!/bin/sh
 
-BASE_DIR=$HOME/public_html/multitimer-vue
-SRC=$BASE_DIR/src
-DIST=$BASE_DIR/dist
-PUBLIC=$BASE_DIR/public
+DIST="./dist"
 
 if [ $(hostname) != "zeus.med-web.com" ]; then
     echo Deploying on a system that is not Zeus is deactivated. Exitting. >&2
