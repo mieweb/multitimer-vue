@@ -24,7 +24,9 @@ export interface SettingsInterface {
 	defaultActivity: Activity,
 	lastUsedForLogging: boolean
 	startOnTimerClick: boolean,
-	moveTimerToTop: boolean
+	moveTimerToTop: boolean,
+	redmineApiKey: string,
+	redmineUserId: string
 }
 
 class _Settings implements SettingsInterface {
@@ -42,6 +44,8 @@ class _Settings implements SettingsInterface {
 	public lastUsedForLogging = false;
 	public startOnTimerClick = false;
 	public moveTimerToTop = false;
+	public redmineApiKey = '';
+	public redmineUserId = '';
 	
 	// "External" settings
 	public darkMode = false;

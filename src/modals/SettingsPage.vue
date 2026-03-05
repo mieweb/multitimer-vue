@@ -5,9 +5,26 @@ import type { Action } from '../components/ModalTemplate.vue';
 import { TimerSystem, TimerSystemData } from '../data/TimerSystem';
 import { ref } from 'vue';
 import { activities } from '../data/TimerData';
+import { RedmineAPI } from '../data/RedmineAPI';
 
 const formData = Settings.dataCopy();
 const fileUpload = ref<HTMLInputElement>();
+const apiKeyTestResult = ref<'success' | 'error' | null>(null);
+const isTestingApiKey = ref(false);
+
+const testApiKey = async () => {
+	isTestingApiKey.value = true;
+	
+	const isValid = await RedmineAPI.testApiKey(formData.redmineApiKey);
+	apiKeyTestResult.value = isValid ? 'success' : 'error';
+	
+	isTestingApiKey.value = false;
+	
+	// Clear the result after 5 seconds
+	setTimeout(() => {
+		apiKeyTestResult.value = null;
+	}, 5000);
+};
 
 const saveAction = () => {
 	const validRange = validateMeetingRange(formData);
@@ -311,6 +328,64 @@ const actions: Action[] = [
                 <input type="date" class="form-control" id="meeting-detect-end">
             </div>
         </div> -->
+		<h5>Redmine Integration</h5>
+		<hr>
+		<div class="mb-3">
+			<label
+				class="form-label"
+				for="redmine-api-key"
+			>Redmine API Key:</label>
+			<div class="input-group">
+				<input
+					id="redmine-api-key"
+					v-model="formData.redmineApiKey"
+					type="password"
+					class="form-control"
+					placeholder="Leave blank to disable"
+				>
+				<button
+					class="btn btn-outline-secondary"
+					type="button"
+					:disabled="!formData.redmineApiKey || isTestingApiKey"
+					@click="testApiKey"
+				>
+					{{ isTestingApiKey ? 'Testing...' : 'Test Key' }}
+				</button>
+				<span
+					v-if="apiKeyTestResult === 'success'"
+					class="input-group-text bg-success text-white"
+				>
+					<i class="fa fa-check" />
+				</span>
+				<span
+					v-else-if="apiKeyTestResult === 'error'"
+					class="input-group-text bg-danger text-white"
+				title="Check browser console (F12) for details"
+			>
+				<i class="fa fa-times" />
+			</span>
+			</div>
+			<small class="form-text text-muted d-block mt-2">
+				Your API key is used to fetch ticket information and activity history from Redmine. 
+				It will be saved locally in your browser's storage and never sent to external servers.
+			</small>
+		</div>
+		<div class="mb-3">
+			<label
+				class="form-label"
+				for="redmine-user-id"
+			>Redmine User ID:</label>
+			<input
+				id="redmine-user-id"
+				v-model="formData.redmineUserId"
+				type="text"
+				class="form-control"
+				placeholder="e.g., 7"
+			>
+			<small class="form-text text-muted">
+				Your user ID is used to fetch your recent time entries for a ticket.
+			</small>
+		</div>
 		<h5>Importing/Exporting</h5>
 		<hr>
 		<button
@@ -341,6 +416,16 @@ const actions: Action[] = [
 		>
 			Recover Save Data
 		</button>
-	</modaltemplate>
+	</ModalTemplate>
 </template>
-<script lang="ts">export default {};</script>import Action from "../data/Action.1";
+<script lang="ts">export default {};</script>
+<style scoped>
+.input-group-text.bg-success {
+	border-color: var(--bs-success);
+}
+
+.input-group-text.bg-danger {
+	border-color: var(--bs-danger);
+}
+</style>
+import Action from "../data/Action.1";
