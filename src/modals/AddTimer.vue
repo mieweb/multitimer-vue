@@ -106,15 +106,6 @@ const onActivityChange = () => {
   showActivityError.value = false;
 };
 
-const showDuplicateWarning = ref(false);
-const issueInputClass = computed(() => 
-  showDuplicateWarning.value ? 'form-control modal-focus-input border-warning duplicate-warning-border' : 'form-control modal-focus-input'
-);
-
-const onIssueChange = () => {
-  showDuplicateWarning.value = false;
-};
-
 const clearFormData = () => {
   formData.issue = "";
   formData.title = "";
@@ -128,15 +119,12 @@ const clearFormData = () => {
   showBillStatusError.value = false;
   showActivityError.value = false;
   showIssueOrTitleError.value = false;
-  showDuplicateWarning.value = false;
 };
 
 const actions: Action[] = [
   {
     title: "Split Timer",
     action: () => {
-      TimerSystem.splitTimer(rawToTimerData(formData));
-      clearFormData();
       // Check required fields
       if (!isFormValid.value) {
         if (!hasIssueOrTitle.value) showIssueOrTitleError.value = true;
@@ -159,8 +147,6 @@ const actions: Action[] = [
   {
     title: "Add Timer",
     action: () => {
-      TimerSystem.addTimer(rawToTimerData(formData));
-      clearFormData();
       // Check required fields
       if (!isFormValid.value) {
         if (!hasIssueOrTitle.value) showIssueOrTitleError.value = true;
@@ -194,18 +180,10 @@ const actions: Action[] = [
           type="number"
           :class="issueInputClass"
           placeholder="issue"
-          @input="onIssueChange"
           :disabled="isLoadingFromRedmine"
           @input="onIssueChange"
           @blur="onIssueBlur"
         />
-        <label for="atm-issue" class="form-label">Issue #</label>
-      </div>
-      <div v-if="showDuplicateWarning" class="text-warning small mb-3">
-        Duplicate ticket number, click Add Timer again if you want to add.
-      </div>
-      <div v-else class="mb-2"></div>
-      <div class="form-floating mb-3">
         <label for="atm-issue" class="form-label">Issue #</label>
       </div>
       <div v-if="isLoadingFromRedmine" class="text-info small mb-3">
@@ -332,8 +310,3 @@ export default {};
   font-size: 0.75rem;
 }
 </style>
-.text-warning.small {
-  font-size: 0.75rem;
-}
-</style>
-import Action from "../data/Action.1";
