@@ -23,6 +23,27 @@ const versionNumber = MULTITIMER_VERSION;
 		initial time the timer will start at. If no time is given,
 		the timer will start from 0.
 		<p>
+			<b>Form Validation:</b> Before adding a timer, the following fields are required:
+			<ul>
+				<li>Either an <b>Issue #</b> or a <b>Title</b> (at least one must be filled in)</li>
+				<li><b>Bill Status</b> - must be selected from the dropdown</li>
+				<li><b>Activity</b> - must be selected from the dropdown</li>
+			</ul>
+			If any required fields are missing, they will display a red border and an error message until filled in.
+		</p>
+		<p>
+			<b>Redmine API Integration:</b> If you have set up your Redmine API key in Settings, the timer form 
+			will automatically populate timer data when you enter an issue number. When you click outside the 
+			issue field (or press Tab), a loading spinner will appear briefly showing "Searching Redmine..." 
+			while it fetches the data. Once loaded, the following fields will be auto-filled if they're still empty:
+			<ul>
+				<li><b>Title</b> - populated from the issue subject</li>
+				<li><b>Activity</b> - populated from your most recent activity on that ticket</li>
+				<li><b>Bill Status</b> - populated from your most recent billing status on that ticket</li>
+			</ul>
+			This feature requires you to configure your Redmine API Key and User ID in the Settings page (under "Redmine Integration").
+		</p>
+		<p>
 			<b>Duplicate Ticket Warning:</b> If you attempt to add a timer with an issue number that already exists 
 			in your timer list, the issue field will show a yellow border and a warning message will appear below it. 
 			This allows you to review the duplicate before confirming. If you still want to add the duplicate timer, 
