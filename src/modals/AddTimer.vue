@@ -7,7 +7,7 @@ import {
   RawTimerData,
   billStatuses,
 } from "../data/TimerData";
-import { reactive } from "vue";
+import { reactive, ref, computed } from "vue";
 import { TimerSystem } from "../data/TimerSystem";
 import { Settings } from "../data/Settings";
 
@@ -27,6 +27,15 @@ const formData: Omit<RawTimerData, "controlsHidden" | "lastUsed"> = reactive({
   activity: "" as unknown as string,
 } as unknown as Omit<RawTimerData, "controlsHidden" | "lastUsed">);
 
+const showDuplicateWarning = ref(false);
+const issueInputClass = computed(() => 
+  showDuplicateWarning.value ? 'form-control modal-focus-input border-warning duplicate-warning-border' : 'form-control modal-focus-input'
+);
+
+const onIssueChange = () => {
+  showDuplicateWarning.value = false;
+};
+
 const clearFormData = () => {
   formData.issue = "";
   formData.title = "";
@@ -34,22 +43,35 @@ const clearFormData = () => {
   formData.time.minutes = NaN;
   formData.time.seconds = NaN;
   formData.comment = "";
+  showDuplicateWarning.value = false;
 };
 
 const actions: Action[] = [
   {
     title: "Split Timer",
     action: () => {
-      TimerSystem.splitTimer(rawToTimerData(formData));
-      clearFormData();
+      const force = showDuplicateWarning.value;
+      const success = TimerSystem.splitTimer(rawToTimerData(formData), force);
+      
+      if (!success && !force) {
+        showDuplicateWarning.value = true;
+      } else {
+        clearFormData();
+      }
     },
-    closeModal: true,
+    closeModal: false,
   },
   {
     title: "Add Timer",
     action: () => {
-      TimerSystem.addTimer(rawToTimerData(formData));
-      clearFormData();
+      const force = showDuplicateWarning.value;
+      const success = TimerSystem.addTimer(rawToTimerData(formData), force);
+      
+      if (!success && !force) {
+        showDuplicateWarning.value = true;
+      } else {
+        clearFormData();
+      }
     },
     classes: "btn-primary",
     hotkey: "Enter",
@@ -60,16 +82,21 @@ const actions: Action[] = [
 <template>
   <ModalTemplate title="Add Timer" :actions="actions">
     <form>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-1">
         <input
           id="atm-issue"
           v-model="formData.issue"
           type="number"
-          class="form-control modal-focus-input"
+          :class="issueInputClass"
           placeholder="issue"
+          @input="onIssueChange"
         />
         <label for="atm-issue" class="form-label">Issue #</label>
       </div>
+      <div v-if="showDuplicateWarning" class="text-warning small mb-3">
+        Duplicate ticket number, click Add Timer again if you want to add.
+      </div>
+      <div v-else class="mb-2"></div>
       <div class="form-floating mb-3">
         <input
           id="atm-title"
@@ -157,4 +184,13 @@ const actions: Action[] = [
 <script lang="ts">
 export default {};
 </script>
+<style scoped>
+.duplicate-warning-border {
+  border-width: 3px !important;
+}
+
+.text-warning.small {
+  font-size: 0.75rem;
+}
+</style>
 import Action from "../data/Action.1";

@@ -4,6 +4,8 @@ import { TimerSystem } from '../data/TimerSystem';
 import PageTitle from './PageTitle.vue';
 
 const totalTime = computed(() => TimerSystem.totalTime());
+const roundedTotalTime = computed(() => TimerSystem.roundedTotalTime());
+const hoverText = computed(() => `Rounded time: ${roundedTotalTime.value}`);
 </script>
 <template>
 	<PageTitle
@@ -15,7 +17,7 @@ const totalTime = computed(() => TimerSystem.totalTime());
 		class="d-flex flex-column align-items-center pt-4 text-secondary"
 	>
 		<h5>Total Time:</h5>
-		<h4>
+		<h4 :title="hoverText">
 			{{ totalTime }}
 		</h4>
 	</div>
