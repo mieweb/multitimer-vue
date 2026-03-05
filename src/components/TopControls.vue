@@ -69,23 +69,19 @@ const toggleAllControls = () => {
 					>
 						Remove All Timers
 					</button>
+					<button
+						class="btn btn-outline-warning"
+						@click="openModal(ClearAllComments)"
+					>
+						Clear All Comments
+					</button>
+					<button
+						class="btn btn-outline-info"
+						@click="toggleAllControls"
+					>
+						{{ toggleAllControlsText }}
+					</button>
 				</div>
-			</div>
-		</div>
-		<div class="d-flex justify-content-center pt-3">
-			<div class="input-group">
-				<button
-					class="btn btn-outline-warning"
-					@click="openModal(ClearAllComments)"
-				>
-					Clear All Comments
-				</button>
-				<button
-					class="btn btn-outline-info"
-					@click="toggleAllControls"
-				>
-					{{ toggleAllControlsText }}
-				</button>
 			</div>
 		</div>
 		<div class="d-flex-justify-content-center pt-3">
