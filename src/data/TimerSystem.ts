@@ -407,6 +407,17 @@ class _TimerSystem {
     return totalTime;
   }
 
+  public roundedTotalTime() {
+    const totalTime = this.totalTime();
+    const roundedHours = totalTime.roundedTime();
+    
+    // Convert decimal hours back to HMS format
+    const hours = Math.floor(roundedHours);
+    const minutes = Math.round((roundedHours - hours) * 60);
+    
+    return HMS.fromHumanReadable(hours, minutes, 0);
+  }
+
   public toTimerSystemData(): TimerSystemData {
     return {
       timers: this.timerList.map((te) => timerDataToRaw(te.timer)),
