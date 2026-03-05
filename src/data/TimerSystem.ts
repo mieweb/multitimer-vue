@@ -51,18 +51,18 @@ class _TimerSystem {
     withTime: false,
   };
 
-  public addTimer(timerData: TimerData): boolean {
-    if (this.issueExistsInTimerList(timerData.issue)) return false;
+  public addTimer(timerData: TimerData, force = false): boolean {
+    if (!force && this.issueExistsInTimerList(timerData.issue)) return false;
     const id = this.newId();
     this.timerList.unshift({ id, timer: reactive(timerData) });
     this.startTimer(id);
     return true;
   }
 
-  public splitTimer(timerData: TimerData): boolean {
-    if (this.issueExistsInTimerList(timerData.issue)) return false;
+  public splitTimer(timerData: TimerData, force = false): boolean {
+    if (!force && this.issueExistsInTimerList(timerData.issue)) return false;
     if (!this.activeTimer) {
-      return this.addTimer(timerData);
+      return this.addTimer(timerData, force);
     }
 
     const splitFromTimer = this.getTimerById(this.activeTimer);
@@ -72,6 +72,10 @@ class _TimerSystem {
     this.timerList.unshift({ id, timer: reactive(timerData) });
     this.startTimer(id);
     return true;
+  }
+
+  public issueExists(issue: string): boolean {
+    return !!this.issueExistsInTimerList(issue);
   }
 
   /**
@@ -345,6 +349,30 @@ class _TimerSystem {
   public removeAllTimers() {
     this.timerList.splice(0, this.timerList.length);
     this.activeTimer = NaN;
+  }
+
+  public clearAllComments() {
+    for (const { timer } of this.timerList) {
+      timer.comment = "";
+    }
+  }
+
+  public toggleAllControls() {
+    if (this.timerList.length === 0) return;
+    
+    // Get the first timer's state to determine what to do
+    const firstTimer = this.timerList[0].timer;
+    const targetState = !firstTimer.controlsHidden;
+    
+    // Set all timers to the opposite of the first timer's current state
+    for (const { timer } of this.timerList) {
+      timer.controlsHidden = targetState;
+    }
+  }
+
+  public areAllControlsHidden(): boolean {
+    if (this.timerList.length === 0) return false;
+    return this.timerList[0].timer.controlsHidden;
   }
 
   public isLoggable(timer: TimerData) {
