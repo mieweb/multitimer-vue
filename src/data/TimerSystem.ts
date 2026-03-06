@@ -408,14 +408,21 @@ class _TimerSystem {
   }
 
   public roundedTotalTime() {
-    const totalTime = this.totalTime();
-    const roundedHours = totalTime.roundedTime();
+    const totalRoundedTime = new HMS();
     
-    // Convert decimal hours back to HMS format
-    const hours = Math.floor(roundedHours);
-    const minutes = Math.round((roundedHours - hours) * 60);
+    // Round each timer individually, then sum them
+    for (const { timer } of this.timerList) {
+      const roundedHours = timer.time.roundedTime();
+      
+      // Convert decimal hours back to HMS and add to total
+      const hours = Math.floor(roundedHours);
+      const minutes = Math.round((roundedHours - hours) * 60);
+      const roundedHMS = HMS.fromHumanReadable(hours, minutes, 0);
+      
+      totalRoundedTime.updateTime(roundedHMS);
+    }
     
-    return HMS.fromHumanReadable(hours, minutes, 0);
+    return totalRoundedTime;
   }
 
   public toTimerSystemData(): TimerSystemData {
