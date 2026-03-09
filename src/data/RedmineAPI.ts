@@ -2,7 +2,10 @@ import { Settings } from './Settings';
 import { Activity, activities } from './TimerData';
 import { BillStatus, billStatuses } from './TimerData';
 
-const REDMINE_BASE_URL = '/api/redmine';
+// Use proxy in development, direct URL in production
+const REDMINE_BASE_URL = import.meta.env.DEV 
+	? '/api/redmine' 
+	: 'https://pm.mieweb.com';
 
 interface RedmineIssue {
 	issue: {
