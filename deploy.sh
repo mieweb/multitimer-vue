@@ -8,7 +8,7 @@ if [ $(hostname) != "zeus.med-web.com" ]; then
 fi
 
 function usage() {
-    echo "Usage: deploy.sh [ --testing | --release | --qa ]"
+    echo "Usage: deploy.sh [ --testing | --zeus | --qa ]"
 }
 
 if [ "$#" != "1" ]; then
@@ -20,7 +20,7 @@ case "$1" in
     "--testing")
         TARGET_DIR=$HOME/public_html/multitimer-testing
         ;;
-    "--release")
+    "--zeus")
         TARGET_DIR=$HOME/public_html/multitimer
         ;;
     "--qa")
